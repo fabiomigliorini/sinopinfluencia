@@ -41,7 +41,9 @@ const filterSchema = z.object({
 });
 
 export const getFilteredProfiles = createServerFn({ method: "GET" })
-  .validator(filterSchema)
+  .validator((input: Record<string, string | undefined>) =>
+    filterSchema.parse(input),
+  )
   .handler(async ({ data }) => {
     const supabase = createServerSupabaseClient();
     let builder = supabase
