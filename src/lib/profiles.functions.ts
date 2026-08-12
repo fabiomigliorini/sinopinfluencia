@@ -33,8 +33,12 @@ export const listProfiles = createServerFn({ method: "GET" }).handler(
 
 export const getFilteredProfiles = createServerFn({ method: "GET" })
   .validator(
-    (input: { q?: string; niche?: string; network?: string; tier?: string }) =>
-      input,
+    (input: {
+      q?: string | undefined;
+      niche?: string | undefined;
+      network?: string | undefined;
+      tier?: string | undefined;
+    }) => input,
   )
   .handler(async ({ data }) => {
     const supabase = createServerSupabaseClient();
