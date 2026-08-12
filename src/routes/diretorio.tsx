@@ -21,12 +21,14 @@ const searchSchema = z.object({
   tier: z.string().optional(),
 });
 
-const directoryQueryOptions = (filters: {
-  q?: string;
-  niche?: string;
-  network?: string;
-  tier?: string;
-}) =>
+const directoryQueryOptions = (
+  filters: {
+    q?: string | undefined;
+    niche?: string | undefined;
+    network?: string | undefined;
+    tier?: string | undefined;
+  },
+) =>
   queryOptions({
     queryKey: ["directory", filters],
     queryFn: () => getFilteredProfiles({ data: filters }),
