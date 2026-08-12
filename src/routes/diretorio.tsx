@@ -39,8 +39,7 @@ const metadataQueryOptions = queryOptions({
 
 export const Route = createFileRoute("/diretorio")({
   validateSearch: (search) => searchSchema.parse(search),
-  loader: ({ context, search }) => {
-    context.queryClient.ensureQueryData(directoryQueryOptions(search));
+  loader: ({ context }) => {
     context.queryClient.ensureQueryData(metadataQueryOptions);
   },
   head: () => ({
