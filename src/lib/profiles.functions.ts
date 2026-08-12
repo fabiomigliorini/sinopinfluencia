@@ -52,10 +52,16 @@ export const getFilteredProfiles = createServerFn({ method: "GET" })
       builder = builder.eq("niche", data.niche);
     }
     if (data.network) {
-      builder = builder.eq("main_network", data.network);
+      builder = builder.eq(
+        "main_network",
+        data.network as Database["public"]["Enums"]["social_network"],
+      );
     }
     if (data.tier) {
-      builder = builder.eq("tier", data.tier);
+      builder = builder.eq(
+        "tier",
+        data.tier as Database["public"]["Enums"]["creator_tier"],
+      );
     }
 
     const { data: profiles, error } = await builder
