@@ -32,7 +32,7 @@ export const listProfiles = createServerFn({ method: "GET" }).handler(
 );
 
 export const getProfileBySlug = createServerFn({ method: "GET" })
-  .inputValidator((input: { slug: string }) => input)
+  .validator((input: { slug: string }) => input)
   .handler(async ({ data }) => {
     const supabase = createServerSupabaseClient();
     const { data: profile, error: profileError } = await supabase
