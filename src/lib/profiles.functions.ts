@@ -60,7 +60,7 @@ export const getFilteredProfiles = createServerFn({ method: "GET" })
     if (data.tier) {
       builder = builder.eq(
         "tier",
-        data.tier as Database["public"]["Enums"]["creator_tier"],
+        data.tier as Database["public"]["Enums"]["tier"],
       );
     }
 
