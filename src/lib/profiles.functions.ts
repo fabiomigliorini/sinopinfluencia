@@ -31,6 +31,55 @@ export const listProfiles = createServerFn({ method: "GET" }).handler(
   },
 );
 
+export const getFilteredProfiles = createServerFn({ method: "GET" })
+  .validator(
+    (input: { q?: string; niche?: string; network?: string; tier?: string }) =>
+      input,
+  )
+  .handler(async ({ data }) => {
+    const supabase = createServerSupabaseClient();
+    let builder = supabase
+      .from("profiles")
+      .select("*")
+      .eq("status", "approved");
+
+    if (data.q) {
+      builder = builder.or(
+        `display_name.ilike.%${data.q}%,bio.ilike.%${data.q}%,niche.ilike.%${data.q}%`,
+      );
+    }
+    if (data.niche) {
+      builder = builder.eq("niche", data.niche);
+    }
+    if (data.network) {
+      builder = builder.eq("main_network", data.network);
+    }
+    if (data.tier) {
+      builder = builder.eq("tier", data.tier);
+    }
+
+    const { data: profiles, error } = await builder
+      .order("tier", { ascending: false })
+      .order("display_name", { ascending: true });
+
+    if (error) throw new Error(error.message);
+    return profiles ?? [];
+  });
+
+export const listDirectoryMetadata = createServerFn({ method: "GET" }).handler(
+  async () => {
+    const supabase = createServerSupabaseClient();
+    const [{ data: profiles }, { data: metrics }] = await Promise.all([
+      supabase.from("profiles").select("id, niche, tier").eq("status", "approved"),
+      supabase.from("profile_metrics").select("profile_id, network, followers"),
+    ]);
+    const niches = Array.from(
+      new Set((profiles ?? []).map((p) => p.niche).filter(Boolean)),
+    ) as string[];
+    return { niches, metrics: metrics ?? [], count: (profiles ?? []).length };
+  },
+);
+
 export const getProfileBySlug = createServerFn({ method: "GET" })
   .validator((input: { slug: string }) => input)
   .handler(async ({ data }) => {
@@ -46,29 +95,33 @@ export const getProfileBySlug = createServerFn({ method: "GET" })
       throw new Error("Perfil não encontrado");
     }
 
-    const [{ data: metrics }, { data: formats }, { data: works }, { data: brands }] =
-      await Promise.all([
-        supabase
-          .from("profile_metrics")
-          .select("*")
-          .eq("profile_id", profile.id)
-          .order("network", { ascending: true }),
-        supabase
-          .from("profile_formats")
-          .select("*")
-          .eq("profile_id", profile.id)
-          .order("format", { ascending: true }),
-        supabase
-          .from("profile_works")
-          .select("*")
-          .eq("profile_id", profile.id)
-          .order("sort_order", { ascending: true }),
-        supabase
-          .from("profile_brands")
-          .select("*")
-          .eq("profile_id", profile.id)
-          .order("brand_name", { ascending: true }),
-      ]);
+    const [
+      { data: metrics },
+      { data: formats },
+      { data: works },
+      { data: brands },
+    ] = await Promise.all([
+      supabase
+        .from("profile_metrics")
+        .select("*")
+        .eq("profile_id", profile.id)
+        .order("network", { ascending: true }),
+      supabase
+        .from("profile_formats")
+        .select("*")
+        .eq("profile_id", profile.id)
+        .order("format", { ascending: true }),
+      supabase
+        .from("profile_works")
+        .select("*")
+        .eq("profile_id", profile.id)
+        .order("sort_order", { ascending: true }),
+      supabase
+        .from("profile_brands")
+        .select("*")
+        .eq("profile_id", profile.id)
+        .order("brand_name", { ascending: true }),
+    ]);
 
     return {
       profile,
@@ -78,3 +131,4 @@ export const getProfileBySlug = createServerFn({ method: "GET" })
       brands: brands ?? [],
     };
   });
+
