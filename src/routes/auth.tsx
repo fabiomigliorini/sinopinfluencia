@@ -47,7 +47,7 @@ function AuthPage() {
 
     const parse = authSchema.safeParse({ email, password });
     if (!parse.success) {
-      setError(parse.error.errors[0].message);
+      setError(parse.error.errors[0]?.message ?? "Dados inválidos");
       return;
     }
 
