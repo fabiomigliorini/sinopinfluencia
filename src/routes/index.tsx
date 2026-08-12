@@ -2,7 +2,7 @@ import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { listProfiles } from "@/lib/profiles.functions";
-import { ProfileCard } from "@/components/ProfileCard";
+import { ProfileCard, TierBadge } from "@/components/ProfileCard";
 import type { Database } from "@/integrations/supabase/types";
 
 type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
