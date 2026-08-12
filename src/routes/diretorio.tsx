@@ -15,10 +15,10 @@ type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
 type MetricRow = Database["public"]["Tables"]["profile_metrics"]["Row"];
 
 const searchSchema = z.object({
-  q: z.string().optional().default(""),
-  niche: z.string().optional().default(""),
-  network: z.string().optional().default(""),
-  tier: z.string().optional().default(""),
+  q: z.string().optional(),
+  niche: z.string().optional(),
+  network: z.string().optional(),
+  tier: z.string().optional(),
 });
 
 const directoryQueryOptions = (filters: {
