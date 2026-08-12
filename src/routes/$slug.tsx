@@ -104,8 +104,7 @@ function ProfilePage() {
                 <MetricCard
                   key={metric.id}
                   network={metric.network}
-                  followers={metric.followers}
-                  handle={metric.handle}
+                  followers={metric.followers ?? "—"}
                 />
               ))}
               {mainMetrics.length === 0 && (
