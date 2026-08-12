@@ -31,15 +31,17 @@ export const listProfiles = createServerFn({ method: "GET" }).handler(
   },
 );
 
+import { z } from "zod";
+
+const filterSchema = z.object({
+  q: z.string().optional(),
+  niche: z.string().optional(),
+  network: z.string().optional(),
+  tier: z.string().optional(),
+});
+
 export const getFilteredProfiles = createServerFn({ method: "GET" })
-  .validator(
-    (input: {
-      q?: string | undefined;
-      niche?: string | undefined;
-      network?: string | undefined;
-      tier?: string | undefined;
-    }) => input,
-  )
+  .validator(filterSchema)
   .handler(async ({ data }) => {
     const supabase = createServerSupabaseClient();
     let builder = supabase
