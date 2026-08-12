@@ -146,7 +146,7 @@ function Header() {
       <div className="mx-auto flex max-w-[1180px] items-center justify-between px-6 py-3.5 lg:px-7">
         <BrandLogo />
         <nav className="hidden items-center gap-8 md:flex">
-          <Link to="/diretorio" className="text-[14.5px] font-semibold text-foreground/80 transition hover:text-foreground">
+          <Link to="/diretorio" search={{}} className="text-[14.5px] font-semibold text-foreground/80 transition hover:text-foreground">
             Encontrar criadores
           </Link>
           <Link to="/" hash="como-funciona" className="text-[14.5px] font-semibold text-foreground/80 transition hover:text-foreground">
@@ -197,7 +197,7 @@ function Footer() {
           <div>
             <h5 className="mb-3.5 text-xs font-bold uppercase tracking-widest text-white">Para empresas</h5>
             <ul className="space-y-2 text-[13.5px] text-[#B9D8C1]">
-              <li><Link to="/diretorio" className="transition hover:text-white">Buscar criadores</Link></li>
+              <li><Link to="/diretorio" search={{}} className="transition hover:text-white">Buscar criadores</Link></li>
               <li><Link to="/" hash="como-funciona" className="transition hover:text-white">Como funciona</Link></li>
               <li><Link to="/" hash="diretorio" className="transition hover:text-white">Categorias e critérios</Link></li>
             </ul>

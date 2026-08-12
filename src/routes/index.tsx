@@ -162,7 +162,7 @@ function HeroSearch({
                 </div>
                 <Link
                   to="/diretorio"
-                  search={{ q: query, niche, network }}
+                  search={{ q: query, niche, network, tier: "" }}
                   className="flex items-center justify-center gap-2 self-end rounded-full bg-primary px-6 py-3 text-sm font-bold text-white shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90"
                 >
                   Buscar
@@ -310,6 +310,7 @@ function FeaturedDirectory({
         <div className="mt-10 text-center">
           <Link
             to="/diretorio"
+            search={{}}
             className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-6 py-3 text-sm font-bold text-foreground transition hover:border-primary hover:text-primary"
           >
             Ver todos os criadores
