@@ -142,15 +142,12 @@ function ProfilePage() {
                       >
                         <h3 className="font-bold text-foreground">{work.title}</h3>
                         <p className="mt-1.5 text-sm text-muted-foreground">{work.description}</p>
-                        {work.link_url && (
-                          <a
-                            href={work.link_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="mt-3 inline-block text-sm font-bold text-primary hover:underline"
-                          >
-                            Ver trabalho →
-                          </a>
+                        {work.image_url && (
+                          <img
+                            src={work.image_url}
+                            alt={work.title}
+                            className="mt-3 rounded-xl border border-border"
+                          />
                         )}
                       </div>
                     ))}
