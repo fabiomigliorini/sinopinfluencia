@@ -206,11 +206,9 @@ function ProfilePage() {
 function MetricCard({
   network,
   followers,
-  handle,
 }: {
   network: string;
   followers: string;
-  handle: string | null;
 }) {
   const labels: Record<string, { icon: string; color: string }> = {
     instagram: { icon: "📸", color: "#E1306C" },
@@ -231,16 +229,6 @@ function MetricCard({
         </span>
       </div>
       <div className="mt-2 text-2xl font-extrabold text-foreground">{followers}</div>
-      {handle && (
-        <a
-          href={`https://instagram.com/${handle.replace(/^@/, "")}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-0.5 text-sm font-semibold text-primary hover:underline"
-        >
-          {handle}
-        </a>
-      )}
     </div>
   );
 }
