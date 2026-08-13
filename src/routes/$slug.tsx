@@ -147,6 +147,7 @@ function ProfilePage() {
                   key={metric.id}
                   network={metric.network}
                   followers={metric.followers ?? "—"}
+                  verified={metric.source === "api" && Boolean(metric.verified_at)}
                 />
               ))}
               {mainMetrics.length === 0 && (
@@ -248,9 +249,11 @@ function ProfilePage() {
 function MetricCard({
   network,
   followers,
+  verified = false,
 }: {
   network: string;
   followers: string;
+  verified?: boolean;
 }) {
   const labels: Record<string, { icon: string; color: string }> = {
     instagram: { icon: "📸", color: "#E1306C" },
@@ -271,7 +274,17 @@ function MetricCard({
           {network}
         </span>
       </div>
-      <div className="mt-2 text-2xl font-extrabold text-foreground">{followers}</div>
+      <div className="mt-2 flex items-center gap-2">
+        <span className="text-2xl font-extrabold text-foreground">{followers}</span>
+        {verified ? (
+          <span
+            title="Métrica importada diretamente da rede social"
+            className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary"
+          >
+            Verificado
+          </span>
+        ) : null}
+      </div>
     </div>
   );
 }

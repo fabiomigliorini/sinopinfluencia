@@ -18,7 +18,9 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAdminPerfisRouteImport } from './routes/_authenticated/admin.perfis'
 import { Route as AuthenticatedPerfilEditRouteImport } from './routes/_authenticated/perfil.edit'
 import { Route as ApiPublicSitemapDotxmlRouteImport } from './routes/api/public/sitemap[.]xml'
+import { Route as ApiPublicCronSyncSocialRouteImport } from './routes/api/public/cron/sync-social'
 import { Route as ApiPublicImgSplatRouteImport } from './routes/api/public/img.$'
+import { Route as ApiPublicWebhooksInsightiqRouteImport } from './routes/api/public/webhooks/insightiq'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -65,11 +67,22 @@ const ApiPublicSitemapDotxmlRoute = ApiPublicSitemapDotxmlRouteImport.update({
   path: '/api/public/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicCronSyncSocialRoute = ApiPublicCronSyncSocialRouteImport.update({
+  id: '/api/public/cron/sync-social',
+  path: '/api/public/cron/sync-social',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicImgSplatRoute = ApiPublicImgSplatRouteImport.update({
   id: '/api/public/img/$',
   path: '/api/public/img/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicWebhooksInsightiqRoute =
+  ApiPublicWebhooksInsightiqRouteImport.update({
+    id: '/api/public/webhooks/insightiq',
+    path: '/api/public/webhooks/insightiq',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -80,7 +93,9 @@ export interface FileRoutesByFullPath {
   '/admin/perfis': typeof AuthenticatedAdminPerfisRoute
   '/perfil/edit': typeof AuthenticatedPerfilEditRoute
   '/api/public/sitemap.xml': typeof ApiPublicSitemapDotxmlRoute
+  '/api/public/cron/sync-social': typeof ApiPublicCronSyncSocialRoute
   '/api/public/img/$': typeof ApiPublicImgSplatRoute
+  '/api/public/webhooks/insightiq': typeof ApiPublicWebhooksInsightiqRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -91,7 +106,9 @@ export interface FileRoutesByTo {
   '/admin/perfis': typeof AuthenticatedAdminPerfisRoute
   '/perfil/edit': typeof AuthenticatedPerfilEditRoute
   '/api/public/sitemap.xml': typeof ApiPublicSitemapDotxmlRoute
+  '/api/public/cron/sync-social': typeof ApiPublicCronSyncSocialRoute
   '/api/public/img/$': typeof ApiPublicImgSplatRoute
+  '/api/public/webhooks/insightiq': typeof ApiPublicWebhooksInsightiqRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -104,7 +121,9 @@ export interface FileRoutesById {
   '/_authenticated/admin/perfis': typeof AuthenticatedAdminPerfisRoute
   '/_authenticated/perfil/edit': typeof AuthenticatedPerfilEditRoute
   '/api/public/sitemap.xml': typeof ApiPublicSitemapDotxmlRoute
+  '/api/public/cron/sync-social': typeof ApiPublicCronSyncSocialRoute
   '/api/public/img/$': typeof ApiPublicImgSplatRoute
+  '/api/public/webhooks/insightiq': typeof ApiPublicWebhooksInsightiqRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -117,7 +136,9 @@ export interface FileRouteTypes {
     | '/admin/perfis'
     | '/perfil/edit'
     | '/api/public/sitemap.xml'
+    | '/api/public/cron/sync-social'
     | '/api/public/img/$'
+    | '/api/public/webhooks/insightiq'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -128,7 +149,9 @@ export interface FileRouteTypes {
     | '/admin/perfis'
     | '/perfil/edit'
     | '/api/public/sitemap.xml'
+    | '/api/public/cron/sync-social'
     | '/api/public/img/$'
+    | '/api/public/webhooks/insightiq'
   id:
     | '__root__'
     | '/'
@@ -140,7 +163,9 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/perfis'
     | '/_authenticated/perfil/edit'
     | '/api/public/sitemap.xml'
+    | '/api/public/cron/sync-social'
     | '/api/public/img/$'
+    | '/api/public/webhooks/insightiq'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -150,7 +175,9 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   DiretorioRoute: typeof DiretorioRoute
   ApiPublicSitemapDotxmlRoute: typeof ApiPublicSitemapDotxmlRoute
+  ApiPublicCronSyncSocialRoute: typeof ApiPublicCronSyncSocialRoute
   ApiPublicImgSplatRoute: typeof ApiPublicImgSplatRoute
+  ApiPublicWebhooksInsightiqRoute: typeof ApiPublicWebhooksInsightiqRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -218,11 +245,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicSitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/cron/sync-social': {
+      id: '/api/public/cron/sync-social'
+      path: '/api/public/cron/sync-social'
+      fullPath: '/api/public/cron/sync-social'
+      preLoaderRoute: typeof ApiPublicCronSyncSocialRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/img/$': {
       id: '/api/public/img/$'
       path: '/api/public/img/$'
       fullPath: '/api/public/img/$'
       preLoaderRoute: typeof ApiPublicImgSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/webhooks/insightiq': {
+      id: '/api/public/webhooks/insightiq'
+      path: '/api/public/webhooks/insightiq'
+      fullPath: '/api/public/webhooks/insightiq'
+      preLoaderRoute: typeof ApiPublicWebhooksInsightiqRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -250,7 +291,9 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   DiretorioRoute: DiretorioRoute,
   ApiPublicSitemapDotxmlRoute: ApiPublicSitemapDotxmlRoute,
+  ApiPublicCronSyncSocialRoute: ApiPublicCronSyncSocialRoute,
   ApiPublicImgSplatRoute: ApiPublicImgSplatRoute,
+  ApiPublicWebhooksInsightiqRoute: ApiPublicWebhooksInsightiqRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
