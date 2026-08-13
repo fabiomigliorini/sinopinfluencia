@@ -12,3 +12,5 @@ Allow: /
 
 User-agent: *
 Allow: /
+
+Sitemap: https://sinopinfluencia.lovable.app/api/public/sitemap.xml
