@@ -162,6 +162,7 @@ function AdminProfilesPage() {
               >
                 Ver perfil
               </Link>
+              <AdminSocialTools profileId={p.id} />
               {p.status !== "approved" && (
                 <button
                   disabled={mutation.isPending}
