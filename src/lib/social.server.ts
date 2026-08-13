@@ -214,13 +214,16 @@ export async function fetchTikTokPublic(handle: string): Promise<PublicMetrics> 
 
 export async function fetchFacebookPublic(handle: string): Promise<PublicMetrics> {
   const profileUrl = `https://www.facebook.com/${handle}`;
-  const html = await getText(profileUrl);
-  const followersJson = firstNumber(/"follower_count":(\d+)/, html);
-  const description = html.match(/<meta property="og:description" content="([^"]+)"/)?.[1] ?? "";
-  const metaFollowers = description.match(
-    /([\d.,]+\s*(?:K|M|mil|mi)?)\s*(?:followers|seguidores|pessoas curtiram|likes)/i,
+  const html = await getText(profileUrl, { "User-Agent": CRAWLER_UA });
+  const description = decodeEntities(
+    html.match(/property="og:description" content="([^"]+)"/)?.[1] ??
+      html.match(/name="description" content="([^"]+)"/)?.[1] ??
+      "",
   );
-  const followers = followersJson ?? (metaFollowers ? compactToNumber(metaFollowers[1]!) : null);
+  const followers =
+    firstNumber(/"follower_count":(\d+)/, html) ??
+    numberBefore(description, /(?:followers|seguidores)/i) ??
+    numberBefore(description, /(?:pessoas curtiram|curtidas|likes|gillar|me gusta)/i);
   if (followers === null) {
     throw new Error("Não foi possível ler os seguidores públicos do Facebook");
   }
@@ -232,7 +235,7 @@ export async function fetchFacebookPublic(handle: string): Promise<PublicMetrics
     postsCount: null,
     likes: null,
     views: null,
-    raw: { source: "facebook_html", description },
+    raw: { source: "facebook_preview", description },
   };
 }
 
