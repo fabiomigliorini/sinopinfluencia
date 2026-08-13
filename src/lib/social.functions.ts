@@ -2,18 +2,28 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-const networkEnum = z.enum(["instagram", "tiktok", "youtube", "facebook", "linkedin"]);
+const networkEnum = z.enum(["instagram", "tiktok", "youtube", "facebook"]);
 
-/** Tells the UI whether the aggregator credentials are configured. */
+/** Tells the UI which networks can be collected automatically. */
 export const getSocialIntegrationStatus = createServerFn({ method: "GET" }).handler(async () => {
-  const { getProviderConfig, SUPPORTED_NETWORKS } = await import("./social.server");
-  const config = getProviderConfig();
+  const { SUPPORTED_NETWORKS, hasYouTubeKey } = await import("./social.server");
   return {
-    enabled: Boolean(config),
-    environment: config?.sdkEnvironment ?? null,
+    enabled: true,
+    youtubeEnabled: hasYouTubeKey(),
     networks: SUPPORTED_NETWORKS,
   };
 });
+
+async function getMyProfileId(supabase: any, userId: string) {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!data) throw new Error("Perfil não encontrado");
+  return data.id as string;
+}
 
 export const listMyConnections = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -36,9 +46,7 @@ export const listMyConnections = createServerFn({ method: "GET" })
 
     const { data: snapshots } = await context.supabase
       .from("social_snapshots")
-      .select(
-        "social_account_id, captured_at, followers, engagement_rate, avg_likes, avg_comments, avg_views",
-      )
+      .select("social_account_id, captured_at, followers, posts_count, avg_likes, avg_views")
       .in(
         "social_account_id",
         accounts.map((a) => a.id),
@@ -51,93 +59,154 @@ export const listMyConnections = createServerFn({ method: "GET" })
     }));
   });
 
-/** Mints the short-lived token the Connect SDK needs, for the caller's profile. */
-export const createConnectSession = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
-    z.object({ network: networkEnum.optional() }).parse(input ?? {}),
-  )
-  .handler(async ({ data, context }) => {
-    const {
-      getProviderConfig,
-      ensureProviderUser,
-      createSdkToken,
-      getWorkPlatformId,
-    } = await import("./social.server");
-
-    const config = getProviderConfig();
-    if (!config) throw new Error("Integração de métricas ainda não configurada");
-
-    const { data: profile, error } = await context.supabase
-      .from("profiles")
-      .select("id, display_name")
-      .eq("user_id", context.userId)
-      .maybeSingle();
-    if (error) throw new Error(error.message);
-    if (!profile) throw new Error("Perfil não encontrado");
-
-    const providerUserId = await ensureProviderUser(config, profile.id, profile.display_name);
-    const token = await createSdkToken(config, providerUserId);
-    const workPlatformId = data.network
-      ? await getWorkPlatformId(config, data.network)
-      : null;
-
-    return {
-      token,
-      providerUserId,
-      environment: config.sdkEnvironment,
-      workPlatformId,
-      profileId: profile.id,
-    };
-  });
-
-/** Called right after the SDK reports a connected account. */
-export const registerConnectedAccount = createServerFn({ method: "POST" })
+/**
+ * Saves the @ / channel the creator informed for one network and immediately
+ * tries to collect the public numbers.
+ */
+export const saveNetworkHandle = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) =>
     z
-      .object({
-        accountId: z.string().min(1),
-        providerUserId: z.string().min(1),
-        network: networkEnum.optional(),
-      })
+      .object({ network: networkEnum, handle: z.string().max(200) })
       .parse(input),
   )
   .handler(async ({ data, context }) => {
-    const { getProviderConfig, fetchAccount, syncSocialAccount } = await import(
-      "./social.server"
-    );
-    const config = getProviderConfig();
-    if (!config) throw new Error("Integração de métricas ainda não configurada");
+    const { normalizeHandle, syncSocialAccount } = await import("./social.server");
+    const profileId = await getMyProfileId(context.supabase, context.userId);
+    const handle = normalizeHandle(data.network, data.handle);
 
-    const { data: profile } = await context.supabase
-      .from("profiles")
-      .select("id")
-      .eq("user_id", context.userId)
-      .maybeSingle();
-    if (!profile) throw new Error("Perfil não encontrado");
-
-    const account = await fetchAccount(config, data.accountId);
-    const platformName = String(
-      account["work_platform"]?.name ?? account["platform_name"] ?? "",
-    ).toLowerCase();
-    const network =
-      data.network ??
-      (["instagram", "tiktok", "youtube", "facebook", "linkedin"] as const).find((n) =>
-        platformName.includes(n),
-      );
-    if (!network) throw new Error("Rede social não reconhecida");
+    if (!handle) {
+      await context.supabase
+        .from("social_accounts")
+        .delete()
+        .eq("profile_id", profileId)
+        .eq("network", data.network);
+      return { ok: true, removed: true, error: null as string | null };
+    }
 
     const { data: saved, error } = await context.supabase
       .from("social_accounts")
       .upsert(
         {
-          profile_id: profile.id,
-          network,
-          provider: "insightiq",
-          provider_account_id: data.accountId,
-          provider_user_id: data.providerUserId,
-          handle: account["platform_username"] ?? null,
+          profile_id: profileId,
+          network: data.network,
+          provider: data.network === "youtube" ? "youtube_api" : "public",
+          handle,
+          sync_status: "pending",
+          sync_error: null,
+        },
+        { onConflict: "profile_id,network" },
+      )
+      .select("id")
+      .single();
+    if (error) throw new Error(error.message);
+
+    try {
+      const result = await syncSocialAccount(saved.id);
+      return { ok: true, removed: false, followers: result.followers, error: null as string | null };
+    } catch (syncError) {
+      return {
+        ok: true,
+        removed: false,
+        followers: null,
+        error: syncError instanceof Error ? syncError.message : "Falha na coleta pública",
+      };
+    }
+  });
+
+export const syncMyAccount = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ accountRowId: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    const profileId = await getMyProfileId(context.supabase, context.userId);
+    const { data: owned } = await context.supabase
+      .from("social_accounts")
+      .select("id")
+      .eq("id", data.accountRowId)
+      .eq("profile_id", profileId)
+      .maybeSingle();
+    if (!owned) throw new Error("Rede não encontrada");
+
+    const { syncSocialAccount } = await import("./social.server");
+    return syncSocialAccount(data.accountRowId);
+  });
+
+export const syncMyProfile = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const profileId = await getMyProfileId(context.supabase, context.userId);
+    const { syncProfileAccounts } = await import("./social.server");
+    return syncProfileAccounts(profileId);
+  });
+
+export const removeMyAccount = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ accountRowId: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    const profileId = await getMyProfileId(context.supabase, context.userId);
+    const { error } = await context.supabase
+      .from("social_accounts")
+      .delete()
+      .eq("id", data.accountRowId)
+      .eq("profile_id", profileId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+/** Curation panel: ACES can force a refresh of a profile's public numbers. */
+export const adminSyncProfile = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ profileId: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    const { data: isAdmin } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
+      _role: "admin",
+    });
+    if (!isAdmin) throw new Error("Acesso restrito");
+
+    const { syncProfileAccounts } = await import("./social.server");
+    return syncProfileAccounts(data.profileId);
+  });
+
+/** Curation panel: ACES can correct the @ informed by the creator. */
+export const adminSetHandle = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        profileId: z.string().uuid(),
+        network: networkEnum,
+        handle: z.string().max(200),
+      })
+      .parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: isAdmin } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
+      _role: "admin",
+    });
+    if (!isAdmin) throw new Error("Acesso restrito");
+
+    const { normalizeHandle, syncSocialAccount } = await import("./social.server");
+    const handle = normalizeHandle(data.network, data.handle);
+
+    if (!handle) {
+      await context.supabase
+        .from("social_accounts")
+        .delete()
+        .eq("profile_id", data.profileId)
+        .eq("network", data.network);
+      return { ok: true, removed: true, error: null as string | null };
+    }
+
+    const { data: saved, error } = await context.supabase
+      .from("social_accounts")
+      .upsert(
+        {
+          profile_id: data.profileId,
+          network: data.network,
+          provider: data.network === "youtube" ? "youtube_api" : "public",
+          handle,
           sync_status: "pending",
           sync_error: null,
         },
@@ -149,100 +218,12 @@ export const registerConnectedAccount = createServerFn({ method: "POST" })
 
     try {
       await syncSocialAccount(saved.id);
+      return { ok: true, removed: false, error: null as string | null };
     } catch (syncError) {
-      console.error("[social] first sync failed", syncError);
+      return {
+        ok: true,
+        removed: false,
+        error: syncError instanceof Error ? syncError.message : "Falha na coleta pública",
+      };
     }
-
-    return { ok: true, network };
-  });
-
-export const syncMyAccount = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => z.object({ accountRowId: z.string().uuid() }).parse(input))
-  .handler(async ({ data, context }) => {
-    const { data: owned } = await context.supabase
-      .from("social_accounts")
-      .select("id")
-      .eq("id", data.accountRowId)
-      .maybeSingle();
-    if (!owned) throw new Error("Conta não encontrada");
-
-    const { syncSocialAccount } = await import("./social.server");
-    return syncSocialAccount(data.accountRowId);
-  });
-
-export const disconnectMyAccount = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => z.object({ accountRowId: z.string().uuid() }).parse(input))
-  .handler(async ({ data, context }) => {
-    const { data: account } = await context.supabase
-      .from("social_accounts")
-      .select("id, network, provider_account_id, profile_id")
-      .eq("id", data.accountRowId)
-      .maybeSingle();
-    if (!account) throw new Error("Conta não encontrada");
-
-    const { getProviderConfig, disconnectProviderAccount } = await import("./social.server");
-    const config = getProviderConfig();
-    if (config && account.provider_account_id) {
-      await disconnectProviderAccount(config, account.provider_account_id);
-    }
-
-    await context.supabase
-      .from("profile_metrics")
-      .update({ source: "manual", verified_at: null })
-      .eq("profile_id", account.profile_id)
-      .eq("network", account.network);
-
-    const { error } = await context.supabase
-      .from("social_accounts")
-      .delete()
-      .eq("id", account.id);
-    if (error) throw new Error(error.message);
-    return { ok: true };
-  });
-
-/** Admin: re-sync every connected account of one profile. */
-export const syncProfileAsAdmin = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => z.object({ profileId: z.string().uuid() }).parse(input))
-  .handler(async ({ data, context }) => {
-    const { data: isAdmin } = await context.supabase.rpc("has_role", {
-      _user_id: context.userId,
-      _role: "admin",
-    });
-    if (!isAdmin) throw new Error("Forbidden");
-
-    const { data: accounts } = await context.supabase
-      .from("social_accounts")
-      .select("id")
-      .eq("profile_id", data.profileId);
-
-    const { syncSocialAccount } = await import("./social.server");
-    let synced = 0;
-    for (const account of accounts ?? []) {
-      try {
-        await syncSocialAccount(account.id);
-        synced += 1;
-      } catch (error) {
-        console.error("[social] admin sync failed", error);
-      }
-    }
-    return { synced, total: (accounts ?? []).length };
-  });
-
-export const listConnectionsForAdmin = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
-    const { data: isAdmin } = await context.supabase.rpc("has_role", {
-      _user_id: context.userId,
-      _role: "admin",
-    });
-    if (!isAdmin) throw new Error("Forbidden");
-
-    const { data, error } = await context.supabase
-      .from("social_accounts")
-      .select("id, profile_id, network, handle, last_synced_at, sync_status");
-    if (error) throw new Error(error.message);
-    return data ?? [];
   });

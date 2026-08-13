@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 /**
- * Daily refresh of every connected social account.
- * Protected by a shared secret so only the scheduler can trigger it.
+ * Daily refresh of every social handle informed by the creators, using public
+ * data only. Protected by a shared secret so only the scheduler can trigger it.
  */
 async function handle(request: Request) {
   const secret = process.env["SOCIAL_CRON_SECRET"];
@@ -19,21 +19,26 @@ async function handle(request: Request) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data: accounts, error } = await supabaseAdmin
     .from("social_accounts")
-    .select("id")
-    .not("provider_account_id", "is", null);
+    .select("id, network, handle")
+    .not("handle", "is", null);
   if (error) return new Response(error.message, { status: 500 });
 
   const { syncSocialAccount } = await import("@/lib/social.server");
   let synced = 0;
-  const failures: string[] = [];
+  const failures: Array<{ id: string; network: string; error: string }> = [];
   for (const account of accounts ?? []) {
     try {
       await syncSocialAccount(account.id);
       synced += 1;
     } catch (syncError) {
-      failures.push(account.id);
-      console.error("[social] cron sync failed", account.id, syncError);
+      failures.push({
+        id: account.id,
+        network: account.network,
+        error: syncError instanceof Error ? syncError.message : "Erro desconhecido",
+      });
     }
+    // Small pause so the networks don't see a burst of requests.
+    await new Promise((resolve) => setTimeout(resolve, 500));
   }
   return Response.json({ ok: true, total: (accounts ?? []).length, synced, failures });
 }

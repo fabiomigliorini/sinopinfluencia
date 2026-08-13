@@ -8,6 +8,7 @@ import {
   listProfilesForAdmin,
   setProfileStatus,
 } from "@/lib/account.functions";
+import { adminSetHandle, adminSyncProfile } from "@/lib/social.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/perfis")({
   component: AdminProfilesPage,
@@ -162,6 +163,7 @@ function AdminProfilesPage() {
               >
                 Ver perfil
               </Link>
+              <AdminSocialTools profileId={p.id} />
               {p.status !== "approved" && (
                 <button
                   disabled={mutation.isPending}
@@ -189,5 +191,90 @@ function AdminProfilesPage() {
         ))}
       </div>
     </div>
+  );
+}
+
+const ADMIN_NETWORKS = ["instagram", "tiktok", "youtube", "facebook"] as const;
+
+/** Lets the curation team correct a creator's @ and force a public refresh. */
+function AdminSocialTools({ profileId }: { profileId: string }) {
+  const [open, setOpen] = useState(false);
+  const [network, setNetwork] = useState<(typeof ADMIN_NETWORKS)[number]>("instagram");
+  const [handle, setHandle] = useState("");
+  const setHandleFn = useServerFn(adminSetHandle);
+  const syncFn = useServerFn(adminSyncProfile);
+  const queryClient = useQueryClient();
+
+  const saveMutation = useMutation({
+    mutationFn: () => setHandleFn({ data: { profileId, network, handle: handle.trim() } }),
+    onSuccess: (result) => {
+      if (result.error) toast.warning(`Salvo, mas a coleta falhou: ${result.error}`);
+      else toast.success("@ salvo e métricas atualizadas");
+      void queryClient.invalidateQueries({ queryKey: ["admin-profiles"] });
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+
+  const syncMutation = useMutation({
+    mutationFn: () => syncFn({ data: { profileId } }),
+    onSuccess: (results) => {
+      const failed = results.filter((r) => !r.ok);
+      if (!results.length) toast.info("Este perfil não tem redes informadas");
+      else if (failed.length) toast.warning(`Falhas: ${failed.map((f) => f.network).join(", ")}`);
+      else toast.success("Métricas públicas atualizadas");
+      void queryClient.invalidateQueries({ queryKey: ["admin-profiles"] });
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen((value) => !value)}
+        className="rounded-full border border-border px-4 py-2 text-xs font-bold transition hover:bg-accent"
+      >
+        Redes
+      </button>
+      <button
+        type="button"
+        disabled={syncMutation.isPending}
+        onClick={() => syncMutation.mutate()}
+        className="rounded-full border border-border px-4 py-2 text-xs font-bold transition hover:bg-accent disabled:opacity-60"
+      >
+        {syncMutation.isPending ? "Atualizando…" : "Atualizar métricas"}
+      </button>
+      {open ? (
+        <div className="mt-2 flex w-full flex-wrap items-center gap-2 rounded-2xl border border-border p-3">
+          <select
+            value={network}
+            onChange={(event) =>
+              setNetwork(event.target.value as (typeof ADMIN_NETWORKS)[number])
+            }
+            className="rounded-xl border border-input bg-background px-3 py-2 text-xs"
+          >
+            {ADMIN_NETWORKS.map((n) => (
+              <option key={n} value={n}>
+                {n}
+              </option>
+            ))}
+          </select>
+          <input
+            value={handle}
+            placeholder="@ ou link do perfil"
+            onChange={(event) => setHandle(event.target.value)}
+            className="min-w-[180px] flex-1 rounded-xl border border-input bg-background px-3 py-2 text-xs"
+          />
+          <button
+            type="button"
+            disabled={saveMutation.isPending}
+            onClick={() => saveMutation.mutate()}
+            className="rounded-full bg-primary px-4 py-2 text-xs font-bold text-primary-foreground disabled:opacity-60"
+          >
+            {saveMutation.isPending ? "Buscando…" : "Salvar e buscar"}
+          </button>
+        </div>
+      ) : null}
+    </>
   );
 }
