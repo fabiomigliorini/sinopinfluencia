@@ -131,27 +131,26 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
-function BrandLogo({ light = false }: { light?: boolean }) {
+function BrandLogo() {
   return (
     <Link to="/" className="flex items-center gap-3">
-      <svg className="sym" width="34" height="40" viewBox="0 0 240 280" aria-hidden="true">
-        <path d="M 92 190 L 120 252 L 148 190 Z" fill={light ? "#fff" : "#27A03E"} />
-        <rect x="28" y="16" width="184" height="184" rx="58" fill={light ? "#fff" : "#27A03E"} />
-        <g transform="translate(120,108) rotate(45)">
-          <rect x="-38" y="-38" width="76" height="76" rx="24" fill="#FFEB00" />
-        </g>
-      </svg>
+      <img
+        src={brandMark.url}
+        alt="Sinop Influencia"
+        className="h-11 w-11 rounded-xl object-cover"
+      />
       <div className="leading-tight">
         <b className="block text-[17px] font-extrabold tracking-wide text-foreground">
           SINOP <span className="text-primary">INFLUENCIA</span>
         </b>
         <small className="block text-[10.5px] font-semibold tracking-[1.2px] uppercase text-muted-foreground">
-          Vitrine oficial · ACES
+          Um programa ACES
         </small>
       </div>
     </Link>
   );
 }
+
 
 function Header() {
   const signedIn = useSession();
