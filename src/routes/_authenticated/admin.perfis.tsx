@@ -108,6 +108,9 @@ function AdminProfilesPage() {
         Revise os perfis enviados e defina quem entra na vitrine oficial.
       </p>
 
+      <YouTubeKeyCard />
+
+
       <div className="mt-6 flex flex-wrap gap-2">
         {STATUSES.map((s) => (
           <button
