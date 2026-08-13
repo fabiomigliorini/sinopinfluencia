@@ -204,20 +204,14 @@ function Footer() {
       <div className="mx-auto max-w-[1180px] px-6 pb-6 pt-14 lg:px-7">
         <div className="grid gap-10 border-b border-white/10 pb-10 md:grid-cols-[1.4fr_1fr_1fr]">
           <div>
-            <Link to="/" className="flex items-center gap-3">
-              <svg className="sym" width="30" height="35" viewBox="0 0 240 280" aria-hidden="true">
-                <path d="M 92 190 L 120 252 L 148 190 Z" fill="#fff" />
-                <rect x="28" y="16" width="184" height="184" rx="58" fill="#fff" />
-                <g transform="translate(120,108) rotate(45)">
-                  <rect x="-38" y="-38" width="76" height="76" rx="24" fill="#FFEB00" />
-                </g>
-              </svg>
-              <div className="leading-tight">
-                <b className="block text-[17px] font-extrabold tracking-wide text-white">
-                  SINOP <span className="text-[#FFEB00]">INFLUENCIA</span>
-                </b>
-              </div>
+            <Link to="/" className="inline-block">
+              <img
+                src={brandLockup.url}
+                alt="Sinop Influencia — um programa ACES"
+                className="h-14 w-auto"
+              />
             </Link>
+
             <p className="mt-4 max-w-[280px] text-[13.5px] leading-relaxed text-[#A9C9B2]">
               Um programa da ACES — Associação Comercial e Empresarial de Sinop — para qualificar o ambiente digital em favor do comércio local.
             </p>
