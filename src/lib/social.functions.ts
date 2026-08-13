@@ -227,3 +227,59 @@ export const adminSetHandle = createServerFn({ method: "POST" })
       };
     }
   });
+
+/** Curation panel: reads whether the YouTube/Google API key is configured. */
+export const adminGetYouTubeKeyStatus = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data: isAdmin } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
+      _role: "admin",
+    });
+    if (!isAdmin) throw new Error("Acesso restrito");
+
+    const { data } = await context.supabase
+      .from("app_settings")
+      .select("value, updated_at")
+      .eq("key", "youtube_api_key")
+      .maybeSingle();
+
+    const saved = data?.value?.trim() ?? "";
+    const fromEnv = Boolean(process.env["YOUTUBE_API_KEY"] ?? process.env["GOOGLE_API_KEY"]);
+    return {
+      configured: Boolean(saved) || fromEnv,
+      source: saved ? ("panel" as const) : fromEnv ? ("secret" as const) : ("none" as const),
+      masked: saved ? `${saved.slice(0, 6)}••••${saved.slice(-4)}` : null,
+      updatedAt: data?.updated_at ?? null,
+    };
+  });
+
+/** Curation panel: saves or clears the YouTube/Google API key. */
+export const adminSetYouTubeKey = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({ key: z.string().trim().max(200) }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: isAdmin } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
+      _role: "admin",
+    });
+    if (!isAdmin) throw new Error("Acesso restrito");
+
+    if (!data.key) {
+      const { error } = await context.supabase
+        .from("app_settings")
+        .delete()
+        .eq("key", "youtube_api_key");
+      if (error) throw new Error(error.message);
+      return { ok: true, removed: true };
+    }
+
+    const { error } = await context.supabase.from("app_settings").upsert(
+      { key: "youtube_api_key", value: data.key, updated_by: context.userId },
+      { onConflict: "key" },
+    );
+    if (error) throw new Error(error.message);
+    return { ok: true, removed: false };
+  });
