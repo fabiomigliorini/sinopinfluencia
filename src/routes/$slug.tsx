@@ -74,7 +74,35 @@ export const Route = createFileRoute("/$slug")({
     };
   },
   component: ProfilePage,
+  notFoundComponent: ProfileUnavailable,
+  errorComponent: ProfileUnavailable,
 });
+
+function ProfileUnavailable() {
+  return (
+    <div className="mx-auto flex max-w-xl flex-col items-center gap-4 px-4 py-24 text-center">
+      <h1 className="text-2xl font-semibold">Perfil indisponível</h1>
+      <p className="text-muted-foreground">
+        Este perfil não existe ou ainda não foi aprovado pela curadoria da ACES.
+        Perfis em rascunho ou em análise só aparecem no painel do criador.
+      </p>
+      <div className="flex gap-3">
+        <Link
+          to="/diretorio"
+          className="rounded-md bg-primary px-4 py-2 text-primary-foreground"
+        >
+          Ver diretório
+        </Link>
+        <Link
+          to="/dashboard"
+          className="rounded-md border px-4 py-2"
+        >
+          Meu painel
+        </Link>
+      </div>
+    </div>
+  );
+}
 
 
 function ProfilePage() {
