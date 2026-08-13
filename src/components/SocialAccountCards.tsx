@@ -213,7 +213,7 @@ export function SocialAccountCards() {
                 </div>
               </div>
 
-              {!account.is_declared && account.latest && (
+              {account.latest && (
                 <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
                   <div className="rounded-xl bg-accent/50 p-2">
                     <p className="text-muted-foreground">Posts</p>
