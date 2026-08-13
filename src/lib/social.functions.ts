@@ -47,7 +47,7 @@ async function loadAccounts(supabase: any, profileId: string) {
     .order("network", { ascending: true });
   if (error) throw new Error(error.message);
 
-  const accounts = (data ?? []) as Array<Record<string, any>>;
+  const accounts = (data ?? []) as Array<any>;
   if (!accounts.length) return [];
 
   const { data: snapshots } = await supabase
@@ -95,19 +95,19 @@ export const previewNetworkHandle = createServerFn({ method: "POST" })
     if (DECLARED_NETWORKS.includes(data.network)) {
       return {
         handle,
-        metrics: null,
-        error: "Esta rede não permite coleta pública — informe o número de seguidores.",
+        metrics: null as any,
+        error: "Esta rede não permite coleta pública — informe o número de seguidores." as string | null,
       };
     }
 
     try {
       const metrics = await collectPublicMetrics(data.network, handle);
-      return { handle, metrics, error: null as string | null };
+  return { handle, metrics: metrics as any, error: null as string | null };
     } catch (error) {
       return {
         handle,
-        metrics: null,
-        error: error instanceof Error ? error.message : "Falha na coleta pública",
+        metrics: null as any,
+        error: (error instanceof Error ? error.message : "Falha na coleta pública") as string | null,
       };
     }
   });
