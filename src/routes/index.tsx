@@ -41,6 +41,8 @@ function HomePage() {
     { value: "instagram", label: "Instagram" },
     { value: "tiktok", label: "TikTok" },
     { value: "youtube", label: "YouTube" },
+    { value: "kwai", label: "Kwai" },
+    { value: "linkedin", label: "LinkedIn" },
   ];
 
   return (

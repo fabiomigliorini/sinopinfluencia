@@ -14,6 +14,7 @@ const networkEnum = z.enum([
   "facebook",
   "twitter",
   "kwai",
+  "linkedin",
 ]);
 
 const profileInput = z.object({
@@ -24,6 +25,7 @@ const profileInput = z.object({
   bio: z.string().max(1200).optional().nullable(),
   main_network: networkEnum.optional().nullable(),
   whatsapp: z.string().optional().nullable(),
+  email: z.string().email("E-mail inválido").optional().nullable().or(z.literal("")),
   avatar_url: z.string().optional().nullable(),
   metrics: z
     .array(
@@ -109,6 +111,7 @@ export const updateMyProfile = createServerFn({ method: "POST" })
         bio: data.bio ?? null,
         main_network: (data.main_network ?? null) as Network | null,
         whatsapp: data.whatsapp ?? null,
+        email: data.email || null,
         avatar_url: data.avatar_url ?? null,
       })
       .eq("id", profileId);

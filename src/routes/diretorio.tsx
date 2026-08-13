@@ -91,6 +91,7 @@ function DirectoryPage() {
     { value: "youtube", label: "YouTube" },
     { value: "kwai", label: "Kwai" },
     { value: "facebook", label: "Facebook" },
+    { value: "linkedin", label: "LinkedIn" },
   ];
 
   const tiers = [
