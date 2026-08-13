@@ -1,4 +1,4 @@
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -12,6 +12,19 @@ import {
 import appCss from "../styles.css?url";
 import { supabase } from "@/integrations/supabase/client";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { Toaster } from "@/components/ui/sonner";
+
+function useSession() {
+  const [signedIn, setSignedIn] = useState<boolean | null>(null);
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setSignedIn(!!data.session));
+    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSignedIn(!!session);
+    });
+    return () => data.subscription.unsubscribe();
+  }, []);
+  return signedIn;
+}
 
 function NotFoundComponent() {
   return (
@@ -141,6 +154,7 @@ function BrandLogo({ light = false }: { light?: boolean }) {
 }
 
 function Header() {
+  const signedIn = useSession();
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur-md">
       <div className="mx-auto flex max-w-[1180px] items-center justify-between px-6 py-3.5 lg:px-7">
@@ -155,16 +169,28 @@ function Header() {
           <Link to="/" hash="diretorio" className="text-[14.5px] font-semibold text-foreground/80 transition hover:text-foreground">
             Categorias
           </Link>
-          <Link to="/auth" className="text-[14.5px] font-semibold text-foreground/80 transition hover:text-foreground">
+          <Link
+            to={signedIn ? "/dashboard" : "/auth"}
+            className="text-[14.5px] font-semibold text-foreground/80 transition hover:text-foreground"
+          >
             Sou influenciador
           </Link>
         </nav>
-        <Link
-          to="/auth"
-          className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90"
-        >
-          Cadastrar meu perfil
-        </Link>
+        {signedIn ? (
+          <Link
+            to="/dashboard"
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90"
+          >
+            Minha conta
+          </Link>
+        ) : (
+          <Link
+            to="/auth"
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90"
+          >
+            Cadastrar meu perfil
+          </Link>
+        )}
       </div>
     </header>
   );
@@ -243,6 +269,7 @@ function RootComponent() {
           <Outlet />
         </main>
         <Footer />
+        <Toaster />
       </div>
     </QueryClientProvider>
   );
