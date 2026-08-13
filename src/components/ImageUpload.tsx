@@ -120,9 +120,21 @@ export function ImageUpload({
           className="hidden"
           onChange={(e) => {
             const file = e.target.files?.[0];
-            if (file) void handleFile(file);
+            if (file) pickFile(file);
           }}
         />
+        <ImageCropDialog
+          file={pending?.file ?? null}
+          imageSrc={pending?.src ?? null}
+          aspect={aspect ?? (round ? 1 : 4 / 3)}
+          round={round}
+          onCancel={closeCrop}
+          onConfirm={(cropped) => {
+            closeCrop();
+            void uploadFile(cropped);
+          }}
+        />
+
       </div>
     </div>
   );
