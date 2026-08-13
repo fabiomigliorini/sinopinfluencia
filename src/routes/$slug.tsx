@@ -4,6 +4,8 @@ import { getProfileBySlug } from "@/lib/profiles.functions";
 import { TierBadge } from "@/components/ProfileCard";
 import type { Database } from "@/integrations/supabase/types";
 
+const SITE_URL = "https://sinopinfluencia.lovable.app";
+
 const profileQueryOptions = (slug: string) =>
   queryOptions({
     queryKey: ["profile", slug],
