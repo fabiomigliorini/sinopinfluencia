@@ -281,13 +281,18 @@ function MetricCard({
         <span className="text-2xl font-extrabold text-foreground">{followers}</span>
         {verified ? (
           <span
-            title="Métrica importada diretamente da rede social"
+            title="Número coletado dos dados públicos da rede social"
             className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary"
           >
-            Verificado
+            Dados públicos
           </span>
         ) : null}
       </div>
+      <p className="mt-1 text-[11px] text-muted-foreground">
+        {verified && verifiedAt
+          ? `Atualizado em ${new Date(verifiedAt).toLocaleDateString("pt-BR")}`
+          : "Declarado pelo criador"}
+      </p>
     </div>
   );
 }
