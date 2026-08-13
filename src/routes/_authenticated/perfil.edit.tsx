@@ -60,7 +60,6 @@ const field =
   "w-full rounded-2xl border border-border bg-background px-4 py-2.5 text-sm outline-none transition focus:border-primary";
 const labelCls = "text-xs font-bold uppercase tracking-widest text-muted-foreground";
 
-type MetricRow = { network: string; followers: string; audience_pct: string };
 type WorkRow = { title: string; description: string; image_url: string };
 
 function EditProfilePage() {
