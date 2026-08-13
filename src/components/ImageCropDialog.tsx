@@ -100,7 +100,7 @@ export function ImageCropDialog({
     if (!imageSrc || !file || !area) return;
     setBusy(true);
     try {
-      onConfirm(await cropToFile(imageSrc, area, file.name));
+      onConfirm(await cropToFile(imageSrc, area, rotation, file.name));
     } finally {
       setBusy(false);
     }
