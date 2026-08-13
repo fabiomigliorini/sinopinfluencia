@@ -22,6 +22,7 @@ type Props = {
 async function cropToFile(
   imageSrc: string,
   area: Area,
+  rotation: number,
   fileName: string,
 ): Promise<File> {
   const image = await new Promise<HTMLImageElement>((resolve, reject) => {
@@ -31,16 +32,31 @@ async function cropToFile(
     img.src = imageSrc;
   });
 
+  const rad = (rotation * Math.PI) / 180;
+  const sin = Math.abs(Math.sin(rad));
+  const cos = Math.abs(Math.cos(rad));
+  const boxW = image.width * cos + image.height * sin;
+  const boxH = image.width * sin + image.height * cos;
+
+  const rotated = document.createElement("canvas");
+  rotated.width = Math.round(boxW);
+  rotated.height = Math.round(boxH);
+  const rctx = rotated.getContext("2d");
+  if (!rctx) throw new Error("Não foi possível processar a imagem");
+  rctx.translate(boxW / 2, boxH / 2);
+  rctx.rotate(rad);
+  rctx.drawImage(image, -image.width / 2, -image.height / 2);
+
   const maxSide = 1600;
   const scale = Math.min(1, maxSide / Math.max(area.width, area.height));
   const canvas = document.createElement("canvas");
-  canvas.width = Math.round(area.width * scale);
-  canvas.height = Math.round(area.height * scale);
+  canvas.width = Math.max(1, Math.round(area.width * scale));
+  canvas.height = Math.max(1, Math.round(area.height * scale));
   const ctx = canvas.getContext("2d");
   if (!ctx) throw new Error("Não foi possível processar a imagem");
   ctx.imageSmoothingQuality = "high";
   ctx.drawImage(
-    image,
+    rotated,
     area.x,
     area.y,
     area.width,
@@ -58,6 +74,7 @@ async function cropToFile(
   const base = fileName.replace(/\.[^.]+$/, "") || "imagem";
   return new File([blob], `${base}.jpg`, { type: "image/jpeg" });
 }
+
 
 export function ImageCropDialog({
   file,
