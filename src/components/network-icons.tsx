@@ -3,11 +3,11 @@ import {
   SiFacebook,
   SiInstagram,
   SiKuaishou,
-  SiLinkedin,
   SiTiktok,
   SiX,
   SiYoutube,
 } from "react-icons/si";
+import { FaLinkedin } from "react-icons/fa6";
 
 export type NetworkId =
   | "instagram"
@@ -69,7 +69,7 @@ export const NETWORK_META: Record<NetworkId, NetworkMeta> = {
   linkedin: {
     id: "linkedin",
     label: "LinkedIn",
-    Icon: SiLinkedin,
+    Icon: FaLinkedin,
     color: "#0A66C2",
     placeholder: "in/seunome ou company/suaempresa",
     hint: "O LinkedIn bloqueia coleta pública: o número é informado por você.",
