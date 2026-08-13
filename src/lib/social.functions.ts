@@ -2,15 +2,26 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-const networkEnum = z.enum(["instagram", "tiktok", "youtube", "facebook"]);
+const networkEnum = z.enum([
+  "instagram",
+  "tiktok",
+  "youtube",
+  "facebook",
+  "linkedin",
+  "kwai",
+  "twitter",
+]);
+
+const YOUTUBE_KEY_SETTING = "youtube_api_key";
 
 /** Tells the UI which networks can be collected automatically. */
 export const getSocialIntegrationStatus = createServerFn({ method: "GET" }).handler(async () => {
-  const { SUPPORTED_NETWORKS, hasYouTubeKey } = await import("./social.server");
+  const { SUPPORTED_NETWORKS, DECLARED_NETWORKS, hasYouTubeKey } = await import("./social.server");
   return {
     enabled: true,
     youtubeEnabled: await hasYouTubeKey(),
     networks: SUPPORTED_NETWORKS,
+    declaredNetworks: DECLARED_NETWORKS,
   };
 });
 
@@ -25,7 +36,38 @@ async function getMyProfileId(supabase: any, userId: string) {
   return data.id as string;
 }
 
-export const listMyConnections = createServerFn({ method: "GET" })
+const ACCOUNT_COLUMNS =
+  "id, network, handle, profile_url, avatar_url, display_name, is_declared, declared_followers, last_synced_at, sync_status, sync_error";
+
+async function loadAccounts(supabase: any, profileId: string) {
+  const { data, error } = await supabase
+    .from("social_accounts")
+    .select(ACCOUNT_COLUMNS)
+    .eq("profile_id", profileId)
+    .order("network", { ascending: true });
+  if (error) throw new Error(error.message);
+
+  const accounts = (data ?? []) as Array<Record<string, any>>;
+  if (!accounts.length) return [];
+
+  const { data: snapshots } = await supabase
+    .from("social_snapshots")
+    .select("social_account_id, captured_at, followers, posts_count, avg_likes, avg_views")
+    .in(
+      "social_account_id",
+      accounts.map((a) => a.id),
+    )
+    .order("captured_at", { ascending: false });
+
+  return accounts.map((account) => ({
+    ...account,
+    latest:
+      (snapshots ?? []).find((s: any) => s.social_account_id === account.id) ?? null,
+  }));
+}
+
+/** Every network account linked by the signed-in creator. */
+export const listMyAccounts = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { data: profile } = await context.supabase
@@ -34,55 +76,64 @@ export const listMyConnections = createServerFn({ method: "GET" })
       .eq("user_id", context.userId)
       .maybeSingle();
     if (!profile) return [];
-
-    const { data, error } = await context.supabase
-      .from("social_accounts")
-      .select("id, network, handle, profile_url, last_synced_at, sync_status, sync_error")
-      .eq("profile_id", profile.id);
-    if (error) throw new Error(error.message);
-
-    const accounts = data ?? [];
-    if (!accounts.length) return [];
-
-    const { data: snapshots } = await context.supabase
-      .from("social_snapshots")
-      .select("social_account_id, captured_at, followers, posts_count, avg_likes, avg_views")
-      .in(
-        "social_account_id",
-        accounts.map((a) => a.id),
-      )
-      .order("captured_at", { ascending: false });
-
-    return accounts.map((account) => ({
-      ...account,
-      latest: (snapshots ?? []).find((s) => s.social_account_id === account.id) ?? null,
-    }));
+    return loadAccounts(context.supabase, profile.id);
   });
 
-/**
- * Saves the @ / channel the creator informed for one network and immediately
- * tries to collect the public numbers.
- */
-export const saveNetworkHandle = createServerFn({ method: "POST" })
+/** Wizard step 2: collects the public numbers without saving anything yet. */
+export const previewNetworkHandle = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({ network: networkEnum, handle: z.string().min(1).max(200) }).parse(input),
+  )
+  .handler(async ({ data }) => {
+    const { normalizeHandle, collectPublicMetrics, DECLARED_NETWORKS } = await import(
+      "./social.server"
+    );
+    const handle = normalizeHandle(data.network, data.handle);
+    if (!handle) throw new Error("Informe um @ válido");
+
+    if (DECLARED_NETWORKS.includes(data.network)) {
+      return {
+        handle,
+        metrics: null,
+        error: "Esta rede não permite coleta pública — informe o número de seguidores.",
+      };
+    }
+
+    try {
+      const metrics = await collectPublicMetrics(data.network, handle);
+      return { handle, metrics, error: null as string | null };
+    } catch (error) {
+      return {
+        handle,
+        metrics: null,
+        error: error instanceof Error ? error.message : "Falha na coleta pública",
+      };
+    }
+  });
+
+/** Wizard step 3: saves the account, with collected or declared numbers. */
+export const addNetworkAccount = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) =>
     z
-      .object({ network: networkEnum, handle: z.string().max(200) })
+      .object({
+        network: networkEnum,
+        handle: z.string().min(1).max(200),
+        declaredFollowers: z.string().trim().max(20).optional(),
+      })
       .parse(input),
   )
   .handler(async ({ data, context }) => {
-    const { normalizeHandle, syncSocialAccount } = await import("./social.server");
+    const { normalizeHandle, syncSocialAccount, DECLARED_NETWORKS } = await import(
+      "./social.server"
+    );
     const profileId = await getMyProfileId(context.supabase, context.userId);
     const handle = normalizeHandle(data.network, data.handle);
+    if (!handle) throw new Error("Informe um @ válido");
 
-    if (!handle) {
-      await context.supabase
-        .from("social_accounts")
-        .delete()
-        .eq("profile_id", profileId)
-        .eq("network", data.network);
-      return { ok: true, removed: true, error: null as string | null };
-    }
+    const declared = (data.declaredFollowers ?? "").trim();
+    const declaredOnly = DECLARED_NETWORKS.includes(data.network) || Boolean(declared);
 
     const { data: saved, error } = await context.supabase
       .from("social_accounts")
@@ -94,24 +145,100 @@ export const saveNetworkHandle = createServerFn({ method: "POST" })
           handle,
           sync_status: "pending",
           sync_error: null,
+          is_declared: declaredOnly,
+          declared_followers: declared || null,
         },
-        { onConflict: "profile_id,network" },
+        { onConflict: "profile_id,network,handle" },
       )
       .select("id")
       .single();
     if (error) throw new Error(error.message);
 
+    if (declared) {
+      await writeDeclaredMetric(context.supabase, profileId, saved.id, data.network, handle, declared);
+      return { ok: true, accountId: saved.id, error: null as string | null };
+    }
+
+    if (DECLARED_NETWORKS.includes(data.network)) {
+      return { ok: true, accountId: saved.id, error: null as string | null };
+    }
+
     try {
-      const result = await syncSocialAccount(saved.id);
-      return { ok: true, removed: false, followers: result.followers, error: null as string | null };
+      await syncSocialAccount(saved.id);
+      return { ok: true, accountId: saved.id, error: null as string | null };
     } catch (syncError) {
       return {
         ok: true,
-        removed: false,
-        followers: null,
+        accountId: saved.id,
         error: syncError instanceof Error ? syncError.message : "Falha na coleta pública",
       };
     }
+  });
+
+async function writeDeclaredMetric(
+  supabase: any,
+  profileId: string,
+  accountId: string,
+  network: string,
+  handle: string,
+  followers: string,
+) {
+  await supabase
+    .from("profile_metrics")
+    .delete()
+    .eq("profile_id", profileId)
+    .eq("network", network)
+    .eq("handle", handle);
+
+  if (!followers) return;
+
+  const { error } = await supabase.from("profile_metrics").insert({
+    profile_id: profileId,
+    network,
+    handle,
+    social_account_id: accountId,
+    followers,
+    source: "manual",
+    verified_at: null,
+  });
+  if (error) throw new Error(error.message);
+}
+
+/** Card action: creator types the followers manually for one account. */
+export const setDeclaredFollowers = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({ accountRowId: z.string().uuid(), followers: z.string().trim().max(20) })
+      .parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const profileId = await getMyProfileId(context.supabase, context.userId);
+    const { data: account } = await context.supabase
+      .from("social_accounts")
+      .select("id, network, handle")
+      .eq("id", data.accountRowId)
+      .eq("profile_id", profileId)
+      .maybeSingle();
+    if (!account) throw new Error("Rede não encontrada");
+
+    await context.supabase
+      .from("social_accounts")
+      .update({
+        is_declared: Boolean(data.followers),
+        declared_followers: data.followers || null,
+      })
+      .eq("id", account.id);
+
+    await writeDeclaredMetric(
+      context.supabase,
+      profileId,
+      account.id,
+      account.network,
+      account.handle ?? "",
+      data.followers,
+    );
+    return { ok: true, removed: !data.followers };
   });
 
 export const syncMyAccount = createServerFn({ method: "POST" })
@@ -131,73 +258,72 @@ export const syncMyAccount = createServerFn({ method: "POST" })
     return syncSocialAccount(data.accountRowId);
   });
 
-export const syncMyProfile = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
-    const profileId = await getMyProfileId(context.supabase, context.userId);
-    const { syncProfileAccounts } = await import("./social.server");
-    return syncProfileAccounts(profileId);
-  });
-
 export const removeMyAccount = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => z.object({ accountRowId: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const profileId = await getMyProfileId(context.supabase, context.userId);
+    const { data: account } = await context.supabase
+      .from("social_accounts")
+      .select("id, network, handle")
+      .eq("id", data.accountRowId)
+      .eq("profile_id", profileId)
+      .maybeSingle();
+    if (!account) throw new Error("Rede não encontrada");
+
+    await context.supabase
+      .from("profile_metrics")
+      .delete()
+      .eq("profile_id", profileId)
+      .eq("network", account.network)
+      .eq("handle", account.handle ?? "");
+
     const { error } = await context.supabase
       .from("social_accounts")
       .delete()
-      .eq("id", data.accountRowId)
+      .eq("id", account.id)
       .eq("profile_id", profileId);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+async function assertAdmin(supabase: any, userId: string) {
+  const { data: isAdmin } = await supabase.rpc("has_role", {
+    _user_id: userId,
+    _role: "admin",
+  });
+  if (!isAdmin) throw new Error("Acesso restrito");
+}
 
 /** Curation panel: ACES can force a refresh of a profile's public numbers. */
 export const adminSyncProfile = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => z.object({ profileId: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
-    const { data: isAdmin } = await context.supabase.rpc("has_role", {
-      _user_id: context.userId,
-      _role: "admin",
-    });
-    if (!isAdmin) throw new Error("Acesso restrito");
-
+    await assertAdmin(context.supabase, context.userId);
     const { syncProfileAccounts } = await import("./social.server");
     return syncProfileAccounts(data.profileId);
   });
 
-/** Curation panel: ACES can correct the @ informed by the creator. */
-export const adminSetHandle = createServerFn({ method: "POST" })
+/** Curation panel: ACES can link an extra @ to a profile. */
+export const adminAddAccount = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) =>
     z
       .object({
         profileId: z.string().uuid(),
         network: networkEnum,
-        handle: z.string().max(200),
+        handle: z.string().min(1).max(200),
       })
       .parse(input),
   )
   .handler(async ({ data, context }) => {
-    const { data: isAdmin } = await context.supabase.rpc("has_role", {
-      _user_id: context.userId,
-      _role: "admin",
-    });
-    if (!isAdmin) throw new Error("Acesso restrito");
-
-    const { normalizeHandle, syncSocialAccount } = await import("./social.server");
+    await assertAdmin(context.supabase, context.userId);
+    const { normalizeHandle, syncSocialAccount, DECLARED_NETWORKS } = await import(
+      "./social.server"
+    );
     const handle = normalizeHandle(data.network, data.handle);
-
-    if (!handle) {
-      await context.supabase
-        .from("social_accounts")
-        .delete()
-        .eq("profile_id", data.profileId)
-        .eq("network", data.network);
-      return { ok: true, removed: true, error: null as string | null };
-    }
+    if (!handle) throw new Error("Informe um @ válido");
 
     const { data: saved, error } = await context.supabase
       .from("social_accounts")
@@ -209,39 +335,62 @@ export const adminSetHandle = createServerFn({ method: "POST" })
           handle,
           sync_status: "pending",
           sync_error: null,
+          is_declared: DECLARED_NETWORKS.includes(data.network),
         },
-        { onConflict: "profile_id,network" },
+        { onConflict: "profile_id,network,handle" },
       )
       .select("id")
       .single();
     if (error) throw new Error(error.message);
 
+    if (DECLARED_NETWORKS.includes(data.network)) {
+      return { ok: true, error: null as string | null };
+    }
+
     try {
       await syncSocialAccount(saved.id);
-      return { ok: true, removed: false, error: null as string | null };
+      return { ok: true, error: null as string | null };
     } catch (syncError) {
       return {
         ok: true,
-        removed: false,
         error: syncError instanceof Error ? syncError.message : "Falha na coleta pública",
       };
     }
+  });
+
+/** Curation panel: ACES can unlink one account. */
+export const adminRemoveAccount = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ accountRowId: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { error } = await context.supabase
+      .from("social_accounts")
+      .delete()
+      .eq("id", data.accountRowId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+/** Curation panel: accounts linked to one profile. */
+export const adminListAccounts = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ profileId: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    return loadAccounts(context.supabase, data.profileId);
   });
 
 /** Curation panel: reads whether the YouTube/Google API key is configured. */
 export const adminGetYouTubeKeyStatus = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data: isAdmin } = await context.supabase.rpc("has_role", {
-      _user_id: context.userId,
-      _role: "admin",
-    });
-    if (!isAdmin) throw new Error("Acesso restrito");
+    await assertAdmin(context.supabase, context.userId);
 
     const { data } = await context.supabase
       .from("app_settings")
       .select("value, updated_at")
-      .eq("key", "youtube_api_key")
+      .eq("key", YOUTUBE_KEY_SETTING)
       .maybeSingle();
 
     const saved = data?.value?.trim() ?? "";
@@ -261,88 +410,21 @@ export const adminSetYouTubeKey = createServerFn({ method: "POST" })
     z.object({ key: z.string().trim().max(200) }).parse(input),
   )
   .handler(async ({ data, context }) => {
-    const { data: isAdmin } = await context.supabase.rpc("has_role", {
-      _user_id: context.userId,
-      _role: "admin",
-    });
-    if (!isAdmin) throw new Error("Acesso restrito");
+    await assertAdmin(context.supabase, context.userId);
 
     if (!data.key) {
       const { error } = await context.supabase
         .from("app_settings")
         .delete()
-        .eq("key", "youtube_api_key");
+        .eq("key", YOUTUBE_KEY_SETTING);
       if (error) throw new Error(error.message);
       return { ok: true, removed: true };
     }
 
     const { error } = await context.supabase.from("app_settings").upsert(
-      { key: "youtube_api_key", value: data.key, updated_by: context.userId },
+      { key: YOUTUBE_KEY_SETTING, value: data.key, updated_by: context.userId },
       { onConflict: "key" },
     );
-    if (error) throw new Error(error.message);
-    return { ok: true, removed: false };
-  });
-
-/** Numbers shown on the public profile, so the creator sees manual vs collected. */
-export const listMyNetworkMetrics = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
-    const { data: profile } = await context.supabase
-      .from("profiles")
-      .select("id")
-      .eq("user_id", context.userId)
-      .maybeSingle();
-    if (!profile) return [];
-
-    const { data, error } = await context.supabase
-      .from("profile_metrics")
-      .select("id, network, followers, source, verified_at")
-      .eq("profile_id", profile.id);
-    if (error) throw new Error(error.message);
-    return data ?? [];
-  });
-
-/**
- * Fallback for when the public collection fails (private profiles, personal
- * Facebook pages): the creator types the number and it is flagged as manual.
- */
-export const setManualMetric = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
-    z
-      .object({
-        network: z.enum([
-          "instagram",
-          "tiktok",
-          "youtube",
-          "facebook",
-          "twitter",
-          "kwai",
-          "linkedin",
-        ]),
-        followers: z.string().trim().max(20),
-      })
-      .parse(input),
-  )
-  .handler(async ({ data, context }) => {
-    const profileId = await getMyProfileId(context.supabase, context.userId);
-
-    await context.supabase
-      .from("profile_metrics")
-      .delete()
-      .eq("profile_id", profileId)
-      .eq("network", data.network);
-
-    if (!data.followers) return { ok: true, removed: true };
-
-    const { error } = await context.supabase.from("profile_metrics").insert({
-      profile_id: profileId,
-      network: data.network,
-      followers: data.followers,
-      source: "manual",
-      verified_at: null,
-    });
     if (error) throw new Error(error.message);
     return { ok: true, removed: false };
   });
