@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 
 type Network = Database["public"]["Enums"]["social_network"];
@@ -177,12 +178,15 @@ export const getMyRole = createServerFn({ method: "GET" })
     return { isAdmin: (data ?? []).some((r) => r.role === "admin") };
   });
 
-async function assertAdmin(supabase: typeof import("@supabase/supabase-js") extends never ? never : any, userId: string) {
+async function assertAdmin(
+  supabase: SupabaseClient<Database>,
+  userId: string,
+) {
   const { data } = await supabase
     .from("user_roles")
     .select("role")
     .eq("user_id", userId);
-  const isAdmin = (data ?? []).some((r: { role: string }) => r.role === "admin");
+  const isAdmin = (data ?? []).some((r) => r.role === "admin");
   if (!isAdmin) throw new Error("Forbidden");
 }
 
