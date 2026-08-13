@@ -29,7 +29,9 @@ Cada conta vinculada vira um card com:
 - @ da conta, com link para o perfil na rede.
 - Seguidores, publicações e curtidas/visualizações.
 - Etiqueta "Dados públicos · data" ou "Declarado pelo criador".
-- Ações: "Atualizar agora", "Editar @", "Remover".
+- Ações ao lado do número de seguidores: "Atualizar agora" (nova coleta) e "Informar manualmente" (campo inline que grava o número declarado).
+- Ação "Remover" no card — é também o caminho para corrigir um @ errado (remover e adicionar de novo).
+
 
 ## Foto de perfil da rede
 
