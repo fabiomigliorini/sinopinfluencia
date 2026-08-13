@@ -82,17 +82,33 @@ function firstNumber(pattern: RegExp, html: string): number | null {
   return Number.isFinite(value) ? value : null;
 }
 
-/** Converts "12.4K" / "1,2M" / "12 mil" style counters into a number. */
+/** Turns HTML entities into plain text so counters become readable. */
+function decodeEntities(text: string) {
+  return text
+    .replace(/&#x([0-9a-f]+);/gi, (_, hex) => String.fromCodePoint(parseInt(hex, 16)))
+    .replace(/&#(\d+);/g, (_, dec) => String.fromCodePoint(Number(dec)))
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#0?39;/g, "'");
+}
+
+/** Converts "12.4K" / "1,2M" / "8,555" / "28 686 009" counters into a number. */
 function compactToNumber(text: string): number | null {
-  const match = text.match(/([\d.,]+)\s*([KkMmBb]|mil|mi)?/);
+  const match = text.match(/([\d][\d.,\s\u00a0]*)\s*([KkMmBb]|mil|mi)?/);
   if (!match) return null;
-  const base = Number(match[1]!.replace(/\./g, "").replace(",", "."));
-  if (!Number.isFinite(base)) return null;
+  const digits = match[1]!.trim();
   const suffix = (match[2] ?? "").toLowerCase();
+
+  if (!suffix) {
+    const plain = Number(digits.replace(/[.,\s\u00a0]/g, ""));
+    return Number.isFinite(plain) ? plain : null;
+  }
+  const base = Number(digits.replace(/[\s\u00a0]/g, "").replace(/\.(?=\d{3}\b)/g, "").replace(",", "."));
+  if (!Number.isFinite(base)) return null;
   if (suffix === "k" || suffix === "mil") return Math.round(base * 1_000);
   if (suffix === "m" || suffix === "mi") return Math.round(base * 1_000_000);
-  if (suffix === "b") return Math.round(base * 1_000_000_000);
-  return Math.round(base);
+  return Math.round(base * 1_000_000_000);
 }
 
 export async function fetchInstagramPublic(handle: string): Promise<PublicMetrics> {
