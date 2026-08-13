@@ -26,6 +26,10 @@ export type PublicMetrics = {
 const BROWSER_UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 
+/** Meta serves the public link preview (with counters) to crawler user agents. */
+const CRAWLER_UA =
+  "facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)";
+
 async function getText(url: string, headers: Record<string, string> = {}) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 12_000);
