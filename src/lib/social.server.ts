@@ -88,16 +88,14 @@ function firstNumber(pattern: RegExp, html: string): number | null {
 
 /** Reads the counter that precedes a label, e.g. "686M Followers" or "28 686 009 gillar". */
 function numberBefore(text: string, label: RegExp): number | null {
+  // Collapse thousand separators first so each counter is a single token.
+  const flat = text.replace(/(\d)[.,\s\u00a0](?=\d{3}(?!\d))/g, "$1");
   const pattern = new RegExp(
-    `([\\d][\\d.,\\s\\u00a0]*(?:\\s*(?:K|M|B|mil|mi))?)\\s*${label.source}`,
+    `(\\d+(?:[.,]\\d+)?\\s*(?:K|M|B|mil|mi)?)\\s*${label.source}`,
     "i",
   );
-  // Split on separators so a counter never absorbs the neighbouring one.
-  for (const chunk of text.split(/[,;·|\u00b7]|\s{2,}|\.\s/)) {
-    const match = chunk.match(pattern);
-    if (match) return compactToNumber(match[1]!);
-  }
-  return null;
+  const match = flat.match(pattern);
+  return match ? compactToNumber(match[1]!) : null;
 }
 
 /** Turns HTML entities into plain text so counters become readable. */
