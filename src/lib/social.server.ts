@@ -53,6 +53,11 @@ async function getText(url: string, headers: Record<string, string> = {}) {
     });
     const body = await response.text();
     if (!response.ok) {
+      if (response.status === 429 || response.status === 403) {
+        throw new Error(
+          "A rede social bloqueou a coleta automática agora (limite de acessos). Tente novamente mais tarde ou informe o número manualmente.",
+        );
+      }
       throw new Error(`Resposta ${response.status} da rede social`);
     }
     return body;
