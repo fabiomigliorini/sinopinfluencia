@@ -106,7 +106,7 @@ export const getProfileBySlug = createServerFn({ method: "GET" })
       .single();
 
     if (profileError || !profile) {
-      throw new Error("Perfil não encontrado");
+      throw notFound();
     }
 
     const [
