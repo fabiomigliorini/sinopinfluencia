@@ -92,8 +92,12 @@ function numberBefore(text: string, label: RegExp): number | null {
     `([\\d][\\d.,\\s\\u00a0]*(?:\\s*(?:K|M|B|mil|mi))?)\\s*${label.source}`,
     "i",
   );
-  const match = text.match(pattern);
-  return match ? compactToNumber(match[1]!) : null;
+  // Split on separators so a counter never absorbs the neighbouring one.
+  for (const chunk of text.split(/[,;·|\u00b7]|\s{2,}|\.\s/)) {
+    const match = chunk.match(pattern);
+    if (match) return compactToNumber(match[1]!);
+  }
+  return null;
 }
 
 /** Turns HTML entities into plain text so counters become readable. */
