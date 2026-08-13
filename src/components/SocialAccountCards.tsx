@@ -236,78 +236,44 @@ export function SocialAccountCards() {
                 </p>
               )}
 
-              {manualFor === account.id ? (
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <input
-                    autoFocus
-                    className="min-w-[140px] flex-1 rounded-2xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary"
-                    placeholder="Ex.: 18,4 mil"
-                    value={manualValue}
-                    onChange={(e) => setManualValue(e.target.value)}
-                  />
-                  <button
-                    type="button"
-                    disabled={declareMutation.isPending}
-                    onClick={() =>
-                      declareMutation.mutate({
-                        accountRowId: account.id,
-                        followers: manualValue.trim(),
-                      })
-                    }
-                    className="rounded-full bg-primary px-4 py-2 text-xs font-bold text-primary-foreground transition hover:opacity-90 disabled:opacity-50"
-                  >
-                    Salvar
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setManualFor(null)}
+              <div className="mt-3 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  disabled={syncMutation.isPending}
+                  onClick={() => syncMutation.mutate(account.id)}
+                  className="rounded-full border border-border px-4 py-2 text-xs font-bold transition hover:bg-accent disabled:opacity-50"
+                >
+                  Atualizar agora
+                </button>
+                <button
+                  type="button"
+                  onClick={() => openManual(account)}
+                  className="rounded-full border border-border px-4 py-2 text-xs font-bold transition hover:bg-accent"
+                >
+                  Informar manualmente
+                </button>
+                {account.profile_url && (
+                  <a
+                    href={account.profile_url}
+                    target="_blank"
+                    rel="noreferrer"
                     className="rounded-full border border-border px-4 py-2 text-xs font-bold transition hover:bg-accent"
                   >
-                    Cancelar
-                  </button>
-                </div>
-              ) : (
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    disabled={syncMutation.isPending}
-                    onClick={() => syncMutation.mutate(account.id)}
-                    className="rounded-full border border-border px-4 py-2 text-xs font-bold transition hover:bg-accent disabled:opacity-50"
-                  >
-                    Atualizar agora
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setManualFor(account.id);
-                      setManualValue(account.declared_followers ?? "");
-                    }}
-                    className="rounded-full border border-border px-4 py-2 text-xs font-bold transition hover:bg-accent"
-                  >
-                    Informar manualmente
-                  </button>
-                  {account.profile_url && (
-                    <a
-                      href={account.profile_url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="rounded-full border border-border px-4 py-2 text-xs font-bold transition hover:bg-accent"
-                    >
-                      Abrir perfil
-                    </a>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (confirm(`Remover @${account.handle} do ${networkLabel(account.network)}?`))
-                        removeMutation.mutate(account.id);
-                    }}
-                    className="rounded-full border border-border px-4 py-2 text-xs font-bold text-destructive transition hover:bg-destructive/10"
-                  >
-                    Remover
-                  </button>
-                </div>
-              )}
+                    Abrir perfil
+                  </a>
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (confirm(`Remover @${account.handle} do ${networkLabel(account.network)}?`))
+                      removeMutation.mutate(account.id);
+                  }}
+                  className="rounded-full border border-border px-4 py-2 text-xs font-bold text-destructive transition hover:bg-destructive/10"
+                >
+                  Remover
+                </button>
+              </div>
+
             </article>
           );
         })}
