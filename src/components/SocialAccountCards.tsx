@@ -71,8 +71,12 @@ export function SocialAccountCards() {
 
   const syncMutation = useMutation({
     mutationFn: (accountRowId: string) => runSync({ data: { accountRowId } }),
-    onSuccess: () => {
-      toast.success("Dados atualizados!");
+    onSuccess: (result) => {
+      if (result && (result as { ok?: boolean }).ok === false) {
+        toast.error((result as { error?: string }).error ?? "Não foi possível coletar os dados agora.");
+      } else {
+        toast.success("Dados atualizados!");
+      }
       refresh();
     },
     onError: (error: Error) => {
