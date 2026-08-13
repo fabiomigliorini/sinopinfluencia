@@ -54,7 +54,7 @@ export const listMyConnections = createServerFn({ method: "GET" })
 /** Mints the short-lived token the Connect SDK needs, for the caller's profile. */
 export const createConnectSession = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .validator((input: unknown) =>
+  .inputValidator((input: unknown) =>
     z.object({ network: networkEnum.optional() }).parse(input ?? {}),
   )
   .handler(async ({ data, context }) => {
@@ -94,7 +94,7 @@ export const createConnectSession = createServerFn({ method: "POST" })
 /** Called right after the SDK reports a connected account. */
 export const registerConnectedAccount = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .validator((input: unknown) =>
+  .inputValidator((input: unknown) =>
     z
       .object({
         accountId: z.string().min(1),
@@ -158,7 +158,7 @@ export const registerConnectedAccount = createServerFn({ method: "POST" })
 
 export const syncMyAccount = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .validator((input: unknown) => z.object({ accountRowId: z.string().uuid() }).parse(input))
+  .inputValidator((input: unknown) => z.object({ accountRowId: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const { data: owned } = await context.supabase
       .from("social_accounts")
@@ -173,7 +173,7 @@ export const syncMyAccount = createServerFn({ method: "POST" })
 
 export const disconnectMyAccount = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .validator((input: unknown) => z.object({ accountRowId: z.string().uuid() }).parse(input))
+  .inputValidator((input: unknown) => z.object({ accountRowId: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const { data: account } = await context.supabase
       .from("social_accounts")
@@ -205,7 +205,7 @@ export const disconnectMyAccount = createServerFn({ method: "POST" })
 /** Admin: re-sync every connected account of one profile. */
 export const syncProfileAsAdmin = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .validator((input: unknown) => z.object({ profileId: z.string().uuid() }).parse(input))
+  .inputValidator((input: unknown) => z.object({ profileId: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const { data: isAdmin } = await context.supabase.rpc("has_role", {
       _user_id: context.userId,
