@@ -240,6 +240,7 @@ export type Database = {
         | "facebook"
         | "twitter"
         | "kwai"
+        | "linkedin"
       tier: "creator" | "featured" | "reference" | "icon"
     }
     CompositeTypes: {
@@ -377,6 +378,7 @@ export const Constants = {
         "facebook",
         "twitter",
         "kwai",
+        "linkedin",
       ],
       tier: ["creator", "featured", "reference", "icon"],
     },
