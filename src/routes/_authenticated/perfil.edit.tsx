@@ -9,6 +9,7 @@ import {
   submitMyProfile,
   type ProfileInput,
 } from "@/lib/account.functions";
+import { ImageUpload } from "@/components/ImageUpload";
 
 export const Route = createFileRoute("/_authenticated/perfil/edit")({
   component: EditProfilePage,
@@ -81,6 +82,7 @@ function EditProfilePage() {
     bio: "",
     main_network: "",
     whatsapp: "",
+    email: "",
     avatar_url: "",
   });
   const [metrics, setMetrics] = useState<MetricRow[]>([]);
@@ -99,6 +101,7 @@ function EditProfilePage() {
       bio: p.bio ?? "",
       main_network: p.main_network ?? "",
       whatsapp: p.whatsapp ?? "",
+      email: p.email ?? "",
       avatar_url: p.avatar_url ?? "",
     });
     setMetrics(
@@ -128,6 +131,7 @@ function EditProfilePage() {
       bio: form.bio.trim() || null,
       main_network: (form.main_network || null) as ProfileInput["main_network"],
       whatsapp: form.whatsapp.trim() || null,
+      email: form.email.trim() || null,
       avatar_url: form.avatar_url.trim() || null,
       metrics: metrics
         .filter((m) => m.network)
@@ -266,15 +270,24 @@ function EditProfilePage() {
                 onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}
               />
             </label>
-            <label className="space-y-1.5 md:col-span-2">
-              <span className={labelCls}>URL da foto de perfil</span>
+            <label className="space-y-1.5">
+              <span className={labelCls}>E-mail para contato</span>
               <input
                 className={field}
-                placeholder="https://..."
-                value={form.avatar_url}
-                onChange={(e) => setForm({ ...form, avatar_url: e.target.value })}
+                type="email"
+                placeholder="voce@email.com"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
               />
             </label>
+            <div className="md:col-span-2">
+              <ImageUpload
+                label="Foto de perfil"
+                round
+                value={form.avatar_url}
+                onChange={(url) => setForm({ ...form, avatar_url: url })}
+              />
+            </div>
             <label className="space-y-1.5 md:col-span-2">
               <span className={labelCls}>Bio</span>
               <textarea
@@ -414,24 +427,23 @@ function EditProfilePage() {
             )}
             {works.map((w, i) => (
               <div key={i} className="rounded-2xl border border-border p-4">
-                <div className="grid gap-3 md:grid-cols-2">
-                  <input
-                    className={field}
-                    placeholder="Título do trabalho"
-                    value={w.title}
-                    onChange={(e) => {
-                      const next = [...works];
-                      next[i] = { ...w, title: e.target.value };
-                      setWorks(next);
-                    }}
-                  />
-                  <input
-                    className={field}
-                    placeholder="URL da imagem"
+                <input
+                  className={field}
+                  placeholder="Título do trabalho"
+                  value={w.title}
+                  onChange={(e) => {
+                    const next = [...works];
+                    next[i] = { ...w, title: e.target.value };
+                    setWorks(next);
+                  }}
+                />
+                <div className="mt-3">
+                  <ImageUpload
+                    label="Imagem do trabalho"
                     value={w.image_url}
-                    onChange={(e) => {
+                    onChange={(url) => {
                       const next = [...works];
-                      next[i] = { ...w, image_url: e.target.value };
+                      next[i] = { ...w, image_url: url };
                       setWorks(next);
                     }}
                   />
