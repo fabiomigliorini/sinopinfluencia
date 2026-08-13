@@ -204,12 +204,26 @@ async function writeDeclaredMetric(
   if (error) throw new Error(error.message);
 }
 
-/** Card action: creator types the followers manually for one account. */
+function toNumber(value?: string | null) {
+  if (value === undefined || value === null) return null;
+  const digits = value.replace(/[^\d]/g, "");
+  if (!digits) return null;
+  const parsed = Number(digits);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+/** Card action: creator types followers/posts/likes/views manually for one account. */
 export const setDeclaredFollowers = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) =>
     z
-      .object({ accountRowId: z.string().uuid(), followers: z.string().trim().max(20) })
+      .object({
+        accountRowId: z.string().uuid(),
+        followers: z.string().trim().max(20),
+        posts: z.string().trim().max(20).optional(),
+        likes: z.string().trim().max(20).optional(),
+        views: z.string().trim().max(20).optional(),
+      })
       .parse(input),
   )
   .handler(async ({ data, context }) => {
@@ -238,8 +252,25 @@ export const setDeclaredFollowers = createServerFn({ method: "POST" })
       account.handle ?? "",
       data.followers,
     );
+
+    const followers = toNumber(data.followers);
+    const posts = toNumber(data.posts);
+    const likes = toNumber(data.likes);
+    const views = toNumber(data.views);
+
+    if (followers !== null || posts !== null || likes !== null || views !== null) {
+      await context.supabase.from("social_snapshots").insert({
+        social_account_id: account.id,
+        followers,
+        posts_count: posts,
+        avg_likes: likes,
+        avg_views: views,
+      });
+    }
+
     return { ok: true, removed: !data.followers };
   });
+
 
 export const syncMyAccount = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

@@ -2,6 +2,14 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { NetworkBadge, networkLabel } from "@/components/network-icons";
 import { SocialAccountWizard } from "@/components/SocialAccountWizard";
 import {
@@ -52,8 +60,13 @@ export function SocialAccountCards() {
   const runDeclare = useServerFn(setDeclaredFollowers);
 
   const [wizardOpen, setWizardOpen] = useState(false);
-  const [manualFor, setManualFor] = useState<string | null>(null);
-  const [manualValue, setManualValue] = useState("");
+  const [manualFor, setManualFor] = useState<Account | null>(null);
+  const [manualForm, setManualForm] = useState({
+    followers: "",
+    posts: "",
+    likes: "",
+    views: "",
+  });
 
   const statusQuery = useQuery({
     queryKey: ["social-status"],
@@ -95,15 +108,31 @@ export function SocialAccountCards() {
   });
 
   const declareMutation = useMutation({
-    mutationFn: (input: { accountRowId: string; followers: string }) => runDeclare({ data: input }),
+    mutationFn: (input: {
+      accountRowId: string;
+      followers: string;
+      posts?: string;
+      likes?: string;
+      views?: string;
+    }) => runDeclare({ data: input }),
     onSuccess: () => {
-      toast.success("Número atualizado.");
+      toast.success("Números atualizados.");
       setManualFor(null);
-      setManualValue("");
       refresh();
     },
     onError: (error: Error) => toast.error(error.message),
   });
+
+  function openManual(account: Account) {
+    setManualFor(account);
+    setManualForm({
+      followers: account.declared_followers ?? "",
+      posts: account.latest?.posts_count != null ? String(account.latest.posts_count) : "",
+      likes: account.latest?.avg_likes != null ? String(account.latest.avg_likes) : "",
+      views: account.latest?.avg_views != null ? String(account.latest.avg_views) : "",
+    });
+  }
+
 
   const accounts = accountsQuery.data ?? [];
 
@@ -192,7 +221,7 @@ export function SocialAccountCards() {
                 </div>
               </div>
 
-              {!account.is_declared && account.latest && (
+              {account.latest && (
                 <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
                   <div className="rounded-xl bg-accent/50 p-2">
                     <p className="text-muted-foreground">Posts</p>
@@ -215,82 +244,114 @@ export function SocialAccountCards() {
                 </p>
               )}
 
-              {manualFor === account.id ? (
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <input
-                    autoFocus
-                    className="min-w-[140px] flex-1 rounded-2xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary"
-                    placeholder="Ex.: 18,4 mil"
-                    value={manualValue}
-                    onChange={(e) => setManualValue(e.target.value)}
-                  />
-                  <button
-                    type="button"
-                    disabled={declareMutation.isPending}
-                    onClick={() =>
-                      declareMutation.mutate({
-                        accountRowId: account.id,
-                        followers: manualValue.trim(),
-                      })
-                    }
-                    className="rounded-full bg-primary px-4 py-2 text-xs font-bold text-primary-foreground transition hover:opacity-90 disabled:opacity-50"
-                  >
-                    Salvar
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setManualFor(null)}
+              <div className="mt-3 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  disabled={syncMutation.isPending}
+                  onClick={() => syncMutation.mutate(account.id)}
+                  className="rounded-full border border-border px-4 py-2 text-xs font-bold transition hover:bg-accent disabled:opacity-50"
+                >
+                  Atualizar agora
+                </button>
+                <button
+                  type="button"
+                  onClick={() => openManual(account)}
+                  className="rounded-full border border-border px-4 py-2 text-xs font-bold transition hover:bg-accent"
+                >
+                  Informar manualmente
+                </button>
+                {account.profile_url && (
+                  <a
+                    href={account.profile_url}
+                    target="_blank"
+                    rel="noreferrer"
                     className="rounded-full border border-border px-4 py-2 text-xs font-bold transition hover:bg-accent"
                   >
-                    Cancelar
-                  </button>
-                </div>
-              ) : (
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    disabled={syncMutation.isPending}
-                    onClick={() => syncMutation.mutate(account.id)}
-                    className="rounded-full border border-border px-4 py-2 text-xs font-bold transition hover:bg-accent disabled:opacity-50"
-                  >
-                    Atualizar agora
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setManualFor(account.id);
-                      setManualValue(account.declared_followers ?? "");
-                    }}
-                    className="rounded-full border border-border px-4 py-2 text-xs font-bold transition hover:bg-accent"
-                  >
-                    Informar manualmente
-                  </button>
-                  {account.profile_url && (
-                    <a
-                      href={account.profile_url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="rounded-full border border-border px-4 py-2 text-xs font-bold transition hover:bg-accent"
-                    >
-                      Abrir perfil
-                    </a>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (confirm(`Remover @${account.handle} do ${networkLabel(account.network)}?`))
-                        removeMutation.mutate(account.id);
-                    }}
-                    className="rounded-full border border-border px-4 py-2 text-xs font-bold text-destructive transition hover:bg-destructive/10"
-                  >
-                    Remover
-                  </button>
-                </div>
-              )}
+                    Abrir perfil
+                  </a>
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (confirm(`Remover @${account.handle} do ${networkLabel(account.network)}?`))
+                      removeMutation.mutate(account.id);
+                  }}
+                  className="rounded-full border border-border px-4 py-2 text-xs font-bold text-destructive transition hover:bg-destructive/10"
+                >
+                  Remover
+                </button>
+              </div>
+
             </article>
           );
         })}
       </div>
+
+      <Dialog open={Boolean(manualFor)} onOpenChange={(open) => !open && setManualFor(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Informar números manualmente</DialogTitle>
+            <DialogDescription>
+              {manualFor
+                ? `${networkLabel(manualFor.network)} · @${manualFor.handle}`
+                : ""}{" "}
+              — os valores informados aparecem no perfil como declarados pelo criador.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            {(
+              [
+                { key: "followers", label: "Seguidores", placeholder: "Ex.: 18400" },
+                { key: "posts", label: "Posts", placeholder: "Ex.: 291" },
+                { key: "likes", label: "Curtidas", placeholder: "Ex.: 1200" },
+                { key: "views", label: "Views", placeholder: "Ex.: 8500" },
+              ] as const
+            ).map((f) => (
+              <label key={f.key} className="space-y-1.5">
+                <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                  {f.label}
+                </span>
+                <input
+                  className="w-full rounded-2xl border border-border bg-background px-3 py-2 text-sm outline-none transition focus:border-primary"
+                  placeholder={f.placeholder}
+                  inputMode="numeric"
+                  maxLength={20}
+                  value={manualForm[f.key]}
+                  onChange={(e) => setManualForm({ ...manualForm, [f.key]: e.target.value })}
+                />
+              </label>
+            ))}
+          </div>
+
+          <DialogFooter className="gap-2 sm:justify-end">
+            <button
+              type="button"
+              onClick={() => setManualFor(null)}
+              className="rounded-full border border-border px-5 py-2 text-xs font-bold transition hover:bg-accent"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              disabled={declareMutation.isPending}
+              onClick={() =>
+                manualFor &&
+                declareMutation.mutate({
+                  accountRowId: manualFor.id,
+                  followers: manualForm.followers.trim(),
+                  posts: manualForm.posts.trim(),
+                  likes: manualForm.likes.trim(),
+                  views: manualForm.views.trim(),
+                })
+              }
+              className="rounded-full bg-primary px-5 py-2 text-xs font-bold text-primary-foreground transition hover:opacity-90 disabled:opacity-50"
+            >
+              Salvar
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <SocialAccountWizard
         open={wizardOpen}
@@ -298,6 +359,7 @@ export function SocialAccountCards() {
         onDone={refresh}
         youtubeEnabled={statusQuery.data?.youtubeEnabled ?? false}
       />
+
     </section>
   );
 }
