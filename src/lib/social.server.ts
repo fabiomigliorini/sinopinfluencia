@@ -61,7 +61,7 @@ async function providerFetch<T>(
       "Content-Type": "application/json",
       Accept: "application/json",
     },
-    body: init?.body ? JSON.stringify(init.body) : undefined,
+    ...(init?.body ? { body: JSON.stringify(init.body) } : {}),
   });
   const text = await response.text();
   if (!response.ok) {
@@ -254,8 +254,8 @@ export async function syncSocialAccount(accountRowId: string) {
         sync_status: "ok",
         sync_error: null,
         last_synced_at: now,
-        handle: metrics.handle ?? undefined,
-        profile_url: metrics.profileUrl ?? undefined,
+        handle: metrics.handle,
+        profile_url: metrics.profileUrl,
       })
       .eq("id", account.id);
 
