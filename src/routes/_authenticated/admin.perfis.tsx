@@ -287,3 +287,90 @@ function AdminSocialTools({ profileId }: { profileId: string }) {
     </>
   );
 }
+
+/** Lets the ACES team inform the Google/YouTube API key without touching code. */
+function YouTubeKeyCard() {
+  const fetchStatus = useServerFn(adminGetYouTubeKeyStatus);
+  const saveKey = useServerFn(adminSetYouTubeKey);
+  const queryClient = useQueryClient();
+  const [value, setValue] = useState("");
+
+  const { data } = useQuery({
+    queryKey: ["youtube-key-status"],
+    queryFn: () => fetchStatus(),
+  });
+
+  const mutation = useMutation({
+    mutationFn: (key: string) => saveKey({ data: { key } }),
+    onSuccess: (result) => {
+      setValue("");
+      toast.success(result.removed ? "Chave removida" : "Chave salva");
+      void queryClient.invalidateQueries({ queryKey: ["youtube-key-status"] });
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+
+  return (
+    <div className="mt-6 rounded-3xl border border-border bg-card p-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <strong className="text-[15px]">Chave da API do Google (YouTube)</strong>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Necessária para coletar inscritos e visualizações dos canais do YouTube.
+          </p>
+        </div>
+        <span
+          className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wide ${
+            data?.configured ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"
+          }`}
+        >
+          {data?.configured ? "Configurada" : "Não configurada"}
+        </span>
+      </div>
+
+      {data?.source === "panel" && data.masked ? (
+        <p className="mt-3 text-xs text-muted-foreground">
+          Chave atual: <span className="font-mono">{data.masked}</span>
+        </p>
+      ) : null}
+      {data?.source === "secret" ? (
+        <p className="mt-3 text-xs text-muted-foreground">
+          Usando a chave guardada nas configurações do projeto. Informe abaixo para substituir.
+        </p>
+      ) : null}
+
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        <input
+          value={value}
+          type="password"
+          autoComplete="off"
+          placeholder="AIza..."
+          onChange={(event) => setValue(event.target.value)}
+          className="min-w-[240px] flex-1 rounded-xl border border-input bg-background px-3 py-2 text-sm"
+        />
+        <button
+          type="button"
+          disabled={mutation.isPending || !value.trim()}
+          onClick={() => mutation.mutate(value.trim())}
+          className="rounded-full bg-primary px-5 py-2 text-xs font-bold text-primary-foreground disabled:opacity-60"
+        >
+          {mutation.isPending ? "Salvando…" : "Salvar chave"}
+        </button>
+        {data?.source === "panel" ? (
+          <button
+            type="button"
+            disabled={mutation.isPending}
+            onClick={() => mutation.mutate("")}
+            className="rounded-full border border-destructive/40 px-4 py-2 text-xs font-bold text-destructive disabled:opacity-60"
+          >
+            Remover
+          </button>
+        ) : null}
+      </div>
+      <p className="mt-3 text-xs text-muted-foreground">
+        Gere em console.cloud.google.com → APIs e serviços → Credenciais, com a
+        “YouTube Data API v3” ativada.
+      </p>
+    </div>
+  );
+}
