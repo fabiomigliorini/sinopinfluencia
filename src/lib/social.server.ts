@@ -5,15 +5,23 @@ type Network = Database["public"]["Enums"]["social_network"];
 /** Networks we can collect from public sources. Kwai/X/LinkedIn stay declared. */
 export const SUPPORTED_NETWORKS: Network[] = ["instagram", "tiktok", "youtube", "facebook"];
 
+/** Networks with no reliable public source — the creator declares the number. */
+export const DECLARED_NETWORKS: Network[] = ["linkedin", "kwai", "twitter"];
+
 export const NETWORK_LABELS: Record<string, string> = {
   instagram: "Instagram",
   tiktok: "TikTok",
   youtube: "YouTube",
   facebook: "Facebook",
+  linkedin: "LinkedIn",
+  kwai: "Kwai",
+  twitter: "X (Twitter)",
 };
 
 export type PublicMetrics = {
   handle: string | null;
+  displayName: string | null;
+  avatarUrl: string | null;
   profileUrl: string | null;
   followers: number | null;
   following: number | null;
@@ -142,6 +150,8 @@ export async function fetchInstagramPublic(handle: string): Promise<PublicMetric
     if (user) {
       return {
         handle,
+        displayName: user["full_name"] ?? null,
+        avatarUrl: user["profile_pic_url_hd"] ?? user["profile_pic_url"] ?? null,
         profileUrl,
         followers: user["edge_followed_by"]?.count ?? null,
         following: user["edge_follow"]?.count ?? null,
@@ -182,6 +192,10 @@ export async function fetchInstagramPublic(handle: string): Promise<PublicMetric
   }
   return {
     handle,
+    displayName: decodeEntities(
+      html.match(/property="og:title" content="([^"]+)"/)?.[1] ?? "",
+    ) || null,
+    avatarUrl: html.match(/property="og:image" content="([^"]+)"/)?.[1] ?? null,
     profileUrl,
     followers,
     following,
@@ -204,6 +218,11 @@ export async function fetchTikTokPublic(handle: string): Promise<PublicMetrics> 
   }
   return {
     handle,
+    displayName: html.match(/"nickname":"([^"]+)"/)?.[1] ?? null,
+    avatarUrl:
+      html.match(/"avatarLarger":"([^"]+)"/)?.[1]?.replace(/\\u002F/g, "/") ??
+      html.match(/property="og:image" content="([^"]+)"/)?.[1] ??
+      null,
     profileUrl,
     followers,
     following,
@@ -231,6 +250,10 @@ export async function fetchFacebookPublic(handle: string): Promise<PublicMetrics
   }
   return {
     handle,
+    displayName: decodeEntities(
+      html.match(/property="og:title" content="([^"]+)"/)?.[1] ?? "",
+    ) || null,
+    avatarUrl: html.match(/property="og:image" content="([^"]+)"/)?.[1] ?? null,
     profileUrl,
     followers,
     following: null,
@@ -303,6 +326,11 @@ export async function fetchYouTubePublic(handle: string): Promise<PublicMetrics>
   };
   return {
     handle: item.snippet?.customUrl?.replace(/^@/, "") ?? handle,
+    displayName: item.snippet?.title ?? null,
+    avatarUrl:
+      item.snippet?.thumbnails?.high?.url ??
+      item.snippet?.thumbnails?.default?.url ??
+      null,
     profileUrl: `https://www.youtube.com/channel/${item.id}`,
     followers: toNum(stats["subscriberCount"]),
     following: null,
@@ -339,6 +367,32 @@ export function formatFollowers(followers: number | null) {
 }
 
 /**
+ * Copies the public profile picture into our own storage, because the networks
+ * block hotlinking. Returns the app URL that serves it, or null on failure.
+ */
+export async function storeSocialAvatar(
+  accountId: string,
+  remoteUrl: string | null,
+): Promise<string | null> {
+  if (!remoteUrl) return null;
+  try {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const response = await fetch(remoteUrl, { headers: { "User-Agent": BROWSER_UA } });
+    if (!response.ok) return null;
+    const bytes = new Uint8Array(await response.arrayBuffer());
+    if (!bytes.byteLength) return null;
+    const path = `social/${accountId}.jpg`;
+    const { error } = await supabaseAdmin.storage
+      .from("profile-images")
+      .upload(path, bytes, { contentType: "image/jpeg", upsert: true });
+    if (error) return null;
+    return `/api/public/img/${path}?v=${Date.now()}`;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Collects the public numbers for one saved account, stores a snapshot and
  * refreshes the public metric row. Uses the admin client because it also runs
  * from the cron route where there is no user session.
@@ -369,6 +423,8 @@ export async function syncSocialAccount(accountRowId: string) {
       raw: metrics.raw as never,
     });
 
+    const avatarUrl = await storeSocialAvatar(account.id, metrics.avatarUrl);
+
     await supabaseAdmin
       .from("social_accounts")
       .update({
@@ -376,6 +432,9 @@ export async function syncSocialAccount(accountRowId: string) {
         sync_error: null,
         last_synced_at: now,
         profile_url: metrics.profileUrl,
+        is_declared: false,
+        ...(avatarUrl ? { avatar_url: avatarUrl } : {}),
+        ...(metrics.displayName ? { display_name: metrics.displayName } : {}),
       })
       .eq("id", account.id);
 
@@ -386,6 +445,7 @@ export async function syncSocialAccount(accountRowId: string) {
         .select("id")
         .eq("profile_id", account.profile_id)
         .eq("network", account.network)
+        .eq("handle", account.handle)
         .maybeSingle();
 
       if (existing) {
@@ -397,6 +457,8 @@ export async function syncSocialAccount(accountRowId: string) {
         await supabaseAdmin.from("profile_metrics").insert({
           profile_id: account.profile_id,
           network: account.network,
+          handle: account.handle,
+          social_account_id: account.id,
           followers: followersLabel,
           source: "api",
           verified_at: now,
