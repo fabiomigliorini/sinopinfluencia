@@ -19,6 +19,7 @@ import { Route as AuthenticatedAdminPerfisRouteImport } from './routes/_authenti
 import { Route as AuthenticatedPerfilEditRouteImport } from './routes/_authenticated/perfil.edit'
 import { Route as ApiPublicSitemapDotxmlRouteImport } from './routes/api/public/sitemap[.]xml'
 import { Route as ApiPublicImgSplatRouteImport } from './routes/api/public/img.$'
+import { Route as ApiPublicWebhooksInsightiqRouteImport } from './routes/api/public/webhooks/insightiq'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -70,6 +71,12 @@ const ApiPublicImgSplatRoute = ApiPublicImgSplatRouteImport.update({
   path: '/api/public/img/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicWebhooksInsightiqRoute =
+  ApiPublicWebhooksInsightiqRouteImport.update({
+    id: '/api/public/webhooks/insightiq',
+    path: '/api/public/webhooks/insightiq',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -81,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/perfil/edit': typeof AuthenticatedPerfilEditRoute
   '/api/public/sitemap.xml': typeof ApiPublicSitemapDotxmlRoute
   '/api/public/img/$': typeof ApiPublicImgSplatRoute
+  '/api/public/webhooks/insightiq': typeof ApiPublicWebhooksInsightiqRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -92,6 +100,7 @@ export interface FileRoutesByTo {
   '/perfil/edit': typeof AuthenticatedPerfilEditRoute
   '/api/public/sitemap.xml': typeof ApiPublicSitemapDotxmlRoute
   '/api/public/img/$': typeof ApiPublicImgSplatRoute
+  '/api/public/webhooks/insightiq': typeof ApiPublicWebhooksInsightiqRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -105,6 +114,7 @@ export interface FileRoutesById {
   '/_authenticated/perfil/edit': typeof AuthenticatedPerfilEditRoute
   '/api/public/sitemap.xml': typeof ApiPublicSitemapDotxmlRoute
   '/api/public/img/$': typeof ApiPublicImgSplatRoute
+  '/api/public/webhooks/insightiq': typeof ApiPublicWebhooksInsightiqRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -118,6 +128,7 @@ export interface FileRouteTypes {
     | '/perfil/edit'
     | '/api/public/sitemap.xml'
     | '/api/public/img/$'
+    | '/api/public/webhooks/insightiq'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -129,6 +140,7 @@ export interface FileRouteTypes {
     | '/perfil/edit'
     | '/api/public/sitemap.xml'
     | '/api/public/img/$'
+    | '/api/public/webhooks/insightiq'
   id:
     | '__root__'
     | '/'
@@ -141,6 +153,7 @@ export interface FileRouteTypes {
     | '/_authenticated/perfil/edit'
     | '/api/public/sitemap.xml'
     | '/api/public/img/$'
+    | '/api/public/webhooks/insightiq'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -151,6 +164,7 @@ export interface RootRouteChildren {
   DiretorioRoute: typeof DiretorioRoute
   ApiPublicSitemapDotxmlRoute: typeof ApiPublicSitemapDotxmlRoute
   ApiPublicImgSplatRoute: typeof ApiPublicImgSplatRoute
+  ApiPublicWebhooksInsightiqRoute: typeof ApiPublicWebhooksInsightiqRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -225,6 +239,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicImgSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/webhooks/insightiq': {
+      id: '/api/public/webhooks/insightiq'
+      path: '/api/public/webhooks/insightiq'
+      fullPath: '/api/public/webhooks/insightiq'
+      preLoaderRoute: typeof ApiPublicWebhooksInsightiqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -251,6 +272,7 @@ const rootRouteChildren: RootRouteChildren = {
   DiretorioRoute: DiretorioRoute,
   ApiPublicSitemapDotxmlRoute: ApiPublicSitemapDotxmlRoute,
   ApiPublicImgSplatRoute: ApiPublicImgSplatRoute,
+  ApiPublicWebhooksInsightiqRoute: ApiPublicWebhooksInsightiqRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
