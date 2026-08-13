@@ -20,7 +20,7 @@ Botão "Vincular nova rede" abre um dialog:
 2. **Informar o @** — campo com o @ ou o link do perfil, dica específica da rede, botão "Buscar dados".
 3. **Confirmar** — mostra o que foi coletado (seguidores, publicações, curtidas/visualizações, foto do perfil). Se a coleta falhar, o passo abre um campo para o criador digitar os seguidores manualmente (marcado como declarado). Ao confirmar, o dialog fecha e a listagem é atualizada.
 
-O mesmo wizard serve para editar uma conta já vinculada (reabre no passo 2 com o @ preenchido).
+O wizard serve **apenas para adicionar** uma conta. Não há edição de @: para trocar o @, o criador remove a conta no card e adiciona de novo pelo wizard.
 
 ## Listagem em cards
 
@@ -29,7 +29,9 @@ Cada conta vinculada vira um card com:
 - @ da conta, com link para o perfil na rede.
 - Seguidores, publicações e curtidas/visualizações.
 - Etiqueta "Dados públicos · data" ou "Declarado pelo criador".
-- Ações: "Atualizar agora", "Editar @", "Remover".
+- Ações ao lado do número de seguidores: "Atualizar agora" (nova coleta) e "Informar manualmente" (campo inline que grava o número declarado).
+- Ação "Remover" no card — é também o caminho para corrigir um @ errado (remover e adicionar de novo).
+
 
 ## Foto de perfil da rede
 
