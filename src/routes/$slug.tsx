@@ -148,6 +148,7 @@ function ProfilePage() {
                   network={metric.network}
                   followers={metric.followers ?? "—"}
                   verified={metric.source === "api" && Boolean(metric.verified_at)}
+                  verifiedAt={metric.verified_at ?? null}
                 />
               ))}
               {mainMetrics.length === 0 && (
