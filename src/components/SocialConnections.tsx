@@ -5,8 +5,10 @@ import { toast } from "sonner";
 import {
   getSocialIntegrationStatus,
   listMyConnections,
+  listMyNetworkMetrics,
   removeMyAccount,
   saveNetworkHandle,
+  setManualMetric,
   syncMyAccount,
 } from "@/lib/social.functions";
 
@@ -51,8 +53,11 @@ export function SocialConnections() {
   const saveHandle = useServerFn(saveNetworkHandle);
   const syncAccount = useServerFn(syncMyAccount);
   const removeAccount = useServerFn(removeMyAccount);
+  const fetchMetrics = useServerFn(listMyNetworkMetrics);
+  const saveManual = useServerFn(setManualMetric);
 
   const [drafts, setDrafts] = useState<Record<string, string>>({});
+  const [manualDrafts, setManualDrafts] = useState<Record<string, string>>({});
 
   const status = useQuery({
     queryKey: ["social-integration-status"],
@@ -63,6 +68,24 @@ export function SocialConnections() {
     queryKey: ["my-social-connections"],
     queryFn: () => fetchConnections(),
   });
+
+  const metrics = useQuery({
+    queryKey: ["my-network-metrics"],
+    queryFn: () => fetchMetrics(),
+  });
+
+  useEffect(() => {
+    if (!metrics.data) return;
+    setManualDrafts((current) => {
+      const next = { ...current };
+      for (const metric of metrics.data) {
+        if (next[metric.network] === undefined && metric.source === "manual") {
+          next[metric.network] = metric.followers ?? "";
+        }
+      }
+      return next;
+    });
+  }, [metrics.data]);
 
   useEffect(() => {
     if (!connections.data) return;
@@ -78,6 +101,7 @@ export function SocialConnections() {
   function refresh() {
     void queryClient.invalidateQueries({ queryKey: ["my-social-connections"] });
     void queryClient.invalidateQueries({ queryKey: ["my-profile"] });
+    void queryClient.invalidateQueries({ queryKey: ["my-network-metrics"] });
   }
 
   const saveMutation = useMutation({
@@ -109,6 +133,17 @@ export function SocialConnections() {
     onError: (error: Error) => toast.error(error.message),
   });
 
+  const manualMutation = useMutation({
+    mutationFn: (input: { network: Network; followers: string }) => saveManual({ data: input }),
+    onSuccess: (result) => {
+      toast.success(
+        result.removed ? "Número manual removido" : "Número manual salvo (marcado como declarado)",
+      );
+      refresh();
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+
   const accounts = connections.data ?? [];
 
   return (
@@ -131,6 +166,10 @@ export function SocialConnections() {
         {NETWORKS.map((network) => {
           const account = accounts.find((a) => a.network === network.id);
           const value = drafts[network.id] ?? account?.handle ?? "";
+          const metric = (metrics.data ?? []).find((m) => m.network === network.id);
+          const manualValue =
+            manualDrafts[network.id] ??
+            (metric?.source === "manual" ? (metric.followers ?? "") : "");
           const busy =
             (saveMutation.isPending && saveMutation.variables?.network === network.id) ||
             (syncMutation.isPending && syncMutation.variables === account?.id);
@@ -206,9 +245,61 @@ export function SocialConnections() {
 
               {account?.sync_status === "error" && account.sync_error ? (
                 <p className="mt-1 text-xs text-destructive">
-                  {account.sync_error} — o número informado por você continua valendo.
+                  {account.sync_error} — informe o número manualmente abaixo.
                 </p>
               ) : null}
+
+              <div className="mt-3 rounded-xl border border-dashed border-border p-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <label
+                    className="text-xs font-bold"
+                    htmlFor={`manual-${network.id}`}
+                  >
+                    Informar seguidores manualmente
+                  </label>
+                  {metric?.source === "manual" ? (
+                    <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide">
+                      Declarado pelo criador
+                    </span>
+                  ) : null}
+                  {metric?.source === "api" ? (
+                    <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary-foreground">
+                      Dados públicos
+                    </span>
+                  ) : null}
+                </div>
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <input
+                    id={`manual-${network.id}`}
+                    value={manualValue}
+                    placeholder="Ex.: 12,4 mil ou 12400"
+                    onChange={(event) =>
+                      setManualDrafts((current) => ({
+                        ...current,
+                        [network.id]: event.target.value,
+                      }))
+                    }
+                    className="min-w-[160px] flex-1 rounded-xl border border-input bg-background px-3 py-2 text-sm"
+                  />
+                  <button
+                    type="button"
+                    disabled={manualMutation.isPending}
+                    onClick={() =>
+                      manualMutation.mutate({
+                        network: network.id,
+                        followers: manualValue.trim(),
+                      })
+                    }
+                    className="rounded-full border border-border px-4 py-2 text-xs font-bold transition hover:bg-accent disabled:opacity-60"
+                  >
+                    {manualMutation.isPending ? "Salvando…" : "Salvar manual"}
+                  </button>
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Use quando a coleta automática falhar. O perfil público mostra que o número foi
+                  declarado por você. Uma nova coleta bem-sucedida substitui esse valor.
+                </p>
+              </div>
             </div>
           );
         })}
