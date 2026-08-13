@@ -100,15 +100,31 @@ export function SocialAccountCards() {
   });
 
   const declareMutation = useMutation({
-    mutationFn: (input: { accountRowId: string; followers: string }) => runDeclare({ data: input }),
+    mutationFn: (input: {
+      accountRowId: string;
+      followers: string;
+      posts?: string;
+      likes?: string;
+      views?: string;
+    }) => runDeclare({ data: input }),
     onSuccess: () => {
-      toast.success("Número atualizado.");
+      toast.success("Números atualizados.");
       setManualFor(null);
-      setManualValue("");
       refresh();
     },
     onError: (error: Error) => toast.error(error.message),
   });
+
+  function openManual(account: Account) {
+    setManualFor(account);
+    setManualForm({
+      followers: account.declared_followers ?? "",
+      posts: account.latest?.posts_count != null ? String(account.latest.posts_count) : "",
+      likes: account.latest?.avg_likes != null ? String(account.latest.avg_likes) : "",
+      views: account.latest?.avg_views != null ? String(account.latest.avg_views) : "",
+    });
+  }
+
 
   const accounts = accountsQuery.data ?? [];
 
