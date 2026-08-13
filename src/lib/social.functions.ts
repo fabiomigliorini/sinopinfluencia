@@ -283,3 +283,66 @@ export const adminSetYouTubeKey = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true, removed: false };
   });
+
+/** Numbers shown on the public profile, so the creator sees manual vs collected. */
+export const listMyNetworkMetrics = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data: profile } = await context.supabase
+      .from("profiles")
+      .select("id")
+      .eq("user_id", context.userId)
+      .maybeSingle();
+    if (!profile) return [];
+
+    const { data, error } = await context.supabase
+      .from("profile_metrics")
+      .select("id, network, followers, source, verified_at")
+      .eq("profile_id", profile.id);
+    if (error) throw new Error(error.message);
+    return data ?? [];
+  });
+
+/**
+ * Fallback for when the public collection fails (private profiles, personal
+ * Facebook pages): the creator types the number and it is flagged as manual.
+ */
+export const setManualMetric = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        network: z.enum([
+          "instagram",
+          "tiktok",
+          "youtube",
+          "facebook",
+          "twitter",
+          "kwai",
+          "linkedin",
+        ]),
+        followers: z.string().trim().max(20),
+      })
+      .parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const profileId = await getMyProfileId(context.supabase, context.userId);
+
+    await context.supabase
+      .from("profile_metrics")
+      .delete()
+      .eq("profile_id", profileId)
+      .eq("network", data.network);
+
+    if (!data.followers) return { ok: true, removed: true };
+
+    const { error } = await context.supabase.from("profile_metrics").insert({
+      profile_id: profileId,
+      network: data.network,
+      followers: data.followers,
+      source: "manual",
+      verified_at: null,
+    });
+    if (error) throw new Error(error.message);
+    return { ok: true, removed: false };
+  });
