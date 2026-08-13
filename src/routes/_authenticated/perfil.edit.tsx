@@ -38,6 +38,7 @@ const NETWORKS = [
   { value: "facebook", label: "Facebook" },
   { value: "twitter", label: "X / Twitter" },
   { value: "kwai", label: "Kwai" },
+  { value: "linkedin", label: "LinkedIn" },
 ] as const;
 
 const FORMAT_OPTIONS = [

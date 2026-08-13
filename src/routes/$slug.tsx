@@ -217,6 +217,7 @@ function MetricCard({
     kwai: { icon: "🎬", color: "#FF6600" },
     facebook: { icon: "📘", color: "#1877F2" },
     twitter: { icon: "🐦", color: "#1DA1F2" },
+    linkedin: { icon: "💼", color: "#0A66C2" },
   };
   const { icon, color } = labels[network] ?? { icon: "🔗", color: "#0D4424" };
 
