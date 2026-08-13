@@ -9,7 +9,7 @@ export const getSocialIntegrationStatus = createServerFn({ method: "GET" }).hand
   const { SUPPORTED_NETWORKS, hasYouTubeKey } = await import("./social.server");
   return {
     enabled: true,
-    youtubeEnabled: hasYouTubeKey(),
+    youtubeEnabled: await hasYouTubeKey(),
     networks: SUPPORTED_NETWORKS,
   };
 });
