@@ -148,29 +148,35 @@ export async function fetchInstagramPublic(handle: string): Promise<PublicMetric
     /* fall back to the public HTML page */
   }
 
-  const html = await getText(profileUrl);
+  // Public link preview: Meta serves counters in og:description to crawlers.
+  const html = await getText(profileUrl, { "User-Agent": CRAWLER_UA });
+  const description = decodeEntities(
+    html.match(/property="og:description" content="([^"]+)"/)?.[1] ??
+      html.match(/name="description" content="([^"]+)"/)?.[1] ??
+      "",
+  );
   const followers =
     firstNumber(/"edge_followed_by":\{"count":(\d+)\}/, html) ??
-    firstNumber(/"follower_count":(\d+)/, html);
+    firstNumber(/"follower_count":(\d+)/, html) ??
+    numberBefore(description, /(?:followers|seguidores)/i);
   const posts =
     firstNumber(/"edge_owner_to_timeline_media":\{"count":(\d+)/, html) ??
-    firstNumber(/"media_count":(\d+)/, html);
-  const description = html.match(/<meta property="og:description" content="([^"]+)"/)?.[1] ?? "";
-  const metaFollowers = description.match(/([\d.,]+\s*(?:K|M|mil|mi)?)\s*(?:Followers|seguidores)/i);
+    firstNumber(/"media_count":(\d+)/, html) ??
+    numberBefore(description, /(?:posts|publica[çc][õo]es)/i);
+  const following = numberBefore(description, /(?:following|seguindo)/i);
 
-  const resolved = followers ?? (metaFollowers ? compactToNumber(metaFollowers[1]!) : null);
-  if (resolved === null) {
+  if (followers === null) {
     throw new Error("Não foi possível ler os seguidores públicos do Instagram");
   }
   return {
     handle,
     profileUrl,
-    followers: resolved,
-    following: null,
+    followers,
+    following,
     postsCount: posts,
     likes: null,
     views: null,
-    raw: { source: "instagram_html", description },
+    raw: { source: "instagram_preview", description },
   };
 }
 
