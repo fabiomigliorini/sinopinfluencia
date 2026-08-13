@@ -488,6 +488,7 @@ export async function syncProfileAccounts(profileId: string) {
     .from("social_accounts")
     .select("id, network")
     .eq("profile_id", profileId)
+    .eq("is_declared", false)
     .not("handle", "is", null);
 
   const results: Array<{ network: string; ok: boolean; error?: string }> = [];
