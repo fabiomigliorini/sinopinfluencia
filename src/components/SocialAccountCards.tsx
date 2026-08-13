@@ -52,8 +52,13 @@ export function SocialAccountCards() {
   const runDeclare = useServerFn(setDeclaredFollowers);
 
   const [wizardOpen, setWizardOpen] = useState(false);
-  const [manualFor, setManualFor] = useState<string | null>(null);
-  const [manualValue, setManualValue] = useState("");
+  const [manualFor, setManualFor] = useState<Account | null>(null);
+  const [manualForm, setManualForm] = useState({
+    followers: "",
+    posts: "",
+    likes: "",
+    views: "",
+  });
 
   const statusQuery = useQuery({
     queryKey: ["social-status"],
