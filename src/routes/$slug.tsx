@@ -14,12 +14,25 @@ export const Route = createFileRoute("/$slug")({
   loader: ({ context, params }) =>
     context.queryClient.ensureQueryData(profileQueryOptions(params.slug)),
   head: ({ loaderData }) => {
-    const title = loaderData?.profile.display_name
-      ? `${loaderData.profile.display_name} — Sinop Influencia`
-      : "Perfil — Sinop Influencia";
+    if (!loaderData) {
+      return {
+        meta: [
+          { title: "Perfil indisponível — Sinop Influencia" },
+          { name: "robots", content: "noindex" },
+        ],
+      };
+    }
+    const { profile } = loaderData;
+    const title = `${profile.display_name} — Criador de conteúdo em ${profile.city ?? "Sinop, MT"}`;
     const description =
-      loaderData?.profile.bio ??
-      "Veja o perfil deste criador de conteúdo certificado pela ACES em Sinop.";
+      profile.bio ??
+      `Perfil de ${profile.display_name}, criador de conteúdo certificado pela ACES em Sinop.`;
+    const image = profile.avatar_url
+      ? profile.avatar_url.startsWith("http")
+        ? profile.avatar_url
+        : `${SITE_URL}${profile.avatar_url}`
+      : null;
+
     return {
       meta: [
         { title },
@@ -28,11 +41,38 @@ export const Route = createFileRoute("/$slug")({
         { property: "og:description", content: description },
         { property: "og:type", content: "profile" },
         { name: "twitter:card", content: "summary_large_image" },
+        ...(image
+          ? [
+              { property: "og:image", content: image },
+              { name: "twitter:image", content: image },
+            ]
+          : []),
+      ],
+      links: [{ rel: "canonical", href: `${SITE_URL}/${profile.slug}` }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Person",
+            name: profile.display_name,
+            description,
+            ...(image ? { image } : {}),
+            jobTitle: profile.niche ?? "Criador de conteúdo",
+            url: `${SITE_URL}/${profile.slug}`,
+            address: {
+              "@type": "PostalAddress",
+              addressLocality: profile.city ?? "Sinop, MT",
+              addressCountry: "BR",
+            },
+          }),
+        },
       ],
     };
   },
   component: ProfilePage,
 });
+
 
 function ProfilePage() {
   const { slug } = Route.useParams();
