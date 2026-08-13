@@ -20,6 +20,7 @@ async function handle(request: Request) {
   const { data: accounts, error } = await supabaseAdmin
     .from("social_accounts")
     .select("id, network, handle")
+    .eq("is_declared", false)
     .not("handle", "is", null);
   if (error) return new Response(error.message, { status: 500 });
 

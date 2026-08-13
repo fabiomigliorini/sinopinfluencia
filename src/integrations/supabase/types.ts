@@ -91,27 +91,33 @@ export type Database = {
         Row: {
           audience_pct: number | null
           followers: string | null
+          handle: string | null
           id: string
           network: Database["public"]["Enums"]["social_network"]
           profile_id: string
+          social_account_id: string | null
           source: Database["public"]["Enums"]["metric_source"]
           verified_at: string | null
         }
         Insert: {
           audience_pct?: number | null
           followers?: string | null
+          handle?: string | null
           id?: string
           network: Database["public"]["Enums"]["social_network"]
           profile_id: string
+          social_account_id?: string | null
           source?: Database["public"]["Enums"]["metric_source"]
           verified_at?: string | null
         }
         Update: {
           audience_pct?: number | null
           followers?: string | null
+          handle?: string | null
           id?: string
           network?: Database["public"]["Enums"]["social_network"]
           profile_id?: string
+          social_account_id?: string | null
           source?: Database["public"]["Enums"]["metric_source"]
           verified_at?: string | null
         }
@@ -121,6 +127,13 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profile_metrics_social_account_id_fkey"
+            columns: ["social_account_id"]
+            isOneToOne: false
+            referencedRelation: "social_accounts"
             referencedColumns: ["id"]
           },
         ]
@@ -228,10 +241,14 @@ export type Database = {
       }
       social_accounts: {
         Row: {
+          avatar_url: string | null
           connected_at: string
           created_at: string
+          declared_followers: string | null
+          display_name: string | null
           handle: string | null
           id: string
+          is_declared: boolean
           last_synced_at: string | null
           network: Database["public"]["Enums"]["social_network"]
           profile_id: string
@@ -244,10 +261,14 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          avatar_url?: string | null
           connected_at?: string
           created_at?: string
+          declared_followers?: string | null
+          display_name?: string | null
           handle?: string | null
           id?: string
+          is_declared?: boolean
           last_synced_at?: string | null
           network: Database["public"]["Enums"]["social_network"]
           profile_id: string
@@ -260,10 +281,14 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          avatar_url?: string | null
           connected_at?: string
           created_at?: string
+          declared_followers?: string | null
+          display_name?: string | null
           handle?: string | null
           id?: string
+          is_declared?: boolean
           last_synced_at?: string | null
           network?: Database["public"]["Enums"]["social_network"]
           profile_id?: string

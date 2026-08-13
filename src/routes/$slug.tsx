@@ -1,3 +1,4 @@
+import { NetworkBadge, networkLabel } from "@/components/network-icons";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { getProfileBySlug } from "@/lib/profiles.functions";
@@ -87,7 +88,7 @@ function ProfilePage() {
     .map((n) => n[0]?.toUpperCase() ?? "")
     .join("");
 
-  const mainMetrics = metrics.slice(0, 3);
+  const mainMetrics = metrics.slice(0, 6);
 
   return (
     <div className="bg-background pb-16 pt-8">
@@ -146,6 +147,7 @@ function ProfilePage() {
                 <MetricCard
                   key={metric.id}
                   network={metric.network}
+                  handle={metric.handle ?? null}
                   followers={metric.followers ?? "—"}
                   verified={metric.source === "api" && Boolean(metric.verified_at)}
                   verifiedAt={metric.verified_at ?? null}
@@ -249,32 +251,23 @@ function ProfilePage() {
 
 function MetricCard({
   network,
+  handle = null,
   followers,
   verified = false,
   verifiedAt = null,
 }: {
   network: string;
+  handle?: string | null;
   followers: string;
   verified?: boolean;
   verifiedAt?: string | null;
 }) {
-  const labels: Record<string, { icon: string; color: string }> = {
-    instagram: { icon: "📸", color: "#E1306C" },
-    tiktok: { icon: "🎵", color: "#000000" },
-    youtube: { icon: "▶️", color: "#FF0000" },
-    kwai: { icon: "🎬", color: "#FF6600" },
-    facebook: { icon: "📘", color: "#1877F2" },
-    twitter: { icon: "🐦", color: "#1DA1F2" },
-    linkedin: { icon: "💼", color: "#0A66C2" },
-  };
-  const { icon, color } = labels[network] ?? { icon: "🔗", color: "#0D4424" };
-
   return (
     <div className="rounded-2xl border border-border bg-card p-5 transition hover:border-primary/30">
       <div className="flex items-center gap-2">
-        <span style={{ color }}>{icon}</span>
-        <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-          {network}
+        <NetworkBadge network={network} className="h-7 w-7" iconClassName="h-3.5 w-3.5" />
+        <span className="min-w-0 truncate text-xs font-bold uppercase tracking-wider text-muted-foreground">
+          {handle ? `@${handle}` : networkLabel(network)}
         </span>
       </div>
       <div className="mt-2 flex items-center gap-2">

@@ -10,7 +10,7 @@ import {
   type ProfileInput,
 } from "@/lib/account.functions";
 import { ImageUpload } from "@/components/ImageUpload";
-import { SocialConnections } from "@/components/SocialConnections";
+import { SocialAccountCards } from "@/components/SocialAccountCards";
 
 export const Route = createFileRoute("/_authenticated/perfil/edit")({
   component: EditProfilePage,
@@ -60,7 +60,6 @@ const field =
   "w-full rounded-2xl border border-border bg-background px-4 py-2.5 text-sm outline-none transition focus:border-primary";
 const labelCls = "text-xs font-bold uppercase tracking-widest text-muted-foreground";
 
-type MetricRow = { network: string; followers: string; audience_pct: string };
 type WorkRow = { title: string; description: string; image_url: string };
 
 function EditProfilePage() {
@@ -86,7 +85,6 @@ function EditProfilePage() {
     email: "",
     avatar_url: "",
   });
-  const [metrics, setMetrics] = useState<MetricRow[]>([]);
   const [formats, setFormats] = useState<string[]>([]);
   const [brands, setBrands] = useState<string>("");
   const [works, setWorks] = useState<WorkRow[]>([]);
@@ -105,13 +103,6 @@ function EditProfilePage() {
       email: p.email ?? "",
       avatar_url: p.avatar_url ?? "",
     });
-    setMetrics(
-      data.metrics.map((m) => ({
-        network: m.network,
-        followers: m.followers ?? "",
-        audience_pct: m.audience_pct != null ? String(m.audience_pct) : "",
-      })),
-    );
     setFormats(data.formats.map((f) => f.format));
     setBrands(data.brands.map((b) => b.brand_name).join(", "));
     setWorks(
@@ -134,13 +125,7 @@ function EditProfilePage() {
       whatsapp: form.whatsapp.trim() || null,
       email: form.email.trim() || null,
       avatar_url: form.avatar_url.trim() || null,
-      metrics: metrics
-        .filter((m) => m.network)
-        .map((m) => ({
-          network: m.network as NonNullable<ProfileInput["main_network"]>,
-          followers: m.followers.trim() || null,
-          audience_pct: m.audience_pct ? Number(m.audience_pct) : null,
-        })),
+      metrics: [],
       formats,
       brands: brands
         .split(",")
@@ -302,76 +287,7 @@ function EditProfilePage() {
           </div>
         </section>
 
-        <SocialConnections />
-
-        <section className="rounded-3xl border border-border bg-card p-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold">Métricas por rede</h2>
-            <button
-              type="button"
-              onClick={() =>
-                setMetrics([...metrics, { network: "instagram", followers: "", audience_pct: "" }])
-              }
-              className="rounded-full border border-border px-4 py-2 text-xs font-bold transition hover:bg-accent"
-            >
-              Adicionar rede
-            </button>
-          </div>
-          <div className="mt-5 space-y-3">
-            {metrics.length === 0 && (
-              <p className="text-sm text-muted-foreground">Nenhuma rede adicionada.</p>
-            )}
-            {metrics.map((m, i) => (
-              <div key={i} className="grid gap-3 md:grid-cols-[1fr_1fr_1fr_auto]">
-                <select
-                  className={field}
-                  value={m.network}
-                  onChange={(e) => {
-                    const next = [...metrics];
-                    next[i] = { ...m, network: e.target.value };
-                    setMetrics(next);
-                  }}
-                >
-                  {NETWORKS.map((n) => (
-                    <option key={n.value} value={n.value}>
-                      {n.label}
-                    </option>
-                  ))}
-                </select>
-                <input
-                  className={field}
-                  placeholder="Seguidores (ex.: 18,4 mil)"
-                  value={m.followers}
-                  onChange={(e) => {
-                    const next = [...metrics];
-                    next[i] = { ...m, followers: e.target.value };
-                    setMetrics(next);
-                  }}
-                />
-                <input
-                  className={field}
-                  type="number"
-                  min={0}
-                  max={100}
-                  placeholder="% público local"
-                  value={m.audience_pct}
-                  onChange={(e) => {
-                    const next = [...metrics];
-                    next[i] = { ...m, audience_pct: e.target.value };
-                    setMetrics(next);
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={() => setMetrics(metrics.filter((_, idx) => idx !== i))}
-                  className="rounded-2xl border border-border px-4 text-xs font-bold text-destructive transition hover:bg-destructive/10"
-                >
-                  Remover
-                </button>
-              </div>
-            ))}
-          </div>
-        </section>
+        <SocialAccountCards />
 
         <section className="rounded-3xl border border-border bg-card p-6">
           <h2 className="text-lg font-bold">Formatos de trabalho</h2>

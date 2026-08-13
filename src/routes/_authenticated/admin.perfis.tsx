@@ -10,7 +10,7 @@ import {
 } from "@/lib/account.functions";
 import {
   adminGetYouTubeKeyStatus,
-  adminSetHandle,
+  adminAddAccount,
   adminSetYouTubeKey,
   adminSyncProfile,
 } from "@/lib/social.functions";
@@ -203,22 +203,34 @@ function AdminProfilesPage() {
   );
 }
 
-const ADMIN_NETWORKS = ["instagram", "tiktok", "youtube", "facebook"] as const;
+const ADMIN_NETWORKS = [
+  "instagram",
+  "tiktok",
+  "youtube",
+  "facebook",
+  "linkedin",
+  "kwai",
+  "twitter",
+] as const;
 
 /** Lets the curation team correct a creator's @ and force a public refresh. */
 function AdminSocialTools({ profileId }: { profileId: string }) {
   const [open, setOpen] = useState(false);
   const [network, setNetwork] = useState<(typeof ADMIN_NETWORKS)[number]>("instagram");
   const [handle, setHandle] = useState("");
-  const setHandleFn = useServerFn(adminSetHandle);
+  const addAccountFn = useServerFn(adminAddAccount);
   const syncFn = useServerFn(adminSyncProfile);
   const queryClient = useQueryClient();
 
   const saveMutation = useMutation({
-    mutationFn: () => setHandleFn({ data: { profileId, network, handle: handle.trim() } }),
+    mutationFn: () =>
+      addAccountFn({ data: { profileId, network, handle: handle.trim() } }) as Promise<{
+        ok: boolean;
+        error: string | null;
+      }>,
     onSuccess: (result) => {
       if (result.error) toast.warning(`Salvo, mas a coleta falhou: ${result.error}`);
-      else toast.success("@ salvo e métricas atualizadas");
+      else toast.success("@ vinculado e métricas atualizadas");
       void queryClient.invalidateQueries({ queryKey: ["admin-profiles"] });
     },
     onError: (error: Error) => toast.error(error.message),
