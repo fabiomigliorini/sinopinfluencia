@@ -279,12 +279,79 @@ export function SocialAccountCards() {
         })}
       </div>
 
+      <Dialog open={Boolean(manualFor)} onOpenChange={(open) => !open && setManualFor(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Informar números manualmente</DialogTitle>
+            <DialogDescription>
+              {manualFor
+                ? `${networkLabel(manualFor.network)} · @${manualFor.handle}`
+                : ""}{" "}
+              — os valores informados aparecem no perfil como declarados pelo criador.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            {(
+              [
+                { key: "followers", label: "Seguidores", placeholder: "Ex.: 18400" },
+                { key: "posts", label: "Posts", placeholder: "Ex.: 291" },
+                { key: "likes", label: "Curtidas", placeholder: "Ex.: 1200" },
+                { key: "views", label: "Views", placeholder: "Ex.: 8500" },
+              ] as const
+            ).map((f) => (
+              <label key={f.key} className="space-y-1.5">
+                <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                  {f.label}
+                </span>
+                <input
+                  className="w-full rounded-2xl border border-border bg-background px-3 py-2 text-sm outline-none transition focus:border-primary"
+                  placeholder={f.placeholder}
+                  inputMode="numeric"
+                  maxLength={20}
+                  value={manualForm[f.key]}
+                  onChange={(e) => setManualForm({ ...manualForm, [f.key]: e.target.value })}
+                />
+              </label>
+            ))}
+          </div>
+
+          <DialogFooter className="gap-2 sm:justify-end">
+            <button
+              type="button"
+              onClick={() => setManualFor(null)}
+              className="rounded-full border border-border px-5 py-2 text-xs font-bold transition hover:bg-accent"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              disabled={declareMutation.isPending}
+              onClick={() =>
+                manualFor &&
+                declareMutation.mutate({
+                  accountRowId: manualFor.id,
+                  followers: manualForm.followers.trim(),
+                  posts: manualForm.posts.trim(),
+                  likes: manualForm.likes.trim(),
+                  views: manualForm.views.trim(),
+                })
+              }
+              className="rounded-full bg-primary px-5 py-2 text-xs font-bold text-primary-foreground transition hover:opacity-90 disabled:opacity-50"
+            >
+              Salvar
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <SocialAccountWizard
         open={wizardOpen}
         onOpenChange={setWizardOpen}
         onDone={refresh}
         youtubeEnabled={statusQuery.data?.youtubeEnabled ?? false}
       />
+
     </section>
   );
 }
