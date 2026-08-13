@@ -10,7 +10,7 @@ import {
   type ProfileInput,
 } from "@/lib/account.functions";
 import { ImageUpload } from "@/components/ImageUpload";
-import { SocialConnections } from "@/components/SocialConnections";
+import { SocialAccountCards } from "@/components/SocialAccountCards";
 
 export const Route = createFileRoute("/_authenticated/perfil/edit")({
   component: EditProfilePage,
@@ -302,7 +302,7 @@ function EditProfilePage() {
           </div>
         </section>
 
-        <SocialConnections />
+        <SocialAccountCards />
 
         <section className="rounded-3xl border border-border bg-card p-6">
           <div className="flex items-center justify-between">
