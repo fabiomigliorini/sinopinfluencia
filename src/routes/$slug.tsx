@@ -251,10 +251,12 @@ function MetricCard({
   network,
   followers,
   verified = false,
+  verifiedAt = null,
 }: {
   network: string;
   followers: string;
   verified?: boolean;
+  verifiedAt?: string | null;
 }) {
   const labels: Record<string, { icon: string; color: string }> = {
     instagram: { icon: "📸", color: "#E1306C" },
