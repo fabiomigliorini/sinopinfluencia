@@ -10,6 +10,9 @@ import {
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
+import brandMark from "@/assets/sinop-influencia-mark.png.asset.json";
+import brandLockup from "@/assets/sinop-influencia-logo.png.asset.json";
+
 import { supabase } from "@/integrations/supabase/client";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
