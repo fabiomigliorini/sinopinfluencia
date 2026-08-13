@@ -232,6 +232,7 @@ export const setDeclaredFollowers = createServerFn({ method: "POST" })
       .from("social_accounts")
       .select("id, network, handle")
       .eq("id", data.accountRowId)
+      .eq("profile_id", profileId)
       .maybeSingle();
     if (!account) throw new Error("Rede não encontrada");
 
