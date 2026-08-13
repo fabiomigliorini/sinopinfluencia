@@ -1,6 +1,7 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { ImageCropDialog } from "@/components/ImageCropDialog";
 
 const MAX_BYTES = 5 * 1024 * 1024;
 
@@ -9,29 +10,57 @@ type Props = {
   onChange: (url: string) => void;
   label?: string;
   round?: boolean;
+  aspect?: number;
 };
 
-export function ImageUpload({ value, onChange, label = "Imagem", round = false }: Props) {
+export function ImageUpload({
+  value,
+  onChange,
+  label = "Imagem",
+  round = false,
+  aspect,
+}: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const [pending, setPending] = useState<{ file: File; src: string } | null>(null);
 
-  async function handleFile(file: File) {
+  useEffect(() => {
+    return () => {
+      if (pending) URL.revokeObjectURL(pending.src);
+    };
+  }, [pending]);
+
+  function clearInput() {
+    if (inputRef.current) inputRef.current.value = "";
+  }
+
+  function closeCrop() {
+    if (pending) URL.revokeObjectURL(pending.src);
+    setPending(null);
+    clearInput();
+  }
+
+  function pickFile(file: File) {
     if (!file.type.startsWith("image/")) {
       toast.error("Envie um arquivo de imagem");
+      clearInput();
       return;
     }
     if (file.size > MAX_BYTES) {
       toast.error("A imagem deve ter no máximo 5 MB");
+      clearInput();
       return;
     }
+    setPending({ file, src: URL.createObjectURL(file) });
+  }
 
+  async function uploadFile(file: File) {
     setUploading(true);
     try {
       const { data: userData, error: userError } = await supabase.auth.getUser();
       if (userError || !userData.user) throw new Error("Sessão expirada, entre novamente");
 
-      const ext = (file.name.split(".").pop() ?? "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
-      const path = `${userData.user.id}/${crypto.randomUUID()}.${ext || "jpg"}`;
+      const path = `${userData.user.id}/${crypto.randomUUID()}.jpg`;
       const { error } = await supabase.storage
         .from("profile-images")
         .upload(path, file, { contentType: file.type, upsert: false });
@@ -43,9 +72,10 @@ export function ImageUpload({ value, onChange, label = "Imagem", round = false }
       toast.error(error instanceof Error ? error.message : "Falha no envio");
     } finally {
       setUploading(false);
-      if (inputRef.current) inputRef.current.value = "";
+      clearInput();
     }
   }
+
 
   return (
     <div className="space-y-2">
