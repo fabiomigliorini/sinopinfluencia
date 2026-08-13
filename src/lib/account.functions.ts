@@ -118,22 +118,11 @@ export const updateMyProfile = createServerFn({ method: "POST" })
     if (updateError) throw new Error(updateError.message);
 
     await Promise.all([
-      supabase.from("profile_metrics").delete().eq("profile_id", profileId),
       supabase.from("profile_formats").delete().eq("profile_id", profileId),
       supabase.from("profile_works").delete().eq("profile_id", profileId),
       supabase.from("profile_brands").delete().eq("profile_id", profileId),
     ]);
 
-    if (data.metrics.length) {
-      await supabase.from("profile_metrics").insert(
-        data.metrics.map((m) => ({
-          profile_id: profileId,
-          network: m.network as Network,
-          followers: m.followers ?? null,
-          audience_pct: m.audience_pct ?? null,
-        })),
-      );
-    }
     if (data.formats.length) {
       await supabase.from("profile_formats").insert(
         data.formats.map((format) => ({ profile_id: profileId, format })),
