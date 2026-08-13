@@ -73,6 +73,8 @@ export type Database = {
           id: string
           network: Database["public"]["Enums"]["social_network"]
           profile_id: string
+          source: Database["public"]["Enums"]["metric_source"]
+          verified_at: string | null
         }
         Insert: {
           audience_pct?: number | null
@@ -80,6 +82,8 @@ export type Database = {
           id?: string
           network: Database["public"]["Enums"]["social_network"]
           profile_id: string
+          source?: Database["public"]["Enums"]["metric_source"]
+          verified_at?: string | null
         }
         Update: {
           audience_pct?: number | null
@@ -87,6 +91,8 @@ export type Database = {
           id?: string
           network?: Database["public"]["Enums"]["social_network"]
           profile_id?: string
+          source?: Database["public"]["Enums"]["metric_source"]
+          verified_at?: string | null
         }
         Relationships: [
           {
@@ -199,6 +205,121 @@ export type Database = {
         }
         Relationships: []
       }
+      social_accounts: {
+        Row: {
+          connected_at: string
+          created_at: string
+          handle: string | null
+          id: string
+          last_synced_at: string | null
+          network: Database["public"]["Enums"]["social_network"]
+          profile_id: string
+          profile_url: string | null
+          provider: string
+          provider_account_id: string | null
+          provider_user_id: string | null
+          sync_error: string | null
+          sync_status: Database["public"]["Enums"]["sync_status"]
+          updated_at: string
+        }
+        Insert: {
+          connected_at?: string
+          created_at?: string
+          handle?: string | null
+          id?: string
+          last_synced_at?: string | null
+          network: Database["public"]["Enums"]["social_network"]
+          profile_id: string
+          profile_url?: string | null
+          provider?: string
+          provider_account_id?: string | null
+          provider_user_id?: string | null
+          sync_error?: string | null
+          sync_status?: Database["public"]["Enums"]["sync_status"]
+          updated_at?: string
+        }
+        Update: {
+          connected_at?: string
+          created_at?: string
+          handle?: string | null
+          id?: string
+          last_synced_at?: string | null
+          network?: Database["public"]["Enums"]["social_network"]
+          profile_id?: string
+          profile_url?: string | null
+          provider?: string
+          provider_account_id?: string | null
+          provider_user_id?: string | null
+          sync_error?: string | null
+          sync_status?: Database["public"]["Enums"]["sync_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_accounts_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      social_snapshots: {
+        Row: {
+          avg_comments: number | null
+          avg_likes: number | null
+          avg_views: number | null
+          captured_at: string
+          created_at: string
+          engagement_rate: number | null
+          followers: number | null
+          following: number | null
+          id: string
+          posts_count: number | null
+          raw: Json | null
+          reach: number | null
+          social_account_id: string
+        }
+        Insert: {
+          avg_comments?: number | null
+          avg_likes?: number | null
+          avg_views?: number | null
+          captured_at?: string
+          created_at?: string
+          engagement_rate?: number | null
+          followers?: number | null
+          following?: number | null
+          id?: string
+          posts_count?: number | null
+          raw?: Json | null
+          reach?: number | null
+          social_account_id: string
+        }
+        Update: {
+          avg_comments?: number | null
+          avg_likes?: number | null
+          avg_views?: number | null
+          captured_at?: string
+          created_at?: string
+          engagement_rate?: number | null
+          followers?: number | null
+          following?: number | null
+          id?: string
+          posts_count?: number | null
+          raw?: Json | null
+          reach?: number | null
+          social_account_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_snapshots_social_account_id_fkey"
+            columns: ["social_account_id"]
+            isOneToOne: false
+            referencedRelation: "social_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
@@ -232,6 +353,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin"
+      metric_source: "manual" | "api"
       profile_status: "draft" | "pending" | "approved" | "rejected"
       social_network:
         | "instagram"
@@ -241,6 +363,7 @@ export type Database = {
         | "twitter"
         | "kwai"
         | "linkedin"
+      sync_status: "never" | "ok" | "error" | "pending"
       tier: "creator" | "featured" | "reference" | "icon"
     }
     CompositeTypes: {
@@ -370,6 +493,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin"],
+      metric_source: ["manual", "api"],
       profile_status: ["draft", "pending", "approved", "rejected"],
       social_network: [
         "instagram",
@@ -380,6 +504,7 @@ export const Constants = {
         "kwai",
         "linkedin",
       ],
+      sync_status: ["never", "ok", "error", "pending"],
       tier: ["creator", "featured", "reference", "icon"],
     },
   },
