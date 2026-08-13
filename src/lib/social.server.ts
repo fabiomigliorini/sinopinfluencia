@@ -241,13 +241,33 @@ export async function fetchFacebookPublic(handle: string): Promise<PublicMetrics
   };
 }
 
-export function hasYouTubeKey() {
-  return Boolean(process.env["YOUTUBE_API_KEY"]);
+export const YOUTUBE_KEY_SETTING = "youtube_api_key";
+
+/** Key saved by the ACES team in the admin panel, or the project secret. */
+export async function getYouTubeKey(): Promise<string | null> {
+  try {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data } = await supabaseAdmin
+      .from("app_settings")
+      .select("value")
+      .eq("key", YOUTUBE_KEY_SETTING)
+      .maybeSingle();
+    const saved = data?.value?.trim();
+    if (saved) return saved;
+  } catch {
+    /* fall back to env */
+  }
+  return process.env["YOUTUBE_API_KEY"] ?? process.env["GOOGLE_API_KEY"] ?? null;
+}
+
+export async function hasYouTubeKey() {
+  return Boolean(await getYouTubeKey());
 }
 
 export async function fetchYouTubePublic(handle: string): Promise<PublicMetrics> {
-  const key = process.env["YOUTUBE_API_KEY"];
+  const key = await getYouTubeKey();
   if (!key) throw new Error("Chave da API do YouTube não configurada");
+
 
   const isChannelId = /^UC[\w-]{20,}$/.test(handle);
   const base = "https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics";
