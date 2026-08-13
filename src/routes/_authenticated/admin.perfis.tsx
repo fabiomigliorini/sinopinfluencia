@@ -8,7 +8,13 @@ import {
   listProfilesForAdmin,
   setProfileStatus,
 } from "@/lib/account.functions";
-import { adminSetHandle, adminSyncProfile } from "@/lib/social.functions";
+import {
+  adminGetYouTubeKeyStatus,
+  adminSetHandle,
+  adminSetYouTubeKey,
+  adminSyncProfile,
+} from "@/lib/social.functions";
+
 
 export const Route = createFileRoute("/_authenticated/admin/perfis")({
   component: AdminProfilesPage,
