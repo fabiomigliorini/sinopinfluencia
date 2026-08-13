@@ -53,6 +53,11 @@ async function getText(url: string, headers: Record<string, string> = {}) {
     });
     const body = await response.text();
     if (!response.ok) {
+      if (response.status === 429 || response.status === 403) {
+        throw new Error(
+          "A rede social bloqueou a coleta automática agora (limite de acessos). Tente novamente mais tarde ou informe o número manualmente.",
+        );
+      }
       throw new Error(`Resposta ${response.status} da rede social`);
     }
     return body;
@@ -466,7 +471,7 @@ export async function syncSocialAccount(accountRowId: string) {
       }
     }
 
-    return { ok: true, followers: metrics.followers, network: account.network };
+    return { ok: true as const, followers: metrics.followers, network: account.network, error: null as string | null };
   } catch (syncError) {
     const message = syncError instanceof Error ? syncError.message : "Erro desconhecido";
     await supabaseAdmin
@@ -477,7 +482,12 @@ export async function syncSocialAccount(accountRowId: string) {
         last_synced_at: new Date().toISOString(),
       })
       .eq("id", account.id);
-    throw syncError;
+    return {
+      ok: false as const,
+      followers: null,
+      network: account.network,
+      error: message,
+    };
   }
 }
 
@@ -494,8 +504,12 @@ export async function syncProfileAccounts(profileId: string) {
   const results: Array<{ network: string; ok: boolean; error?: string }> = [];
   for (const account of accounts ?? []) {
     try {
-      await syncSocialAccount(account.id);
-      results.push({ network: account.network, ok: true });
+      const result = await syncSocialAccount(account.id);
+      results.push({
+        network: account.network,
+        ok: result.ok,
+        ...(result.ok ? {} : { error: result.error ?? "Erro desconhecido" }),
+      });
     } catch (error) {
       results.push({
         network: account.network,
