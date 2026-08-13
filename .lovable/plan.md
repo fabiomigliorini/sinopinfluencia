@@ -1,47 +1,44 @@
-# Métricas: manual verificada agora, integração paga só quando fizer sentido
+# Métricas públicas das redes sociais
 
-Decisão que vou seguir: **não dependemos de fornecedor pago agora**. As métricas voltam a ser declaradas pelo criador, com um fluxo de verificação da ACES que dá credibilidade. O código da integração automática fica no projeto, desativado, pronto para ligar depois se você contratar a InsightIQ.
+Trocar a integração paga (InsightIQ) por **coleta de dados públicos** a partir do @ do criador. Sem login do influenciador, sem custo mensal.
 
-Esclarecimento importante: nenhuma API dá métricas de contas de terceiros sem autorização. O que existe é (a) o próprio criador autorizar a conta dele, ou (b) estimativas por dados públicos. Por isso o caminho honesto e sem custo hoje é manual + verificação.
+## O que passa a ser coletado
+
+| Rede | Dados públicos | Como |
+|---|---|---|
+| YouTube | inscritos, visualizações totais, nº de vídeos | API oficial do YouTube (chave gratuita) |
+| Instagram | seguidores, nº de publicações, foto/bio | leitura da página pública |
+| TikTok | seguidores, curtidas totais, nº de vídeos | leitura da página pública |
+| Facebook (página) | seguidores/curtidas da página | leitura da página pública |
+| X / Kwai / LinkedIn | permanecem declarados | sem fonte pública confiável |
+
+Não é possível obter alcance, impressões, stories ou dados de audiência sem autorização do dono — esses campos continuam fora do perfil.
 
 ## Como vai funcionar
 
-1. Em **Editar meu perfil**, o criador informa seguidores/engajamento por rede e o @ de cada uma (como já é hoje).
-2. Cada métrica ganha um estado: **Declarado** (padrão), **Verificado pela ACES** ou **Verificado via API** (quando/se a integração for ligada).
-3. O criador pode anexar um **print do painel da rede** (mesma tela de upload já usada no portfólio) como comprovante.
-4. No painel da ACES (**/admin/perfis**) aparece, por perfil, a lista de métricas com o comprovante ao lado e botões **Verificar** / **Recusar**. Verificar grava quem verificou e quando.
-5. No perfil público e nos cards:
-   - Verificado pela ACES → selo verde "Verificado pela ACES" + data.
-   - Declarado → texto discreto "informado pelo criador".
-   Nada de selo genérico que confunda os dois casos.
-6. O bloco "Métricas automáticas" no editor passa a mostrar uma mensagem clara de que a importação automática está desativada, sem botão morto.
+1. No **/perfil/edit**, no lugar do bloco "Conectar rede social", o criador informa o **@ / URL** de cada rede.
+2. Ao salvar, o sistema tenta buscar os números públicos na hora e mostra o resultado ("Instagram: 12.400 seguidores — atualizado agora").
+3. Botão **Atualizar agora** por rede, além da **atualização diária automática** (rotina já existente de cron).
+4. Se a coleta falhar (perfil privado, bloqueio da rede), o número declarado pelo criador é mantido e a rede fica marcada como "declarado", sem apagar dados.
+5. No perfil público, cada métrica mostra a origem: **"Dados públicos · atualizado em 13/08"** ou **"Declarado pelo criador"**.
+6. A ACES pode corrigir o @ e forçar uma atualização pelo painel de curadoria antes de aprovar.
 
-## O que fica pronto para o futuro
+## Decisões assumidas
 
-As tabelas `social_accounts` / `social_snapshots`, o cron e o webhook continuam existindo e desligados. Se um dia você contratar a InsightIQ, basta salvar as credenciais e o bloco de conexão volta a aparecer — sem refazer nada.
+- O criador informa os @; a ACES pode corrigir na curadoria.
+- Coleta própria (sem fornecedor pago), com YouTube por API oficial.
+- Selo mostra origem + data da coleta.
 
 ## Detalhes técnicos
 
-**Banco (migração)**
-- `profile_metrics`: adicionar `handle` (se ausente), `evidence_path text`, `verification_status text` default `declared` (`declared` | `verified` | `rejected`), `verified_at timestamptz`, `verified_by uuid`.
-- Manter `source` (`manual` | `api`); o selo público passa a olhar `verification_status` + `source`.
-- RLS: dono gerencia as próprias métricas; admin pode atualizar `verification_status`/`verified_*`; público lê métricas de perfis aprovados. GRANTs para `authenticated`, `anon` (select) e `service_role`.
+- Reaproveitar as tabelas `social_accounts` e `social_snapshots` já criadas: `provider` passa a aceitar `public` (e `youtube_api`), `handle`/`profile_url` viram os campos informados pelo criador. Migração leve para permitir isso e registrar `last_error`.
+- Reescrever `src/lib/social.server.ts` como coletor por rede (`fetchYouTubePublic`, `fetchInstagramPublic`, `fetchTikTokPublic`, `fetchFacebookPublic`), cada um retornando `{ followers, likes, posts, raw }` e gravando um snapshot + atualizando `profile_metrics` com `source = 'api'`.
+- `src/lib/social.functions.ts`: substituir `initConnect`/`disconnect` por `saveHandles`, `syncNetwork` (manual) e `syncProfile`; manter proteção por `requireSupabaseAuth`.
+- `src/components/SocialConnections.tsx` vira formulário de @ por rede com status, número atual, data e botão atualizar.
+- `src/routes/api/public/cron/sync-social.tsx` mantém o segredo atual (`SOCIAL_CRON_SECRET`) e passa a percorrer os perfis aprovados; remover a rota de webhook do InsightIQ e as referências às credenciais do provedor.
+- Coleta com timeout curto, User-Agent de navegador e tolerância a falha (nunca derruba o salvamento do perfil).
+- Precisa de uma chave gratuita da API do YouTube (`YOUTUBE_API_KEY`) — vou pedir no momento da implementação.
 
-**Servidor**
-- `src/lib/account.functions.ts`: aceitar `handle` e `evidence_path` no update de métricas; nunca deixar o criador escrever `verification_status`.
-- `src/lib/profiles.functions.ts` (admin): `setMetricVerification({ metricId, status })` com `assertAdmin`, gravando `verified_at` e `verified_by`.
-- Comprovantes vão para o bucket privado `profile-images` (pasta `evidence/`), servidos pela rota de imagem já existente, visível só para dono e admin.
+## Fora do escopo
 
-**Front**
-- `perfil.edit.tsx`: campo de @ por rede + upload de comprovante por métrica; badge do estado atual.
-- `SocialConnections.tsx`: estado "desativado" limpo, sem botão de conectar.
-- `admin.perfis.tsx`: painel de verificação de métricas por perfil (comprovante, verificar, recusar).
-- `$slug.tsx` e `ProfileCard.tsx`: selo "Verificado pela ACES" vs "informado pelo criador".
-
-## Ordem de execução
-
-1. Migração dos campos de verificação.
-2. Editor: @ por rede + upload de comprovante.
-3. Painel da ACES: verificar/recusar métricas.
-4. Selos no perfil público e nos cards.
-5. Desativar visualmente o bloco de conexão automática.
+Alcance/engajamento real, dados de audiência (idade/gênero/cidade) e Kwai automático.
