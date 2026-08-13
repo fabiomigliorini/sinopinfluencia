@@ -1,56 +1,45 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
-  createConnectSession,
-  disconnectMyAccount,
   getSocialIntegrationStatus,
   listMyConnections,
-  registerConnectedAccount,
+  removeMyAccount,
+  saveNetworkHandle,
   syncMyAccount,
 } from "@/lib/social.functions";
 
-const SDK_URL = "https://cdn.getphyllo.com/connect/v2/phyllo-connect.js";
+type Network = "instagram" | "tiktok" | "youtube" | "facebook";
 
-const NETWORK_LABEL: Record<string, string> = {
-  instagram: "Instagram",
-  tiktok: "TikTok",
-  youtube: "YouTube",
-  facebook: "Facebook",
-  linkedin: "LinkedIn",
-};
-
-type ConnectSdk = {
-  initialize: (config: Record<string, unknown>) => {
-    open: () => void;
-    exit: () => void;
-    on: (event: string, callback: (...args: unknown[]) => void) => void;
-  };
-};
-
-async function loadSdk(): Promise<ConnectSdk> {
-  const existing = (window as unknown as { PhylloConnect?: ConnectSdk }).PhylloConnect;
-  if (existing) return existing;
-  await new Promise<void>((resolve, reject) => {
-    const script = document.createElement("script");
-    script.src = SDK_URL;
-    script.async = true;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error("Não foi possível carregar o conector"));
-    document.head.appendChild(script);
-  });
-  const sdk = (window as unknown as { PhylloConnect?: ConnectSdk }).PhylloConnect;
-  if (!sdk) throw new Error("Conector indisponível");
-  return sdk;
-}
+const NETWORKS: Array<{ id: Network; label: string; placeholder: string; hint: string }> = [
+  {
+    id: "instagram",
+    label: "Instagram",
+    placeholder: "seuperfil",
+    hint: "Perfil precisa ser público.",
+  },
+  { id: "tiktok", label: "TikTok", placeholder: "seuperfil", hint: "Somente perfis públicos." },
+  {
+    id: "youtube",
+    label: "YouTube",
+    placeholder: "@seucanal ou ID do canal",
+    hint: "Inscritos e visualizações via API oficial.",
+  },
+  {
+    id: "facebook",
+    label: "Facebook",
+    placeholder: "suapagina",
+    hint: "Funciona com páginas, não com perfis pessoais.",
+  },
+];
 
 function formatDate(value: string | null) {
   if (!value) return "nunca";
   return new Date(value).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
 }
 
-function formatNumber(value: number | null) {
+function formatNumber(value: number | null | undefined) {
   if (value === null || value === undefined) return "—";
   return value.toLocaleString("pt-BR");
 }
@@ -59,11 +48,11 @@ export function SocialConnections() {
   const queryClient = useQueryClient();
   const fetchStatus = useServerFn(getSocialIntegrationStatus);
   const fetchConnections = useServerFn(listMyConnections);
-  const startSession = useServerFn(createConnectSession);
-  const registerAccount = useServerFn(registerConnectedAccount);
+  const saveHandle = useServerFn(saveNetworkHandle);
   const syncAccount = useServerFn(syncMyAccount);
-  const disconnect = useServerFn(disconnectMyAccount);
-  const [connecting, setConnecting] = useState(false);
+  const removeAccount = useServerFn(removeMyAccount);
+
+  const [drafts, setDrafts] = useState<Record<string, string>>({});
 
   const status = useQuery({
     queryKey: ["social-integration-status"],
@@ -73,172 +62,156 @@ export function SocialConnections() {
   const connections = useQuery({
     queryKey: ["my-social-connections"],
     queryFn: () => fetchConnections(),
-    enabled: status.data?.enabled === true,
+  });
+
+  useEffect(() => {
+    if (!connections.data) return;
+    setDrafts((current) => {
+      const next = { ...current };
+      for (const account of connections.data) {
+        if (next[account.network] === undefined) next[account.network] = account.handle ?? "";
+      }
+      return next;
+    });
+  }, [connections.data]);
+
+  function refresh() {
+    void queryClient.invalidateQueries({ queryKey: ["my-social-connections"] });
+    void queryClient.invalidateQueries({ queryKey: ["my-profile"] });
+  }
+
+  const saveMutation = useMutation({
+    mutationFn: (input: { network: Network; handle: string }) => saveHandle({ data: input }),
+    onSuccess: (result) => {
+      if (result.removed) toast.success("Rede removida");
+      else if (result.error) toast.warning(`Salvo, mas a coleta falhou: ${result.error}`);
+      else toast.success("Números públicos atualizados");
+      refresh();
+    },
+    onError: (error: Error) => toast.error(error.message),
   });
 
   const syncMutation = useMutation({
     mutationFn: (accountRowId: string) => syncAccount({ data: { accountRowId } }),
     onSuccess: () => {
       toast.success("Métricas atualizadas");
-      void queryClient.invalidateQueries({ queryKey: ["my-social-connections"] });
-      void queryClient.invalidateQueries({ queryKey: ["my-profile"] });
+      refresh();
     },
     onError: (error: Error) => toast.error(error.message),
   });
 
-  const disconnectMutation = useMutation({
-    mutationFn: (accountRowId: string) => disconnect({ data: { accountRowId } }),
+  const removeMutation = useMutation({
+    mutationFn: (accountRowId: string) => removeAccount({ data: { accountRowId } }),
     onSuccess: () => {
-      toast.success("Conta desconectada");
-      void queryClient.invalidateQueries({ queryKey: ["my-social-connections"] });
+      toast.success("Rede removida");
+      refresh();
     },
     onError: (error: Error) => toast.error(error.message),
   });
 
-  async function handleConnect(network?: string) {
-    setConnecting(true);
-    try {
-      const session = await startSession({
-        data: network ? { network: network as "instagram" } : {},
-      });
-      const sdk = await loadSdk();
-      const instance = sdk.initialize({
-        clientDisplayName: "Sinop Influencia",
-        environment: session.environment,
-        userId: session.providerUserId,
-        token: session.token,
-        ...(session.workPlatformId ? { workPlatformId: session.workPlatformId } : {}),
-      });
-
-      instance.on("accountConnected", (accountId) => {
-        void (async () => {
-          try {
-            await registerAccount({
-              data: {
-                accountId: String(accountId),
-                providerUserId: session.providerUserId,
-              },
-            });
-            toast.success("Conta conectada! As métricas serão importadas em instantes.");
-          } catch (error) {
-            toast.error(error instanceof Error ? error.message : "Falha ao salvar a conexão");
-          } finally {
-            void queryClient.invalidateQueries({ queryKey: ["my-social-connections"] });
-            void queryClient.invalidateQueries({ queryKey: ["my-profile"] });
-          }
-        })();
-      });
-      instance.on("accountDisconnected", () => {
-        void queryClient.invalidateQueries({ queryKey: ["my-social-connections"] });
-      });
-      instance.on("tokenExpired", () => toast.error("Sessão expirada, tente novamente."));
-      instance.on("exit", () => setConnecting(false));
-      instance.on("connectionFailure", (reason) =>
-        toast.error(`Não foi possível conectar: ${String(reason ?? "erro desconhecido")}`),
-      );
-
-      instance.open();
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Falha ao abrir o conector");
-    } finally {
-      setConnecting(false);
-    }
-  }
-
-  if (status.isLoading) return null;
-
-  if (!status.data?.enabled) {
-    return (
-      <section className="rounded-3xl border border-dashed border-border bg-card p-6">
-        <h2 className="text-lg font-bold">Métricas automáticas</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          A importação automática de seguidores e engajamento ainda não está ativa. Enquanto isso,
-          informe seus números manualmente no bloco de métricas.
-        </p>
-      </section>
-    );
-  }
-
-  const items = connections.data ?? [];
+  const accounts = connections.data ?? [];
 
   return (
     <section className="rounded-3xl border border-border bg-card p-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h2 className="text-lg font-bold">Métricas automáticas</h2>
-          <p className="text-sm text-muted-foreground">
-            Conecte suas redes para importar seguidores e engajamento verificados. A atualização é
-            diária e você também pode atualizar quando quiser.
+      <div>
+        <h2 className="text-lg font-bold">Métricas públicas das redes</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Informe seu @ em cada rede. Buscamos automaticamente os dados públicos (seguidores,
+          publicações, curtidas) na hora e todos os dias. Alcance e dados de audiência não são
+          públicos e continuam fora da vitrine.
+        </p>
+        {status.data && !status.data.youtubeEnabled ? (
+          <p className="mt-2 text-xs text-muted-foreground">
+            YouTube: a coleta automática será ativada quando a chave da API oficial for configurada.
           </p>
-        </div>
-        <button
-          type="button"
-          disabled={connecting}
-          onClick={() => void handleConnect()}
-          className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition hover:opacity-90 disabled:opacity-60"
-        >
-          {connecting ? "Abrindo…" : "Conectar rede social"}
-        </button>
+        ) : null}
       </div>
 
       <div className="mt-5 space-y-3">
-        {items.length === 0 && (
-          <p className="text-sm text-muted-foreground">
-            Nenhuma rede conectada ainda. Redes disponíveis:{" "}
-            {(status.data.networks ?? []).map((n) => NETWORK_LABEL[n] ?? n).join(", ")}.
-          </p>
-        )}
+        {NETWORKS.map((network) => {
+          const account = accounts.find((a) => a.network === network.id);
+          const value = drafts[network.id] ?? account?.handle ?? "";
+          const busy =
+            (saveMutation.isPending && saveMutation.variables?.network === network.id) ||
+            (syncMutation.isPending && syncMutation.variables === account?.id);
 
-        {items.map((account) => (
-          <div
-            key={account.id}
-            className="rounded-2xl border border-border p-4 md:flex md:items-center md:justify-between md:gap-4"
-          >
-            <div className="min-w-0">
-              <p className="font-bold">
-                {NETWORK_LABEL[account.network] ?? account.network}
-                {account.handle ? (
-                  <span className="ml-2 text-sm font-medium text-muted-foreground">
-                    @{account.handle}
-                  </span>
-                ) : null}
-              </p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Seguidores: {formatNumber(account.latest?.followers ?? null)} · Engajamento:{" "}
-                {account.latest?.engagement_rate != null
-                  ? `${Number(account.latest.engagement_rate).toFixed(2)}%`
-                  : "—"}{" "}
-                · Atualizado em {formatDate(account.last_synced_at)}
-              </p>
-              {account.sync_status === "error" && account.sync_error ? (
-                <p className="mt-1 text-xs text-destructive">{account.sync_error}</p>
+          return (
+            <div key={network.id} className="rounded-2xl border border-border p-4">
+              <div className="flex flex-wrap items-end gap-3">
+                <div className="min-w-[200px] flex-1">
+                  <label className="text-sm font-bold" htmlFor={`net-${network.id}`}>
+                    {network.label}
+                  </label>
+                  <div className="mt-1 flex items-center gap-2">
+                    <span className="text-sm text-muted-foreground">@</span>
+                    <input
+                      id={`net-${network.id}`}
+                      value={value}
+                      placeholder={network.placeholder}
+                      onChange={(event) =>
+                        setDrafts((current) => ({ ...current, [network.id]: event.target.value }))
+                      }
+                      className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm"
+                    />
+                  </div>
+                  <p className="mt-1 text-xs text-muted-foreground">{network.hint}</p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    disabled={busy}
+                    onClick={() =>
+                      saveMutation.mutate({ network: network.id, handle: value.trim() })
+                    }
+                    className="rounded-full bg-primary px-4 py-2 text-xs font-bold text-primary-foreground transition hover:opacity-90 disabled:opacity-60"
+                  >
+                    {busy ? "Buscando…" : "Salvar e buscar"}
+                  </button>
+                  {account ? (
+                    <>
+                      <button
+                        type="button"
+                        disabled={busy}
+                        onClick={() => syncMutation.mutate(account.id)}
+                        className="rounded-full border border-border px-4 py-2 text-xs font-bold transition hover:bg-accent disabled:opacity-60"
+                      >
+                        Atualizar agora
+                      </button>
+                      <button
+                        type="button"
+                        disabled={removeMutation.isPending}
+                        onClick={() => removeMutation.mutate(account.id)}
+                        className="rounded-full border border-border px-4 py-2 text-xs font-bold text-destructive transition hover:bg-destructive/10 disabled:opacity-60"
+                      >
+                        Remover
+                      </button>
+                    </>
+                  ) : null}
+                </div>
+              </div>
+
+              {account ? (
+                <p className="mt-3 text-xs text-muted-foreground">
+                  Seguidores: {formatNumber(account.latest?.followers)} · Publicações:{" "}
+                  {formatNumber(account.latest?.posts_count)}
+                  {account.latest?.avg_likes != null
+                    ? ` · Curtidas: ${formatNumber(account.latest.avg_likes)}`
+                    : ""}
+                  {account.latest?.avg_views != null
+                    ? ` · Visualizações: ${formatNumber(account.latest.avg_views)}`
+                    : ""}{" "}
+                  · Coletado em {formatDate(account.last_synced_at)}
+                </p>
               ) : null}
-              {account.sync_status === "pending" ? (
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Coleta em andamento no provedor — tente atualizar em alguns minutos.
+
+              {account?.sync_status === "error" && account.sync_error ? (
+                <p className="mt-1 text-xs text-destructive">
+                  {account.sync_error} — o número informado por você continua valendo.
                 </p>
               ) : null}
             </div>
-            <div className="mt-3 flex gap-2 md:mt-0">
-              <button
-                type="button"
-                disabled={syncMutation.isPending}
-                onClick={() => syncMutation.mutate(account.id)}
-                className="rounded-full border border-border px-4 py-2 text-xs font-bold transition hover:bg-accent disabled:opacity-60"
-              >
-                Atualizar agora
-              </button>
-              <button
-                type="button"
-                disabled={disconnectMutation.isPending}
-                onClick={() => disconnectMutation.mutate(account.id)}
-                className="rounded-full border border-border px-4 py-2 text-xs font-bold text-destructive transition hover:bg-destructive/10 disabled:opacity-60"
-              >
-                Desconectar
-              </button>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );
