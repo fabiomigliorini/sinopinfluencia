@@ -86,6 +86,16 @@ function firstNumber(pattern: RegExp, html: string): number | null {
   return Number.isFinite(value) ? value : null;
 }
 
+/** Reads the counter that precedes a label, e.g. "686M Followers" or "28 686 009 gillar". */
+function numberBefore(text: string, label: RegExp): number | null {
+  const pattern = new RegExp(
+    `([\\d][\\d.,\\s\\u00a0]*(?:\\s*(?:K|M|B|mil|mi))?)\\s*${label.source}`,
+    "i",
+  );
+  const match = text.match(pattern);
+  return match ? compactToNumber(match[1]!) : null;
+}
+
 /** Turns HTML entities into plain text so counters become readable. */
 function decodeEntities(text: string) {
   return text
