@@ -80,10 +80,17 @@ export const getFilteredProfiles = createServerFn({ method: "GET" })
 export const listDirectoryMetadata = createServerFn({ method: "GET" }).handler(
   async () => {
     const supabase = createServerSupabaseClient();
-    const [{ data: profiles }, { data: metrics }] = await Promise.all([
-      supabase.from("profiles").select("id, niche, tier").eq("status", "approved"),
-      supabase.from("profile_metrics").select("profile_id, network, followers"),
-    ]);
+    const [{ data: profiles }, { data: metrics }, { data: formats }] =
+      await Promise.all([
+        supabase
+          .from("profiles")
+          .select("id, niche, tier")
+          .eq("status", "approved"),
+        supabase
+          .from("profile_metrics")
+          .select("profile_id, network, followers, handle, source, verified_at"),
+        supabase.from("profile_formats").select("profile_id, format"),
+      ]);
     const niches = Array.from(
       new Set(
         (profiles ?? []).flatMap((p) =>
@@ -94,9 +101,15 @@ export const listDirectoryMetadata = createServerFn({ method: "GET" }).handler(
         ),
       ),
     ).sort((a, b) => a.localeCompare(b, "pt-BR"));
-    return { niches, metrics: metrics ?? [], count: (profiles ?? []).length };
+    return {
+      niches,
+      metrics: metrics ?? [],
+      formats: formats ?? [],
+      count: (profiles ?? []).length,
+    };
   },
 );
+
 
 export const getProfileBySlug = createServerFn({ method: "GET" })
   .validator((input: { slug: string }) => input)
