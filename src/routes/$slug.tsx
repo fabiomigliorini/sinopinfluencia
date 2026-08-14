@@ -112,5 +112,7 @@ function ProfileUnavailable() {
 function ProfilePage() {
   const { slug } = Route.useParams();
   const { data } = useSuspenseQuery(profileQueryOptions(slug));
+  if (!data) return <ProfileUnavailable />;
   return <ProfileView data={data} />;
 }
+
