@@ -3,13 +3,14 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import { directoryQueryOptions, metadataQueryOptions } from "@/lib/profile-queries";
+import { buildFormatsMap, buildMetricsMap } from "@/lib/directory-maps";
+
 import { ProfileCard } from "@/components/ProfileCard";
 import { TierBadge } from "@/components/ProfileCard";
 import type { Database } from "@/integrations/supabase/types";
 
 type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
 
-type MetricRow = Database["public"]["Tables"]["profile_metrics"]["Row"];
 
 const searchSchema = z.object({
   q: z.string().optional(),
@@ -53,9 +54,9 @@ function DirectoryPage() {
   const { data: profiles } = useSuspenseQuery(directoryQueryOptions(search));
   const { data: metadata } = useSuspenseQuery(metadataQueryOptions);
 
-  const metricsMap = Object.fromEntries(
-    (metadata?.metrics ?? []).map((m) => [m.profile_id, m]),
-  );
+  const metricsMap = buildMetricsMap(metadata?.metrics ?? []);
+  const formatsMap = buildFormatsMap(metadata?.formats ?? []);
+
 
   const update = (
     key: "q" | "niche" | "network" | "tier",
@@ -187,9 +188,9 @@ function DirectoryPage() {
               <ProfileCard
                 key={profile.id}
                 profile={profile}
-                metrics={[
-                  metricsMap[profile.id as string] as MetricRow,
-                ].filter(Boolean)}
+                metrics={metricsMap[profile.id] ?? []}
+                formats={formatsMap[profile.id] ?? []}
+
                 index={index}
               />
             ))}

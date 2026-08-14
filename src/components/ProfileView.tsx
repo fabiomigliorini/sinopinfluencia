@@ -28,7 +28,12 @@ export function ProfileView({
     .map((n) => n[0]?.toUpperCase() ?? "")
     .join("");
 
-  const mainMetrics = metrics.slice(0, 6);
+  const mainMetrics = metrics;
+  const niches = (profile.niche ?? "")
+    .split(",")
+    .map((n) => n.trim())
+    .filter(Boolean);
+
 
   return (
     <div className="bg-background pb-16 pt-8">
@@ -76,7 +81,24 @@ export function ProfileView({
                   </h1>
                   <TierBadge tier={profile.tier} />
                 </div>
-                <p className="mt-1 text-sm font-semibold text-primary">{profile.niche}</p>
+                {niches.length > 0 ? (
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {niches.map((n) => (
+                      <span
+                        key={n}
+                        className="rounded-full bg-secondary px-3 py-1 text-xs font-bold text-primary"
+                      >
+                        {n}
+                      </span>
+                    ))}
+                  </div>
+                ) : null}
+                {profile.city ? (
+                  <p className="mt-2 text-sm font-semibold text-muted-foreground">
+                    {profile.city}
+                  </p>
+                ) : null}
+
               </div>
               <a
                 href={`https://wa.me/${profile.whatsapp?.replace(/\D/g, "") ?? ""}`}

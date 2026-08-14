@@ -1,15 +1,21 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { profilesQueryOptions } from "@/lib/profile-queries";
+import { metadataQueryOptions, profilesQueryOptions } from "@/lib/profile-queries";
+import { buildFormatsMap, buildMetricsMap } from "@/lib/directory-maps";
 import { ProfileCard, TierBadge } from "@/components/ProfileCard";
 import type { Database } from "@/integrations/supabase/types";
 
 type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
-type MetricRow = Database["public"]["Tables"]["profile_metrics"]["Row"];
 
 export const Route = createFileRoute("/")({
-  loader: ({ context }) => context.queryClient.ensureQueryData(profilesQueryOptions),
+  loader: async ({ context }) => {
+    await Promise.all([
+      context.queryClient.ensureQueryData(profilesQueryOptions),
+      context.queryClient.ensureQueryData(metadataQueryOptions),
+    ]);
+  },
+
   head: () => ({
     meta: [
       { title: "Sinop Influencia — Vitrine oficial de criadores de conteúdo" },
@@ -270,11 +276,10 @@ function FeaturedDirectory({
   niche: string;
   network: string;
 }) {
-  const [metricsMap, setMetricsMap] = useState<Record<string, MetricRow[]>>({});
+  const { data: metadata } = useSuspenseQuery(metadataQueryOptions);
+  const metricsMap = buildMetricsMap(metadata?.metrics ?? []);
+  const formatsMap = buildFormatsMap(metadata?.formats ?? []);
 
-  // Note: metrics are fetched alongside profile cards in a real implementation.
-  // For the home page we show compact cards without full metrics to keep the
-  // loader light; the directory page fetches related rows.
 
   const filtered = profiles.filter((p) => {
     const matchesQuery =
@@ -303,6 +308,8 @@ function FeaturedDirectory({
               key={profile.id}
               profile={profile}
               metrics={metricsMap[profile.id] ?? []}
+              formats={formatsMap[profile.id] ?? []}
+
               index={index}
             />
           ))}
