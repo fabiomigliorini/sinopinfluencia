@@ -55,7 +55,7 @@ function youtubeId(url: URL) {
 
 /** Reads public Open Graph metadata of a social post and stores its cover image. */
 export const fetchLinkPreview = createServerFn({ method: "POST" })
-  .inputValidator((raw: unknown) => input.parse(raw))
+  .validator((raw: unknown) => input.parse(raw))
   .handler(async ({ data }) => {
     let url: URL;
     try {
