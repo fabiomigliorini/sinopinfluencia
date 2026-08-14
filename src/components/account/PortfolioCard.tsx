@@ -214,68 +214,147 @@ export function PortfolioCard({ works }: { works: Work[] }) {
               {draft.id ? "Editar trabalho" : "Adicionar trabalho"}
             </DialogTitle>
           </DialogHeader>
-          <form
-            className="space-y-4"
-            onSubmit={(event) => {
-              event.preventDefault();
-              saveMutation.mutate();
-            }}
-          >
-            <label className="block space-y-1.5">
-              <span className={labelCls}>Título *</span>
-              <input
-                className={fieldCls}
-                required
-                value={draft.title}
-                onChange={(event) => setDraft({ ...draft, title: event.target.value })}
+
+          <ol className="flex items-center gap-2 text-xs font-semibold">
+            {["Link", "Imagem", "Detalhes"].map((label, index) => {
+              const stepNumber = index + 1;
+              const active = step === stepNumber;
+              return (
+                <li
+                  key={label}
+                  className={`rounded-full px-3 py-1 ${
+                    active
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  {stepNumber}. {label}
+                </li>
+              );
+            })}
+          </ol>
+
+          {step === 1 && (
+            <div className="space-y-4">
+              <label className="block space-y-1.5">
+                <span className={labelCls}>
+                  Link do post (Reel, TikTok, Facebook…)
+                </span>
+                <input
+                  className={fieldCls}
+                  type="url"
+                  autoFocus
+                  disabled={Boolean(draft.id)}
+                  placeholder="https://www.instagram.com/reel/..."
+                  value={draft.link_url}
+                  onChange={(event) =>
+                    setDraft({ ...draft, link_url: event.target.value })
+                  }
+                />
+              </label>
+              <p className="text-xs text-muted-foreground">
+                {draft.id
+                  ? "O link do post não pode ser alterado. Para trocar, remova este trabalho e adicione outro."
+                  : "Importe a prévia para preencher imagem e título automaticamente, ou pule esta etapa."}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={importPreview}
+                  disabled={importing}
+                  className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
+                >
+                  {importing ? "Importando prévia..." : "Importar prévia do link"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStep(2)}
+                  className="rounded-full border border-border bg-card px-5 py-2.5 text-sm font-semibold transition hover:bg-accent"
+                >
+                  Pular
+                </button>
+              </div>
+            </div>
+          )}
+
+          {step === 2 && (
+            <div className="space-y-4">
+              <ImageUpload
+                label="Imagem do trabalho"
+                value={draft.image_url}
+                onChange={(url) => setDraft({ ...draft, image_url: url })}
               />
-            </label>
-            <label className="block space-y-1.5">
-              <span className={labelCls}>Link do post (Reel, TikTok, Facebook…)</span>
-              <input
-                className={fieldCls}
-                type="url"
-                placeholder="https://www.instagram.com/reel/..."
-                value={draft.link_url}
-                onChange={(event) => setDraft({ ...draft, link_url: event.target.value })}
-              />
-            </label>
-            <button
-              type="button"
-              onClick={importPreview}
-              disabled={importing}
-              className="rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold transition hover:bg-accent disabled:opacity-60"
+              <p className="text-xs text-muted-foreground">
+                Mantenha a imagem importada ou envie outra.
+              </p>
+              <DialogFooter className="gap-2 sm:justify-between">
+                <button
+                  type="button"
+                  onClick={() => setStep(1)}
+                  className="rounded-full border border-border bg-card px-5 py-2.5 text-sm font-semibold transition hover:bg-accent"
+                >
+                  Voltar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStep(3)}
+                  className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
+                >
+                  Continuar
+                </button>
+              </DialogFooter>
+            </div>
+          )}
+
+          {step === 3 && (
+            <form
+              className="space-y-4"
+              onSubmit={(event) => {
+                event.preventDefault();
+                saveMutation.mutate();
+              }}
             >
-              {importing ? "Importando prévia..." : "Importar prévia do link"}
-            </button>
-            <ImageUpload
-              label="Imagem do trabalho"
-              value={draft.image_url}
-              onChange={(url) => setDraft({ ...draft, image_url: url })}
-            />
-            <label className="block space-y-1.5">
-              <span className={labelCls}>Descrição</span>
-              <textarea
-                className={`${fieldCls} min-h-[90px] resize-y`}
-                placeholder="Descrição rápida do resultado"
-                value={draft.description}
-                onChange={(event) =>
-                  setDraft({ ...draft, description: event.target.value })
-                }
-              />
-            </label>
-            <DialogFooter>
-              <button
-                type="submit"
-                disabled={saveMutation.isPending}
-                className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
-              >
-                {saveMutation.isPending ? "Salvando..." : "Salvar"}
-              </button>
-            </DialogFooter>
-          </form>
+              <label className="block space-y-1.5">
+                <span className={labelCls}>Título *</span>
+                <input
+                  className={fieldCls}
+                  required
+                  value={draft.title}
+                  onChange={(event) => setDraft({ ...draft, title: event.target.value })}
+                />
+              </label>
+              <label className="block space-y-1.5">
+                <span className={labelCls}>Descrição</span>
+                <textarea
+                  className={`${fieldCls} min-h-[90px] resize-y`}
+                  placeholder="Descrição rápida do resultado"
+                  value={draft.description}
+                  onChange={(event) =>
+                    setDraft({ ...draft, description: event.target.value })
+                  }
+                />
+              </label>
+              <DialogFooter className="gap-2 sm:justify-between">
+                <button
+                  type="button"
+                  onClick={() => setStep(2)}
+                  className="rounded-full border border-border bg-card px-5 py-2.5 text-sm font-semibold transition hover:bg-accent"
+                >
+                  Voltar
+                </button>
+                <button
+                  type="submit"
+                  disabled={saveMutation.isPending}
+                  className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
+                >
+                  {saveMutation.isPending ? "Salvando..." : "Salvar"}
+                </button>
+              </DialogFooter>
+            </form>
+          )}
         </DialogContent>
       </Dialog>
     </section>
   );
 }
+
