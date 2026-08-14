@@ -28,3 +28,40 @@ export const fieldCls =
   "w-full rounded-2xl border border-border bg-background px-4 py-2.5 text-sm outline-none transition focus:border-primary";
 export const labelCls =
   "text-xs font-bold uppercase tracking-widest text-muted-foreground";
+
+export const NICHE_OPTIONS = [
+  "Gastronomia",
+  "Moda",
+  "Beleza",
+  "Agro",
+  "Fitness",
+  "Saúde e bem-estar",
+  "Maternidade",
+  "Humor",
+  "Lifestyle",
+  "Viagem",
+  "Automotivo",
+  "Imóveis",
+  "Educação",
+  "Tecnologia",
+  "Games",
+  "Música",
+  "Eventos",
+  "Pets",
+  "Decoração",
+  "Negócios e empreendedorismo",
+  "Finanças",
+  "Esportes",
+  "Infantil",
+  "Sustentabilidade",
+];
+
+/** profiles.niche stores a comma separated list of niches. */
+export const splitNiches = (value?: string | null) =>
+  (value ?? "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+export const joinNiches = (niches: string[]) =>
+  Array.from(new Set(niches.map((n) => n.trim()).filter(Boolean))).join(", ");
