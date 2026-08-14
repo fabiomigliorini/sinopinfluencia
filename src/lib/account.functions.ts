@@ -156,12 +156,27 @@ export const submitMyProfile = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
+    const { data: existing, error: findError } = await supabase
+      .from("profiles")
+      .select("id, status")
+      .eq("user_id", userId)
+      .maybeSingle();
+    if (findError) throw new Error(findError.message);
+    if (!existing) throw new Error("Perfil não encontrado");
+
+    // An already published profile stays visible in the directory while the
+    // curation team reviews the new changes; it is only flagged for review.
+    const alreadyApproved = existing.status === "approved";
     const { error } = await supabase
       .from("profiles")
-      .update({ status: "pending", submitted_at: new Date().toISOString() })
-      .eq("user_id", userId);
+      .update({
+        status: alreadyApproved ? "approved" : "pending",
+        review_pending: true,
+        submitted_at: new Date().toISOString(),
+      })
+      .eq("id", existing.id);
     if (error) throw new Error(error.message);
-    return { ok: true };
+    return { ok: true, keptPublished: alreadyApproved };
   });
 
 export const getMyRole = createServerFn({ method: "GET" })
