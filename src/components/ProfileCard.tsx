@@ -1,22 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import type { Database } from "@/integrations/supabase/types";
+import { tierLabel, tierRank } from "@/lib/tiers";
 
 type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
 type MetricRow = Database["public"]["Tables"]["profile_metrics"]["Row"];
-
-const TIER_ORDER: Record<string, number> = {
-  creator: 1,
-  featured: 2,
-  reference: 3,
-  icon: 4,
-};
-
-const TIER_LABEL: Record<string, string> = {
-  creator: "Criador",
-  featured: "Destaque",
-  reference: "Referência",
-  icon: "Ícone",
-};
 
 const GRADIENTS = [
   "from-emerald-500 to-green-800",
