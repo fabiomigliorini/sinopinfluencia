@@ -225,6 +225,7 @@ export const setProfileStatus = createServerFn({ method: "POST" })
 
 /** Curation panel: sets the ACES tier (1 to 4 stars) of one profile. */
 export const setProfileTier = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator((input: unknown) =>
     z
       .object({
@@ -233,7 +234,6 @@ export const setProfileTier = createServerFn({ method: "POST" })
       })
       .parse(input),
   )
-  .middleware([requireSupabaseAuth])
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId);
     const { error } = await context.supabase
@@ -246,8 +246,8 @@ export const setProfileTier = createServerFn({ method: "POST" })
 
 /** Curation panel: full profile content of any profile, whatever its status. */
 export const getProfileForAdmin = createServerFn({ method: "POST" })
-  .validator((input: unknown) => z.object({ profileId: z.string().uuid() }).parse(input))
   .middleware([requireSupabaseAuth])
+  .validator((input: unknown) => z.object({ profileId: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId);
     const { supabase } = context;
