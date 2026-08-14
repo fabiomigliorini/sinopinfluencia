@@ -10,7 +10,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { NETWORK_META, NETWORK_ORDER, NetworkBadge, type NetworkId } from "@/components/network-icons";
-import { addNetworkAccount, previewNetworkHandle } from "@/lib/social.functions";
+import {
+  addNetworkAccount,
+  previewNetworkHandle,
+  setDeclaredFollowers,
+} from "@/lib/social.functions";
 
 type Preview = {
   handle: string;
@@ -47,11 +51,12 @@ export function SocialAccountWizard({
 }) {
   const runPreview = useServerFn(previewNetworkHandle);
   const runAdd = useServerFn(addNetworkAccount);
+  const runDeclare = useServerFn(setDeclaredFollowers);
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [network, setNetwork] = useState<NetworkId | null>(null);
   const [handle, setHandle] = useState("");
-  const [manual, setManual] = useState("");
+  const [manual, setManual] = useState({ followers: "", posts: "", likes: "", views: "" });
   const [preview, setPreview] = useState<Preview | null>(null);
 
   const meta = network ? NETWORK_META[network] : null;
@@ -60,7 +65,7 @@ export function SocialAccountWizard({
     setStep(1);
     setNetwork(null);
     setHandle("");
-    setManual("");
+    setManual({ followers: "", posts: "", likes: "", views: "" });
     setPreview(null);
   }
 
@@ -80,9 +85,23 @@ export function SocialAccountWizard({
   const addMutation = useMutation({
     mutationFn: async () => {
       if (!network) throw new Error("Escolha uma rede");
-      return (await runAdd({
-        data: { network, handle, declaredFollowers: manual.trim() || undefined },
-      })) as { ok: boolean; error: string | null };
+      const followers = manual.followers.trim();
+      const result = (await runAdd({
+        data: { network, handle, declaredFollowers: followers || undefined },
+      })) as { ok: boolean; accountId: string; error: string | null };
+      const extras = [manual.posts, manual.likes, manual.views].some((v) => v.trim());
+      if (result.accountId && followers && extras) {
+        await runDeclare({
+          data: {
+            accountRowId: result.accountId,
+            followers,
+            posts: manual.posts.trim() || undefined,
+            likes: manual.likes.trim() || undefined,
+            views: manual.views.trim() || undefined,
+          },
+        });
+      }
+      return result;
     },
     onSuccess: (result) => {
       if (result.error) toast.warning(`Rede vinculada. ${result.error}`);
@@ -233,18 +252,31 @@ export function SocialAccountWizard({
                 <p className="rounded-2xl bg-destructive/10 p-3 text-xs text-destructive">
                   {preview?.error ?? "Não foi possível coletar os dados públicos."}
                 </p>
-                <label className="block text-sm font-semibold">
-                  Informe seus seguidores
-                  <input
-                    className={`${field} mt-2 font-normal`}
-                    placeholder="Ex.: 18,4 mil"
-                    value={manual}
-                    onChange={(e) => setManual(e.target.value)}
-                  />
-                  <span className="mt-1 block text-xs font-normal text-muted-foreground">
-                    Este número aparecerá como “declarado pelo criador”.
-                  </span>
-                </label>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {(
+                    [
+                      { key: "followers", label: "Seguidores", placeholder: "Ex.: 18400" },
+                      { key: "posts", label: "Posts", placeholder: "Ex.: 291" },
+                      { key: "likes", label: "Curtidas", placeholder: "Ex.: 1200" },
+                      { key: "views", label: "Views", placeholder: "Ex.: 8500" },
+                    ] as const
+                  ).map((f) => (
+                    <label key={f.key} className="block text-sm font-semibold">
+                      {f.label}
+                      <input
+                        className={`${field} mt-2 font-normal`}
+                        placeholder={f.placeholder}
+                        value={manual[f.key]}
+                        onChange={(e) =>
+                          setManual((prev) => ({ ...prev, [f.key]: e.target.value }))
+                        }
+                      />
+                    </label>
+                  ))}
+                </div>
+                <span className="block text-xs text-muted-foreground">
+                  Estes números aparecerão como “declarados pelo criador”.
+                </span>
               </div>
             )}
 
