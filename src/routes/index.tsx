@@ -1,15 +1,21 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { profilesQueryOptions } from "@/lib/profile-queries";
+import { metadataQueryOptions, profilesQueryOptions } from "@/lib/profile-queries";
+import { buildFormatsMap, buildMetricsMap } from "@/lib/directory-maps";
 import { ProfileCard, TierBadge } from "@/components/ProfileCard";
 import type { Database } from "@/integrations/supabase/types";
 
 type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
-type MetricRow = Database["public"]["Tables"]["profile_metrics"]["Row"];
 
 export const Route = createFileRoute("/")({
-  loader: ({ context }) => context.queryClient.ensureQueryData(profilesQueryOptions),
+  loader: async ({ context }) => {
+    await Promise.all([
+      context.queryClient.ensureQueryData(profilesQueryOptions),
+      context.queryClient.ensureQueryData(metadataQueryOptions),
+    ]);
+  },
+
   head: () => ({
     meta: [
       { title: "Sinop Influencia — Vitrine oficial de criadores de conteúdo" },
