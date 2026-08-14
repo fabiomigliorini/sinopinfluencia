@@ -113,6 +113,7 @@ export const updateMyProfile = createServerFn({ method: "POST" })
         whatsapp: data.whatsapp ?? null,
         email: data.email || null,
         avatar_url: data.avatar_url ?? null,
+        content_changed_at: new Date().toISOString(),
       })
       .eq("id", profileId);
     if (updateError) throw new Error(updateError.message);
@@ -303,7 +304,10 @@ export const setMyAvatar = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     const { error } = await supabase
       .from("profiles")
-      .update({ avatar_url: data.avatarUrl || null })
+      .update({
+        avatar_url: data.avatarUrl || null,
+        content_changed_at: new Date().toISOString(),
+      })
       .eq("user_id", userId);
     if (error) throw new Error(error.message);
     return { ok: true };
@@ -321,6 +325,17 @@ async function getMyProfileId(
   if (error) throw new Error(error.message);
   if (!data) throw new Error("Perfil não encontrado");
   return data.id;
+}
+
+/** Marks the profile as having content changes not yet sent to curation. */
+async function touchProfileContent(
+  supabase: SupabaseClient<Database>,
+  profileId: string,
+) {
+  await supabase
+    .from("profiles")
+    .update({ content_changed_at: new Date().toISOString() })
+    .eq("id", profileId);
 }
 
 const basicsInput = z.object({
@@ -353,6 +368,7 @@ export const updateMyBasics = createServerFn({ method: "POST" })
         main_network: (data.main_network || null) as Network | null,
         whatsapp: data.whatsapp || null,
         email: data.email || null,
+        content_changed_at: new Date().toISOString(),
       })
       .eq("user_id", userId);
     if (error) throw new Error(error.message);
@@ -380,6 +396,7 @@ export const setMyFormats = createServerFn({ method: "POST" })
         .insert(unique.map((format) => ({ profile_id: profileId, format })));
       if (error) throw new Error(error.message);
     }
+    await touchProfileContent(supabase, profileId);
     return { ok: true };
   });
 
@@ -395,6 +412,7 @@ export const addMyBrand = createServerFn({ method: "POST" })
       .from("profile_brands")
       .insert({ profile_id: profileId, brand_name: data.brandName.trim() });
     if (error) throw new Error(error.message);
+    await touchProfileContent(supabase, profileId);
     return { ok: true };
   });
 
@@ -407,6 +425,10 @@ export const removeMyBrand = createServerFn({ method: "POST" })
       .delete()
       .eq("id", data.brandId);
     if (error) throw new Error(error.message);
+    await touchProfileContent(
+      context.supabase,
+      await getMyProfileId(context.supabase, context.userId),
+    );
     return { ok: true };
   });
 
@@ -441,6 +463,7 @@ export const upsertMyWork = createServerFn({ method: "POST" })
         .eq("id", data.id)
         .eq("profile_id", profileId);
       if (error) throw new Error(error.message);
+      await touchProfileContent(supabase, profileId);
       return { ok: true };
     }
 
@@ -453,6 +476,7 @@ export const upsertMyWork = createServerFn({ method: "POST" })
       .from("profile_works")
       .insert({ ...payload, profile_id: profileId, sort_order: count ?? 0 });
     if (error) throw new Error(error.message);
+    await touchProfileContent(supabase, profileId);
     return { ok: true };
   });
 
@@ -465,6 +489,10 @@ export const removeMyWork = createServerFn({ method: "POST" })
       .delete()
       .eq("id", data.workId);
     if (error) throw new Error(error.message);
+    await touchProfileContent(
+      context.supabase,
+      await getMyProfileId(context.supabase, context.userId),
+    );
     return { ok: true };
   });
 
