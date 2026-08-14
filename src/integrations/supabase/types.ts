@@ -143,6 +143,7 @@ export type Database = {
           description: string | null
           id: string
           image_url: string | null
+          link_url: string | null
           profile_id: string
           sort_order: number
           title: string
@@ -151,6 +152,7 @@ export type Database = {
           description?: string | null
           id?: string
           image_url?: string | null
+          link_url?: string | null
           profile_id: string
           sort_order?: number
           title: string
@@ -159,6 +161,7 @@ export type Database = {
           description?: string | null
           id?: string
           image_url?: string | null
+          link_url?: string | null
           profile_id?: string
           sort_order?: number
           title?: string
