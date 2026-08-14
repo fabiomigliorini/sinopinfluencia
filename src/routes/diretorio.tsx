@@ -53,9 +53,9 @@ function DirectoryPage() {
   const { data: profiles } = useSuspenseQuery(directoryQueryOptions(search));
   const { data: metadata } = useSuspenseQuery(metadataQueryOptions);
 
-  const metricsMap = Object.fromEntries(
-    (metadata?.metrics ?? []).map((m) => [m.profile_id, m]),
-  );
+  const metricsMap = buildMetricsMap(metadata?.metrics ?? []);
+  const formatsMap = buildFormatsMap(metadata?.formats ?? []);
+
 
   const update = (
     key: "q" | "niche" | "network" | "tier",
