@@ -11,7 +11,6 @@ import type { Database } from "@/integrations/supabase/types";
 
 type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
 
-type MetricRow = Database["public"]["Tables"]["profile_metrics"]["Row"];
 
 const searchSchema = z.object({
   q: z.string().optional(),
