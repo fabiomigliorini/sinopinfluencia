@@ -117,23 +117,28 @@ export function ProfileView({
               {profile.bio}
             </p>
 
-            <div className="mt-8 grid gap-4 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4">
-              {mainMetrics.map((metric) => (
-                <MetricCard
-                  key={metric.id}
-                  network={metric.network}
-                  handle={metric.handle ?? null}
-                  followers={metric.followers ?? "—"}
-                  verified={metric.source === "api" && Boolean(metric.verified_at)}
-                  verifiedAt={metric.verified_at ?? null}
-                />
-              ))}
-              {mainMetrics.length === 0 && (
+            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {socialAccounts.length > 0
+                ? socialAccounts.map((account) => (
+                    <SocialCard key={account.id} account={account} />
+                  ))
+                : metrics.map((metric) => (
+                    <MetricCard
+                      key={metric.id}
+                      network={metric.network}
+                      handle={metric.handle ?? null}
+                      followers={metric.followers ?? "—"}
+                      verified={metric.source === "api" && Boolean(metric.verified_at)}
+                      verifiedAt={metric.verified_at ?? null}
+                    />
+                  ))}
+              {socialAccounts.length === 0 && metrics.length === 0 && (
                 <p className="col-span-full text-sm text-muted-foreground">
                   Nenhuma métrica pública disponível.
                 </p>
               )}
             </div>
+
 
             <div className="mt-10 grid gap-10 md:grid-cols-[1fr_320px]">
               <div>
