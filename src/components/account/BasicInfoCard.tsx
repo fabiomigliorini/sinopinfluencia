@@ -10,7 +10,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { updateMyBasics, type BasicsInput } from "@/lib/account.functions";
+import {
+  updateMyBasics,
+  setMySlug,
+  normalizeSlug,
+  type BasicsInput,
+} from "@/lib/account.functions";
 import { NETWORKS, fieldCls, labelCls, networkLabel } from "@/lib/profile-options";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -19,6 +24,7 @@ type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 const emptyForm = {
   display_name: "",
   full_name: "",
+  slug: "",
   city: "Sinop, MT",
   bio: "",
   main_network: "",
@@ -29,6 +35,7 @@ const emptyForm = {
 export function BasicInfoCard({ profile }: { profile: Profile }) {
   const queryClient = useQueryClient();
   const save = useServerFn(updateMyBasics);
+  const saveSlug = useServerFn(setMySlug);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState(emptyForm);
 
@@ -36,6 +43,7 @@ export function BasicInfoCard({ profile }: { profile: Profile }) {
     setForm({
       display_name: profile.display_name ?? "",
       full_name: profile.full_name ?? "",
+      slug: profile.slug ?? "",
       city: profile.city ?? "Sinop, MT",
       bio: profile.bio ?? "",
       main_network: profile.main_network ?? "",
@@ -45,8 +53,12 @@ export function BasicInfoCard({ profile }: { profile: Profile }) {
   }, [profile, open]);
 
   const mutation = useMutation({
-    mutationFn: () =>
-      save({
+    mutationFn: async () => {
+      const slug = normalizeSlug(form.slug);
+      if (slug && slug !== profile.slug) {
+        await saveSlug({ data: { slug } });
+      }
+      return save({
         data: {
           display_name: form.display_name.trim(),
           full_name: form.full_name.trim() || null,
@@ -56,7 +68,8 @@ export function BasicInfoCard({ profile }: { profile: Profile }) {
           whatsapp: form.whatsapp.trim() || null,
           email: form.email.trim() || null,
         },
-      }),
+      });
+    },
     onSuccess: () => {
       toast.success("Informações salvas");
       setOpen(false);
@@ -68,11 +81,13 @@ export function BasicInfoCard({ profile }: { profile: Profile }) {
   const rows: Array<[string, string]> = [
     ["Nome público", profile.display_name || "—"],
     ["Nome completo", profile.full_name || "—"],
+    ["Endereço do perfil", `/perfil/${profile.slug}`],
     ["Cidade", profile.city || "—"],
     ["Rede principal", networkLabel(profile.main_network) ?? "—"],
     ["WhatsApp", profile.whatsapp || "—"],
     ["E-mail de contato", profile.email || "—"],
   ];
+
 
   return (
     <section className="rounded-3xl border border-border bg-card p-7">
