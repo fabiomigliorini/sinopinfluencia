@@ -82,7 +82,7 @@ export function BasicInfoCard({ profile }: { profile: Profile }) {
   const rows: Array<[string, string]> = [
     ["Nome público", profile.display_name || "—"],
     ["Nome completo", profile.full_name || "—"],
-    ["Endereço do perfil", `/perfil/${profile.slug}`],
+    ["Endereço do perfil", `/criador/${profile.slug}`],
     ["Cidade", profile.city || "—"],
     ["Rede principal", networkLabel(profile.main_network) ?? "—"],
     ["WhatsApp", profile.whatsapp || "—"],
@@ -129,7 +129,7 @@ export function BasicInfoCard({ profile }: { profile: Profile }) {
               <label className="space-y-1.5 md:col-span-2">
                 <span className={labelCls}>Endereço do perfil</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">/perfil/</span>
+                  <span className="text-sm text-muted-foreground">/criador/</span>
                   <input
                     className={fieldCls}
                     value={form.slug}

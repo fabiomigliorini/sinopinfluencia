@@ -15,6 +15,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DiretorioRouteImport } from './routes/diretorio'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as CriadorSlugRouteImport } from './routes/criador.$slug'
 import { Route as PerfilSlugRouteImport } from './routes/perfil.$slug'
 import { Route as AuthenticatedAdminPerfisRouteImport } from './routes/_authenticated/admin.perfis'
 import { Route as ApiPublicSitemapDotxmlRouteImport } from './routes/api/public/sitemap[.]xml'
@@ -50,6 +51,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const CriadorSlugRoute = CriadorSlugRouteImport.update({
+  id: '/criador/$slug',
+  path: '/criador/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const PerfilSlugRoute = PerfilSlugRouteImport.update({
   id: '/perfil/$slug',
@@ -90,6 +96,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/diretorio': typeof DiretorioRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/criador/$slug': typeof CriadorSlugRoute
   '/perfil/$slug': typeof PerfilSlugRoute
   '/admin/perfis': typeof AuthenticatedAdminPerfisRoute
   '/api/public/sitemap.xml': typeof ApiPublicSitemapDotxmlRoute
@@ -103,6 +110,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/diretorio': typeof DiretorioRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/criador/$slug': typeof CriadorSlugRoute
   '/perfil/$slug': typeof PerfilSlugRoute
   '/admin/perfis': typeof AuthenticatedAdminPerfisRoute
   '/api/public/sitemap.xml': typeof ApiPublicSitemapDotxmlRoute
@@ -118,6 +126,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/diretorio': typeof DiretorioRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/criador/$slug': typeof CriadorSlugRoute
   '/perfil/$slug': typeof PerfilSlugRoute
   '/_authenticated/admin/perfis': typeof AuthenticatedAdminPerfisRoute
   '/api/public/sitemap.xml': typeof ApiPublicSitemapDotxmlRoute
@@ -133,6 +142,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/diretorio'
     | '/dashboard'
+    | '/criador/$slug'
     | '/perfil/$slug'
     | '/admin/perfis'
     | '/api/public/sitemap.xml'
@@ -146,6 +156,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/diretorio'
     | '/dashboard'
+    | '/criador/$slug'
     | '/perfil/$slug'
     | '/admin/perfis'
     | '/api/public/sitemap.xml'
@@ -160,6 +171,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/diretorio'
     | '/_authenticated/dashboard'
+    | '/criador/$slug'
     | '/perfil/$slug'
     | '/_authenticated/admin/perfis'
     | '/api/public/sitemap.xml'
@@ -174,6 +186,7 @@ export interface RootRouteChildren {
   SlugRoute: typeof SlugRoute
   AuthRoute: typeof AuthRoute
   DiretorioRoute: typeof DiretorioRoute
+  CriadorSlugRoute: typeof CriadorSlugRoute
   PerfilSlugRoute: typeof PerfilSlugRoute
   ApiPublicSitemapDotxmlRoute: typeof ApiPublicSitemapDotxmlRoute
   ApiPublicCronSyncSocialRoute: typeof ApiPublicCronSyncSocialRoute
@@ -223,6 +236,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/criador/$slug': {
+      id: '/criador/$slug'
+      path: '/criador/$slug'
+      fullPath: '/criador/$slug'
+      preLoaderRoute: typeof CriadorSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/perfil/$slug': {
       id: '/perfil/$slug'
@@ -290,6 +310,7 @@ const rootRouteChildren: RootRouteChildren = {
   SlugRoute: SlugRoute,
   AuthRoute: AuthRoute,
   DiretorioRoute: DiretorioRoute,
+  CriadorSlugRoute: CriadorSlugRoute,
   PerfilSlugRoute: PerfilSlugRoute,
   ApiPublicSitemapDotxmlRoute: ApiPublicSitemapDotxmlRoute,
   ApiPublicCronSyncSocialRoute: ApiPublicCronSyncSocialRoute,

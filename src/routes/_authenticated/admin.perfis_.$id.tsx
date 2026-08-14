@@ -92,7 +92,7 @@ function AdminProfilePreview() {
             </Link>
             {profile.status === "approved" ? (
               <Link
-                to="/perfil/$slug"
+                to="/criador/$slug"
                 params={{ slug: profile.slug }}
                 className="rounded-full bg-primary px-4 py-2 text-xs font-bold text-primary-foreground"
               >
