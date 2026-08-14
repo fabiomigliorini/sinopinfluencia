@@ -221,6 +221,44 @@ export async function fetchInstagramPublic(handle: string): Promise<PublicMetric
     }
   }
 
+  // The regular profile endpoints are frequently rate-limited, while Instagram's
+  // public embed payload still exposes the profile header counters without login.
+  try {
+    const embedHtml = await getText(`${profileUrl}embed/`, {
+      "User-Agent": CRAWLER_UA,
+    });
+    const followers =
+      firstNumber(/\\?"followers_count\\?"\s*:\s*(\d+)/, embedHtml) ??
+      firstNumber(/\\?"edge_followed_by\\?"\s*:\s*\{\\?"count\\?"\s*:\s*(\d+)/, embedHtml);
+    if (followers !== null) {
+      const posts =
+        firstNumber(/\\?"posts_count\\?"\s*:\s*(\d+)/, embedHtml) ??
+        firstNumber(/\\?"edge_owner_to_timeline_media\\?"\s*:\s*\{\\?"count\\?"\s*:\s*(\d+)/, embedHtml);
+      const readString = (key: string) => {
+        const match = embedHtml.match(
+          new RegExp(`\\\\?"${key}\\\\?"\\s*:\\s*\\\\?"([^"\\\\]*(?:\\\\.[^"\\\\]*)*)`),
+        );
+        return match?.[1]
+          ? decodeEntities(match[1].replace(/\\u0026/g, "&").replace(/\\u002F/g, "/").replace(/\\\"/g, '"'))
+          : null;
+      };
+      return {
+        handle,
+        displayName: readString("full_name"),
+        avatarUrl: readString("profile_pic_url_hd") ?? readString("profile_pic_url"),
+        profileUrl,
+        followers,
+        following: null,
+        postsCount: posts,
+        likes: null,
+        views: null,
+        raw: { source: "instagram_embed" },
+      };
+    }
+  } catch {
+    /* continue with crawler preview and search snippet fallbacks */
+  }
+
   // Public link preview: Meta serves counters in og:description to crawlers.
   let html = "";
   try {
