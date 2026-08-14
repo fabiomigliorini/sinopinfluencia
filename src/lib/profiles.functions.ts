@@ -1,5 +1,4 @@
 import { createServerFn } from "@tanstack/react-start";
-import { notFound } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import { sortByTier } from "@/lib/tiers";
@@ -104,7 +103,7 @@ export const getProfileBySlug = createServerFn({ method: "GET" })
       .single();
 
     if (profileError || !profile) {
-      throw notFound();
+      return null;
     }
 
     const [
