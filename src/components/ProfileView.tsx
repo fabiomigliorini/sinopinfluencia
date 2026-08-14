@@ -332,47 +332,37 @@ function SocialCard({ account }: { account: PublicSocialAccount }) {
 
   if (stats.length === 0 && !account.handle) return null;
 
-  const header = (
-    <div className="flex items-center gap-3">
-      <div className="relative">
-        {account.avatar_url ? (
-          <img
-            src={account.avatar_url}
-            alt={account.handle ?? networkLabel(account.network)}
-            loading="lazy"
-            className="h-11 w-11 rounded-full object-cover"
+  const content = (
+    <>
+      <div className="flex items-center gap-3">
+        <div className="relative">
+          {account.avatar_url ? (
+            <img
+              src={account.avatar_url}
+              alt={account.handle ?? networkLabel(account.network)}
+              loading="lazy"
+              className="h-11 w-11 rounded-full object-cover"
+            />
+          ) : (
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-secondary text-sm font-bold text-primary">
+              {(account.handle ?? networkLabel(account.network))[0]?.toUpperCase()}
+            </div>
+          )}
+          <NetworkBadge
+            network={account.network}
+            className="absolute -bottom-1 -right-1 h-5 w-5 ring-2 ring-card"
+            iconClassName="h-2.5 w-2.5"
           />
-        ) : (
-          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-secondary text-sm font-bold text-primary">
-            {(account.handle ?? networkLabel(account.network))[0]?.toUpperCase()}
-          </div>
-        )}
-        <NetworkBadge
-          network={account.network}
-          className="absolute -bottom-1 -right-1 h-5 w-5 ring-2 ring-card"
-          iconClassName="h-2.5 w-2.5"
-        />
+        </div>
+        <div className="min-w-0">
+          <p className="truncate text-sm font-bold text-foreground">
+            {account.handle ? `@${account.handle}` : networkLabel(account.network)}
+          </p>
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+            {networkLabel(account.network)}
+          </p>
+        </div>
       </div>
-      <div className="min-w-0">
-        <p className="truncate text-sm font-bold text-foreground">
-          {account.handle ? `@${account.handle}` : networkLabel(account.network)}
-        </p>
-        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-          {networkLabel(account.network)}
-        </p>
-      </div>
-    </div>
-  );
-
-  return (
-    <div className="rounded-2xl border border-border bg-card p-5 transition hover:border-primary/30">
-      {account.profile_url ? (
-        <a href={account.profile_url} target="_blank" rel="noreferrer noopener" className="block">
-          {header}
-        </a>
-      ) : (
-        header
-      )}
 
       {stats.length > 0 ? (
         <div className="mt-4 grid grid-cols-2 gap-3">
@@ -398,17 +388,29 @@ function SocialCard({ account }: { account: PublicSocialAccount }) {
             Atualizado em {new Date(account.last_synced_at).toLocaleDateString("pt-BR")}
           </span>
         ) : null}
-        {account.profile_url ? (
-          <a
-            href={account.profile_url}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="ml-auto text-xs font-bold text-primary hover:underline"
-          >
-            Ver perfil ↗
-          </a>
-        ) : null}
       </div>
-    </div>
+    </>
+  );
+
+  // Same visual identity and hover behaviour as the directory cards, with the
+  // whole card acting as the link to the social profile.
+  const cardClass =
+    "flex flex-col rounded-[20px] border border-border bg-card p-5 transition";
+  const hoverClass =
+    "hover:-translate-y-1 hover:border-[#cfe4d3] hover:shadow-[0_22px_40px_-22px_rgba(13,68,36,0.35)]";
+
+  if (!account.profile_url) {
+    return <div className={cardClass}>{content}</div>;
+  }
+
+  return (
+    <a
+      href={account.profile_url}
+      target="_blank"
+      rel="noreferrer noopener"
+      className={`group ${cardClass} ${hoverClass}`}
+    >
+      {content}
+    </a>
   );
 }
