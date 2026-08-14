@@ -28,7 +28,12 @@ export function ProfileView({
     .map((n) => n[0]?.toUpperCase() ?? "")
     .join("");
 
-  const mainMetrics = metrics.slice(0, 6);
+  const mainMetrics = metrics;
+  const niches = (profile.niche ?? "")
+    .split(",")
+    .map((n) => n.trim())
+    .filter(Boolean);
+
 
   return (
     <div className="bg-background pb-16 pt-8">
