@@ -84,6 +84,7 @@ export function PortfolioCard({ works }: { works: Work[] }) {
 
   function openNew() {
     setDraft(emptyDraft);
+    setStep(1);
     setOpen(true);
   }
 
@@ -95,6 +96,7 @@ export function PortfolioCard({ works }: { works: Work[] }) {
       image_url: work.image_url ?? "",
       link_url: work.link_url ?? "",
     });
+    setStep(2);
     setOpen(true);
   }
 
@@ -117,7 +119,9 @@ export function PortfolioCard({ works }: { works: Work[] }) {
         title: current.title || (result.title ?? ""),
       }));
       toast.success("Prévia importada");
+      setStep(2);
     } catch (error) {
+
       toast.error(
         error instanceof Error ? error.message : "Não conseguimos importar a prévia",
       );
