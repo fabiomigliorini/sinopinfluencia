@@ -341,7 +341,6 @@ async function touchProfileContent(
 const basicsInput = z.object({
   display_name: z.string().min(2, "Informe seu nome público"),
   full_name: z.string().nullable(),
-  niche: z.string().nullable(),
   city: z.string().nullable(),
   bio: z.string().max(1200).nullable(),
   main_network: networkEnum.nullable(),
@@ -362,7 +361,6 @@ export const updateMyBasics = createServerFn({ method: "POST" })
       .update({
         display_name: data.display_name,
         full_name: data.full_name || null,
-        niche: data.niche || null,
         city: data.city || null,
         bio: data.bio || null,
         main_network: (data.main_network || null) as Network | null,
