@@ -189,8 +189,29 @@ function DashboardPage() {
         </div>
       )}
 
+      {profile && banner && (
+        <div
+          className={`mt-8 flex flex-wrap items-center justify-between gap-4 rounded-3xl border p-5 ${banner.tone}`}
+        >
+          <div>
+            <p className="text-sm font-bold">{banner.title}</p>
+            <p className="mt-1 text-sm text-foreground/75">{banner.text}</p>
+          </div>
+          {hasPendingChanges && (
+            <button
+              onClick={() => submitMutation.mutate()}
+              disabled={submitMutation.isPending}
+              className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
+            >
+              {submitMutation.isPending ? "Publicando..." : "Publicar alterações"}
+            </button>
+          )}
+        </div>
+      )}
+
       {profile && (
-        <div className="mt-8 grid gap-6 lg:grid-cols-[1.6fr_1fr]">
+        <div className="mt-6 grid gap-6 lg:grid-cols-[1.6fr_1fr]">
+
           <section className="rounded-3xl border border-border bg-card p-7">
             <div className="mb-6 max-w-[260px]">
               <ImageUpload
