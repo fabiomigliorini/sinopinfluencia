@@ -561,6 +561,7 @@ function YouTubeKeyCard() {
   const saveKey = useServerFn(adminSetYouTubeKey);
   const queryClient = useQueryClient();
   const [value, setValue] = useState("");
+  const [open, setOpen] = useState(false);
 
   const { data } = useQuery({
     queryKey: ["youtube-key-status"],
@@ -571,6 +572,7 @@ function YouTubeKeyCard() {
     mutationFn: (key: string) => saveKey({ data: { key } }),
     onSuccess: (result) => {
       setValue("");
+      setOpen(false);
       toast.success(result.removed ? "Chave removida" : "Chave salva");
       void queryClient.invalidateQueries({ queryKey: ["youtube-key-status"] });
     },
@@ -585,59 +587,87 @@ function YouTubeKeyCard() {
           <p className="mt-1 text-xs text-muted-foreground">
             Necessária para coletar inscritos e visualizações dos canais do YouTube.
           </p>
+          {data?.source === "panel" && data.masked ? (
+            <p className="mt-2 text-xs text-muted-foreground">
+              Chave atual: <span className="font-mono">{data.masked}</span>
+            </p>
+          ) : null}
+          {data?.source === "secret" ? (
+            <p className="mt-2 text-xs text-muted-foreground">
+              Usando a chave guardada nas configurações do projeto.
+            </p>
+          ) : null}
         </div>
-        <span
-          className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wide ${
-            data?.configured ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"
-          }`}
-        >
-          {data?.configured ? "Configurada" : "Não configurada"}
-        </span>
-      </div>
-
-      {data?.source === "panel" && data.masked ? (
-        <p className="mt-3 text-xs text-muted-foreground">
-          Chave atual: <span className="font-mono">{data.masked}</span>
-        </p>
-      ) : null}
-      {data?.source === "secret" ? (
-        <p className="mt-3 text-xs text-muted-foreground">
-          Usando a chave guardada nas configurações do projeto. Informe abaixo para substituir.
-        </p>
-      ) : null}
-
-      <div className="mt-4 flex flex-wrap items-center gap-2">
-        <input
-          value={value}
-          type="password"
-          autoComplete="off"
-          placeholder="AIza..."
-          onChange={(event) => setValue(event.target.value)}
-          className="min-w-[240px] flex-1 rounded-xl border border-input bg-background px-3 py-2 text-sm"
-        />
-        <button
-          type="button"
-          disabled={mutation.isPending || !value.trim()}
-          onClick={() => mutation.mutate(value.trim())}
-          className="rounded-full bg-primary px-5 py-2 text-xs font-bold text-primary-foreground disabled:opacity-60"
-        >
-          {mutation.isPending ? "Salvando…" : "Salvar chave"}
-        </button>
-        {data?.source === "panel" ? (
-          <button
-            type="button"
-            disabled={mutation.isPending}
-            onClick={() => mutation.mutate("")}
-            className="rounded-full border border-destructive/40 px-4 py-2 text-xs font-bold text-destructive disabled:opacity-60"
+        <div className="flex items-center gap-2">
+          <span
+            className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wide ${
+              data?.configured ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"
+            }`}
           >
-            Remover
-          </button>
-        ) : null}
+            {data?.configured ? "Configurada" : "Não configurada"}
+          </span>
+
+          <Dialog
+            open={open}
+            onOpenChange={(next) => {
+              setOpen(next);
+              if (!next) setValue("");
+            }}
+          >
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm" className="rounded-full text-xs font-bold">
+                {data?.configured ? "Alterar chave" : "Informar chave"}
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Chave da API do Google (YouTube)</DialogTitle>
+                <DialogDescription>
+                  Gere em console.cloud.google.com → APIs e serviços → Credenciais, com a
+                  “YouTube Data API v3” ativada.
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="space-y-2">
+                <Label htmlFor="youtube-api-key">Nova chave</Label>
+                <input
+                  id="youtube-api-key"
+                  value={value}
+                  type="password"
+                  autoComplete="off"
+                  placeholder="AIza..."
+                  onChange={(event) => setValue(event.target.value)}
+                  className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm"
+                />
+              </div>
+
+              <DialogFooter className="gap-2 sm:justify-between">
+                {data?.source === "panel" ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={mutation.isPending}
+                    onClick={() => mutation.mutate("")}
+                    className="rounded-full border-destructive/40 text-xs font-bold text-destructive"
+                  >
+                    Remover chave
+                  </Button>
+                ) : (
+                  <span />
+                )}
+                <Button
+                  type="button"
+                  disabled={mutation.isPending || !value.trim()}
+                  onClick={() => mutation.mutate(value.trim())}
+                  className="rounded-full text-xs font-bold"
+                >
+                  {mutation.isPending ? "Salvando…" : "Salvar chave"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
-      <p className="mt-3 text-xs text-muted-foreground">
-        Gere em console.cloud.google.com → APIs e serviços → Credenciais, com a
-        “YouTube Data API v3” ativada.
-      </p>
     </div>
   );
 }
