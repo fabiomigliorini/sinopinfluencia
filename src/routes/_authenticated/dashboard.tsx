@@ -14,6 +14,7 @@ import { SocialAccountCards } from "@/components/SocialAccountCards";
 import { BasicInfoCard } from "@/components/account/BasicInfoCard";
 import { FormatsCard } from "@/components/account/FormatsCard";
 import { BrandsCard } from "@/components/account/BrandsCard";
+import { NichesCard } from "@/components/account/NichesCard";
 import { PortfolioCard } from "@/components/account/PortfolioCard";
 
 
@@ -300,6 +301,7 @@ function DashboardPage() {
 
           <div className="space-y-6 lg:col-span-2">
             <BasicInfoCard profile={profile} />
+          <NichesCard niche={profile.niche} />
             <SocialAccountCards />
             <FormatsCard formats={(data?.formats ?? []).map((f) => f.format)} />
             <BrandsCard brands={data?.brands ?? []} />

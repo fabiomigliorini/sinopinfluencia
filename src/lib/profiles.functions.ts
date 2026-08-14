@@ -56,7 +56,7 @@ export const getFilteredProfiles = createServerFn({ method: "GET" })
       );
     }
     if (data.niche) {
-      builder = builder.eq("niche", data.niche);
+      builder = builder.ilike("niche", `%${data.niche}%`);
     }
     if (data.network) {
       builder = builder.eq(
@@ -85,8 +85,15 @@ export const listDirectoryMetadata = createServerFn({ method: "GET" }).handler(
       supabase.from("profile_metrics").select("profile_id, network, followers"),
     ]);
     const niches = Array.from(
-      new Set((profiles ?? []).map((p) => p.niche).filter(Boolean)),
-    ) as string[];
+      new Set(
+        (profiles ?? []).flatMap((p) =>
+          (p.niche ?? "")
+            .split(",")
+            .map((item) => item.trim())
+            .filter(Boolean),
+        ),
+      ),
+    ).sort((a, b) => a.localeCompare(b, "pt-BR"));
     return { niches, metrics: metrics ?? [], count: (profiles ?? []).length };
   },
 );

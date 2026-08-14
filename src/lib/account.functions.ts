@@ -341,7 +341,6 @@ async function touchProfileContent(
 const basicsInput = z.object({
   display_name: z.string().min(2, "Informe seu nome público"),
   full_name: z.string().nullable(),
-  niche: z.string().nullable(),
   city: z.string().nullable(),
   bio: z.string().max(1200).nullable(),
   main_network: networkEnum.nullable(),
@@ -362,7 +361,6 @@ export const updateMyBasics = createServerFn({ method: "POST" })
       .update({
         display_name: data.display_name,
         full_name: data.full_name || null,
-        niche: data.niche || null,
         city: data.city || null,
         bio: data.bio || null,
         main_network: (data.main_network || null) as Network | null,
@@ -496,3 +494,25 @@ export const removeMyWork = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+
+/** Card "Nichos": replaces the whole list (stored as a comma separated text). */
+export const setMyNiches = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((input: unknown) =>
+    z.object({ niches: z.array(z.string().min(1).max(60)) }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const unique = Array.from(
+      new Set(data.niches.map((n) => n.trim()).filter(Boolean)),
+    );
+    const { error } = await supabase
+      .from("profiles")
+      .update({
+        niche: unique.length ? unique.join(", ") : null,
+        content_changed_at: new Date().toISOString(),
+      })
+      .eq("user_id", userId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
