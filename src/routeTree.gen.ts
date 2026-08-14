@@ -18,6 +18,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAdminPerfisRouteImport } from './routes/_authenticated/admin.perfis'
 import { Route as AuthenticatedPerfilEditRouteImport } from './routes/_authenticated/perfil.edit'
 import { Route as ApiPublicSitemapDotxmlRouteImport } from './routes/api/public/sitemap[.]xml'
+import { Route as AuthenticatedAdminPerfisIdRouteImport } from './routes/_authenticated/admin.perfis.$id'
 import { Route as ApiPublicCronSyncSocialRouteImport } from './routes/api/public/cron/sync-social'
 import { Route as ApiPublicImgSplatRouteImport } from './routes/api/public/img.$'
 
@@ -66,6 +67,12 @@ const ApiPublicSitemapDotxmlRoute = ApiPublicSitemapDotxmlRouteImport.update({
   path: '/api/public/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminPerfisIdRoute =
+  AuthenticatedAdminPerfisIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedAdminPerfisRoute,
+  } as any)
 const ApiPublicCronSyncSocialRoute = ApiPublicCronSyncSocialRouteImport.update({
   id: '/api/public/cron/sync-social',
   path: '/api/public/cron/sync-social',
@@ -83,9 +90,10 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/diretorio': typeof DiretorioRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/admin/perfis': typeof AuthenticatedAdminPerfisRoute
+  '/admin/perfis': typeof AuthenticatedAdminPerfisRouteWithChildren
   '/perfil/edit': typeof AuthenticatedPerfilEditRoute
   '/api/public/sitemap.xml': typeof ApiPublicSitemapDotxmlRoute
+  '/admin/perfis/$id': typeof AuthenticatedAdminPerfisIdRoute
   '/api/public/cron/sync-social': typeof ApiPublicCronSyncSocialRoute
   '/api/public/img/$': typeof ApiPublicImgSplatRoute
 }
@@ -95,9 +103,10 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/diretorio': typeof DiretorioRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/admin/perfis': typeof AuthenticatedAdminPerfisRoute
+  '/admin/perfis': typeof AuthenticatedAdminPerfisRouteWithChildren
   '/perfil/edit': typeof AuthenticatedPerfilEditRoute
   '/api/public/sitemap.xml': typeof ApiPublicSitemapDotxmlRoute
+  '/admin/perfis/$id': typeof AuthenticatedAdminPerfisIdRoute
   '/api/public/cron/sync-social': typeof ApiPublicCronSyncSocialRoute
   '/api/public/img/$': typeof ApiPublicImgSplatRoute
 }
@@ -109,9 +118,10 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/diretorio': typeof DiretorioRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
-  '/_authenticated/admin/perfis': typeof AuthenticatedAdminPerfisRoute
+  '/_authenticated/admin/perfis': typeof AuthenticatedAdminPerfisRouteWithChildren
   '/_authenticated/perfil/edit': typeof AuthenticatedPerfilEditRoute
   '/api/public/sitemap.xml': typeof ApiPublicSitemapDotxmlRoute
+  '/_authenticated/admin/perfis/$id': typeof AuthenticatedAdminPerfisIdRoute
   '/api/public/cron/sync-social': typeof ApiPublicCronSyncSocialRoute
   '/api/public/img/$': typeof ApiPublicImgSplatRoute
 }
@@ -126,6 +136,7 @@ export interface FileRouteTypes {
     | '/admin/perfis'
     | '/perfil/edit'
     | '/api/public/sitemap.xml'
+    | '/admin/perfis/$id'
     | '/api/public/cron/sync-social'
     | '/api/public/img/$'
   fileRoutesByTo: FileRoutesByTo
@@ -138,6 +149,7 @@ export interface FileRouteTypes {
     | '/admin/perfis'
     | '/perfil/edit'
     | '/api/public/sitemap.xml'
+    | '/admin/perfis/$id'
     | '/api/public/cron/sync-social'
     | '/api/public/img/$'
   id:
@@ -151,6 +163,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/perfis'
     | '/_authenticated/perfil/edit'
     | '/api/public/sitemap.xml'
+    | '/_authenticated/admin/perfis/$id'
     | '/api/public/cron/sync-social'
     | '/api/public/img/$'
   fileRoutesById: FileRoutesById
@@ -231,6 +244,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicSitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin/perfis/$id': {
+      id: '/_authenticated/admin/perfis/$id'
+      path: '/$id'
+      fullPath: '/admin/perfis/$id'
+      preLoaderRoute: typeof AuthenticatedAdminPerfisIdRouteImport
+      parentRoute: typeof AuthenticatedAdminPerfisRoute
+    }
     '/api/public/cron/sync-social': {
       id: '/api/public/cron/sync-social'
       path: '/api/public/cron/sync-social'
@@ -248,15 +268,29 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedAdminPerfisRouteChildren {
+  AuthenticatedAdminPerfisIdRoute: typeof AuthenticatedAdminPerfisIdRoute
+}
+
+const AuthenticatedAdminPerfisRouteChildren: AuthenticatedAdminPerfisRouteChildren =
+  {
+    AuthenticatedAdminPerfisIdRoute: AuthenticatedAdminPerfisIdRoute,
+  }
+
+const AuthenticatedAdminPerfisRouteWithChildren =
+  AuthenticatedAdminPerfisRoute._addFileChildren(
+    AuthenticatedAdminPerfisRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
-  AuthenticatedAdminPerfisRoute: typeof AuthenticatedAdminPerfisRoute
+  AuthenticatedAdminPerfisRoute: typeof AuthenticatedAdminPerfisRouteWithChildren
   AuthenticatedPerfilEditRoute: typeof AuthenticatedPerfilEditRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
-  AuthenticatedAdminPerfisRoute: AuthenticatedAdminPerfisRoute,
+  AuthenticatedAdminPerfisRoute: AuthenticatedAdminPerfisRouteWithChildren,
   AuthenticatedPerfilEditRoute: AuthenticatedPerfilEditRoute,
 }
 

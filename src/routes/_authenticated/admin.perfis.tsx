@@ -11,9 +11,14 @@ import {
 import {
   adminGetYouTubeKeyStatus,
   adminAddAccount,
+  adminListAccounts,
+  adminRemoveAccount,
   adminSetYouTubeKey,
   adminSyncProfile,
 } from "@/lib/social.functions";
+import { getProfileForAdmin, setProfileTier } from "@/lib/account.functions";
+import { NetworkBadge, networkLabel } from "@/components/network-icons";
+import { TIER_OPTIONS, type Tier } from "@/lib/tiers";
 
 
 export const Route = createFileRoute("/_authenticated/admin/perfis")({
@@ -166,12 +171,22 @@ function AdminProfilesPage() {
             </div>
             <div className="flex flex-wrap gap-2">
               <Link
-                to="/$slug"
-                params={{ slug: p.slug }}
+                to="/admin/perfis/$id"
+                params={{ id: p.id }}
                 className="rounded-full border border-border px-4 py-2 text-xs font-bold transition hover:bg-accent"
               >
                 Ver perfil
               </Link>
+              {p.status === "approved" ? (
+                <Link
+                  to="/$slug"
+                  params={{ slug: p.slug }}
+                  className="rounded-full border border-border px-4 py-2 text-xs font-bold transition hover:bg-accent"
+                >
+                  Página pública
+                </Link>
+              ) : null}
+              <TierSelect profileId={p.id} tier={p.tier as Tier} />
               <AdminSocialTools profileId={p.id} />
               {p.status !== "approved" && (
                 <button
@@ -200,6 +215,38 @@ function AdminProfilesPage() {
         ))}
       </div>
     </div>
+  );
+}
+
+/** Curation control: sets the ACES ladder (1 to 4 stars) for one profile. */
+function TierSelect({ profileId, tier }: { profileId: string; tier: Tier }) {
+  const queryClient = useQueryClient();
+  const saveTier = useServerFn(setProfileTier);
+  const mutation = useMutation({
+    mutationFn: (value: Tier) => saveTier({ data: { profileId, tier: value } }),
+    onSuccess: () => {
+      toast.success("Nível atualizado");
+      void queryClient.invalidateQueries({ queryKey: ["admin-profiles"] });
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+
+  return (
+    <label className="flex items-center gap-2 rounded-full border border-border px-3 py-1.5 text-xs font-bold">
+      <span className="text-muted-foreground">Nível</span>
+      <select
+        value={tier}
+        disabled={mutation.isPending}
+        onChange={(event) => mutation.mutate(event.target.value as Tier)}
+        className="bg-transparent text-xs font-bold outline-none disabled:opacity-60"
+      >
+        {TIER_OPTIONS.map((option) => (
+          <option key={option.value} value={option.value}>
+            {"★".repeat(option.stars)} {option.label}
+          </option>
+        ))}
+      </select>
+    </label>
   );
 }
 
