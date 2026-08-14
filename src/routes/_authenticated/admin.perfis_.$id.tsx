@@ -5,7 +5,7 @@ import { getProfileForAdmin } from "@/lib/account.functions";
 import { ProfileView, type ProfileViewData } from "@/components/ProfileView";
 import { tierLabel } from "@/lib/tiers";
 
-export const Route = createFileRoute("/_authenticated/admin/perfis/$id")({
+export const Route = createFileRoute("/_authenticated/admin/perfis_/$id")({
   component: AdminProfilePreview,
   head: () => ({
     meta: [
