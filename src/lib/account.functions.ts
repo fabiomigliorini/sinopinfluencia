@@ -1,6 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { normalizeSlug } from "@/lib/profile-options";
+import { loadPublicSocialAccounts } from "@/lib/social-public";
+
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
@@ -262,7 +264,7 @@ export const getProfileForAdmin = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     if (!profile) throw new Error("Perfil não encontrado");
 
-    const [{ data: metrics }, { data: formats }, { data: works }, { data: brands }] =
+    const [{ data: metrics }, { data: formats }, { data: works }, { data: brands }, socialAccounts] =
       await Promise.all([
         supabase
           .from("profile_metrics")
@@ -284,6 +286,7 @@ export const getProfileForAdmin = createServerFn({ method: "POST" })
           .select("*")
           .eq("profile_id", profile.id)
           .order("brand_name", { ascending: true }),
+        loadPublicSocialAccounts(supabase, profile.id),
       ]);
 
     return {
@@ -292,8 +295,10 @@ export const getProfileForAdmin = createServerFn({ method: "POST" })
       formats: formats ?? [],
       works: works ?? [],
       brands: brands ?? [],
+      socialAccounts,
     };
   });
+
 
 /** Saves only the profile photo, so the dashboard can change it in one click. */
 export const setMyAvatar = createServerFn({ method: "POST" })

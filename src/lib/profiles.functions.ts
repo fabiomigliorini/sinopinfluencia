@@ -2,6 +2,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import { sortByTier } from "@/lib/tiers";
+import { loadPublicSocialAccounts } from "@/lib/social-public";
+
 
 function createServerSupabaseClient() {
   return createClient<Database>(
@@ -131,6 +133,7 @@ export const getProfileBySlug = createServerFn({ method: "GET" })
       { data: formats },
       { data: works },
       { data: brands },
+      socialAccounts,
     ] = await Promise.all([
       supabase
         .from("profile_metrics")
@@ -152,6 +155,7 @@ export const getProfileBySlug = createServerFn({ method: "GET" })
         .select("*")
         .eq("profile_id", profile.id)
         .order("brand_name", { ascending: true }),
+      loadPublicSocialAccounts(supabase, profile.id),
     ]);
 
     return {
@@ -160,6 +164,8 @@ export const getProfileBySlug = createServerFn({ method: "GET" })
       formats: formats ?? [],
       works: works ?? [],
       brands: brands ?? [],
+      socialAccounts,
     };
   });
+
 
