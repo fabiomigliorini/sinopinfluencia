@@ -131,6 +131,7 @@ export const getProfileBySlug = createServerFn({ method: "GET" })
       { data: formats },
       { data: works },
       { data: brands },
+      socialAccounts,
     ] = await Promise.all([
       supabase
         .from("profile_metrics")
@@ -152,6 +153,7 @@ export const getProfileBySlug = createServerFn({ method: "GET" })
         .select("*")
         .eq("profile_id", profile.id)
         .order("brand_name", { ascending: true }),
+      loadPublicSocialAccounts(supabase, profile.id),
     ]);
 
     return {
@@ -160,6 +162,8 @@ export const getProfileBySlug = createServerFn({ method: "GET" })
       formats: formats ?? [],
       works: works ?? [],
       brands: brands ?? [],
+      socialAccounts,
     };
   });
+
 
