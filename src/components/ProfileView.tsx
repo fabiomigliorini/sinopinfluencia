@@ -304,3 +304,111 @@ function MetricCard({
     </div>
   );
 }
+
+function formatNumber(value: number) {
+  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1).replace(".0", "")}M`;
+  if (value >= 1_000) return `${(value / 1_000).toFixed(1).replace(".0", "")}K`;
+  return String(value);
+}
+
+function SocialCard({ account }: { account: PublicSocialAccount }) {
+  const snap = account.latest;
+  const declared = account.declared_followers?.trim() || null;
+
+  const followers =
+    snap?.followers != null && snap.followers > 0
+      ? formatNumber(snap.followers)
+      : declared || null;
+  const isDeclared = !(snap?.followers != null && snap.followers > 0) && Boolean(declared);
+
+  const stats: Array<{ label: string; value: string }> = [];
+  if (followers) stats.push({ label: "Seguidores", value: followers });
+  if (snap?.posts_count != null && snap.posts_count > 0)
+    stats.push({ label: "Publicações", value: formatNumber(snap.posts_count) });
+  if (snap?.avg_likes != null && snap.avg_likes > 0)
+    stats.push({ label: "Curtidas (méd.)", value: formatNumber(Math.round(snap.avg_likes)) });
+  if (snap?.avg_views != null && snap.avg_views > 0)
+    stats.push({ label: "Views (méd.)", value: formatNumber(Math.round(snap.avg_views)) });
+
+  if (stats.length === 0 && !account.handle) return null;
+
+  const header = (
+    <div className="flex items-center gap-3">
+      <div className="relative">
+        {account.avatar_url ? (
+          <img
+            src={account.avatar_url}
+            alt={account.handle ?? networkLabel(account.network)}
+            loading="lazy"
+            className="h-11 w-11 rounded-full object-cover"
+          />
+        ) : (
+          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-secondary text-sm font-bold text-primary">
+            {(account.handle ?? networkLabel(account.network))[0]?.toUpperCase()}
+          </div>
+        )}
+        <NetworkBadge
+          network={account.network}
+          className="absolute -bottom-1 -right-1 h-5 w-5 ring-2 ring-card"
+          iconClassName="h-2.5 w-2.5"
+        />
+      </div>
+      <div className="min-w-0">
+        <p className="truncate text-sm font-bold text-foreground">
+          {account.handle ? `@${account.handle}` : networkLabel(account.network)}
+        </p>
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+          {networkLabel(account.network)}
+        </p>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="rounded-2xl border border-border bg-card p-5 transition hover:border-primary/30">
+      {account.profile_url ? (
+        <a href={account.profile_url} target="_blank" rel="noreferrer noopener" className="block">
+          {header}
+        </a>
+      ) : (
+        header
+      )}
+
+      {stats.length > 0 ? (
+        <div className="mt-4 grid grid-cols-2 gap-3">
+          {stats.map((stat) => (
+            <div key={stat.label}>
+              <p className="text-lg font-extrabold leading-tight text-foreground">{stat.value}</p>
+              <p className="text-[11px] font-semibold text-muted-foreground">{stat.label}</p>
+            </div>
+          ))}
+        </div>
+      ) : null}
+
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        <span
+          className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+            isDeclared ? "bg-secondary text-muted-foreground" : "bg-primary/10 text-primary"
+          }`}
+        >
+          {isDeclared ? "Declarado pelo criador" : "Dados públicos"}
+        </span>
+        {!isDeclared && account.last_synced_at ? (
+          <span className="text-[11px] text-muted-foreground">
+            Atualizado em {new Date(account.last_synced_at).toLocaleDateString("pt-BR")}
+          </span>
+        ) : null}
+        {account.profile_url ? (
+          <a
+            href={account.profile_url}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="ml-auto text-xs font-bold text-primary hover:underline"
+          >
+            Ver perfil ↗
+          </a>
+        ) : null}
+      </div>
+    </div>
+  );
+}
