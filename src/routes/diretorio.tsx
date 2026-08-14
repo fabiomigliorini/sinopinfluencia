@@ -189,9 +189,9 @@ function DirectoryPage() {
               <ProfileCard
                 key={profile.id}
                 profile={profile}
-                metrics={[
-                  metricsMap[profile.id as string] as MetricRow,
-                ].filter(Boolean)}
+                metrics={metricsMap[profile.id] ?? []}
+                formats={formatsMap[profile.id] ?? []}
+
                 index={index}
               />
             ))}
