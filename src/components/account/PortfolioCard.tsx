@@ -48,6 +48,8 @@ export function PortfolioCard({ works }: { works: Work[] }) {
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<Draft>(emptyDraft);
   const [importing, setImporting] = useState(false);
+  const [step, setStep] = useState(1);
+
 
   const invalidate = () =>
     queryClient.invalidateQueries({ queryKey: ["my-profile"] });
