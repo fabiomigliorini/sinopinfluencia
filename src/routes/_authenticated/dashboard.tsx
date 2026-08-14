@@ -11,6 +11,11 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { ImageUpload } from "@/components/ImageUpload";
 import { SocialAccountCards } from "@/components/SocialAccountCards";
+import { BasicInfoCard } from "@/components/account/BasicInfoCard";
+import { FormatsCard } from "@/components/account/FormatsCard";
+import { BrandsCard } from "@/components/account/BrandsCard";
+import { PortfolioCard } from "@/components/account/PortfolioCard";
+
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardPage,
