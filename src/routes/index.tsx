@@ -308,6 +308,8 @@ function FeaturedDirectory({
               key={profile.id}
               profile={profile}
               metrics={metricsMap[profile.id] ?? []}
+              formats={formatsMap[profile.id] ?? []}
+
               index={index}
             />
           ))}
