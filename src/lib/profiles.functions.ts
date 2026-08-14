@@ -2,18 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { notFound } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
-import { tierRank } from "@/lib/tiers";
-
-type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
-
-/** Sorts by the official ACES ladder (4 stars first), then by name. */
-function sortByTier(rows: ProfileRow[]) {
-  return [...rows].sort(
-    (a, b) =>
-      tierRank(b.tier) - tierRank(a.tier) ||
-      a.display_name.localeCompare(b.display_name, "pt-BR"),
-  );
-}
+import { sortByTier } from "@/lib/tiers";
 
 function createServerSupabaseClient() {
   return createClient<Database>(

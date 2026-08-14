@@ -95,10 +95,10 @@ function DirectoryPage() {
   ];
 
   const tiers = [
-    { value: "creator", label: "Criador" },
-    { value: "featured", label: "Destaque" },
-    { value: "reference", label: "Referência" },
-    { value: "icon", label: "Ícone" },
+    { value: "creator", label: "Criador (1 estrela)" },
+    { value: "reference", label: "Referência (2 estrelas)" },
+    { value: "icon", label: "Ícone (3 estrelas)" },
+    { value: "featured", label: "Destaque (4 estrelas)" },
   ];
 
   return (

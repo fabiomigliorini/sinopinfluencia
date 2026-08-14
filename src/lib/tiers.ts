@@ -29,3 +29,12 @@ export function tierRank(tier: string | null | undefined) {
 export function tierLabel(tier: string | null | undefined) {
   return TIER_LABEL[(tier ?? "creator") as Tier] ?? String(tier ?? "");
 }
+
+/** Sorts profiles by the official ACES ladder (4 stars first), then by name. */
+export function sortByTier<T extends { tier: string; display_name: string }>(rows: T[]) {
+  return [...rows].sort(
+    (a, b) =>
+      tierRank(b.tier) - tierRank(a.tier) ||
+      a.display_name.localeCompare(b.display_name, "pt-BR"),
+  );
+}
