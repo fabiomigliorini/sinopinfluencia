@@ -117,8 +117,10 @@ function AdminProfilesPage() {
   }
 
   // Approved profiles that submitted new changes still show up for review.
-  const inTab = (p: (typeof profiles extends undefined ? never : NonNullable<typeof profiles>)[number]) =>
-    tab === "pending" ? p.status === "pending" || p.review_pending : p.status === tab && !p.review_pending;
+  const inTab = (p: { status: string; review_pending: boolean }) =>
+    tab === "pending"
+      ? p.status === "pending" || p.review_pending
+      : p.status === tab && !p.review_pending;
   const filtered = (profiles ?? []).filter(inTab);
 
   return (
