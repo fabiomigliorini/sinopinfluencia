@@ -1,11 +1,8 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { z } from "zod";
-import {
-  getFilteredProfiles,
-  listDirectoryMetadata,
-} from "@/lib/profiles.functions";
+import { directoryQueryOptions, metadataQueryOptions } from "@/lib/profile-queries";
 import { ProfileCard } from "@/components/ProfileCard";
 import { TierBadge } from "@/components/ProfileCard";
 import type { Database } from "@/integrations/supabase/types";
@@ -19,24 +16,6 @@ const searchSchema = z.object({
   niche: z.string().optional(),
   network: z.string().optional(),
   tier: z.string().optional(),
-});
-
-const directoryQueryOptions = (
-  filters: {
-    q?: string | undefined;
-    niche?: string | undefined;
-    network?: string | undefined;
-    tier?: string | undefined;
-  },
-) =>
-  queryOptions({
-    queryKey: ["directory", filters],
-    queryFn: () => getFilteredProfiles({ data: filters }),
-  });
-
-const metadataQueryOptions = queryOptions({
-  queryKey: ["directory-metadata"],
-  queryFn: () => listDirectoryMetadata(),
 });
 
 export const Route = createFileRoute("/diretorio")({

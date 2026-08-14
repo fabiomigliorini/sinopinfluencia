@@ -10,7 +10,6 @@ import {
   type ProfileInput,
 } from "@/lib/account.functions";
 import { ImageUpload } from "@/components/ImageUpload";
-import { SocialAccountCards } from "@/components/SocialAccountCards";
 
 export const Route = createFileRoute("/_authenticated/perfil/edit")({
   component: EditProfilePage,
@@ -266,14 +265,6 @@ function EditProfilePage() {
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
               />
             </label>
-            <div className="md:col-span-2">
-              <ImageUpload
-                label="Foto de perfil"
-                round
-                value={form.avatar_url}
-                onChange={(url) => setForm({ ...form, avatar_url: url })}
-              />
-            </div>
             <label className="space-y-1.5 md:col-span-2">
               <span className={labelCls}>Bio</span>
               <textarea
@@ -286,8 +277,6 @@ function EditProfilePage() {
             </label>
           </div>
         </section>
-
-        <SocialAccountCards />
 
         <section className="rounded-3xl border border-border bg-card p-6">
           <h2 className="text-lg font-bold">Formatos de trabalho</h2>

@@ -2,8 +2,15 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { getMyProfile, submitMyProfile, getMyRole } from "@/lib/account.functions";
+import {
+  getMyProfile,
+  submitMyProfile,
+  getMyRole,
+  setMyAvatar,
+} from "@/lib/account.functions";
 import { supabase } from "@/integrations/supabase/client";
+import { ImageUpload } from "@/components/ImageUpload";
+import { SocialAccountCards } from "@/components/SocialAccountCards";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardPage,
@@ -55,6 +62,7 @@ function DashboardPage() {
   const fetchProfile = useServerFn(getMyProfile);
   const fetchRole = useServerFn(getMyRole);
   const submit = useServerFn(submitMyProfile);
+  const saveAvatar = useServerFn(setMyAvatar);
 
   const { data, isLoading } = useQuery({
     queryKey: ["my-profile"],
@@ -67,6 +75,15 @@ function DashboardPage() {
     onSuccess: () => {
       toast.success("Perfil enviado para curadoria!");
       queryClient.invalidateQueries({ queryKey: ["my-profile"] });
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+
+  const avatarMutation = useMutation({
+    mutationFn: (avatarUrl: string) => saveAvatar({ data: { avatarUrl } }),
+    onSuccess: () => {
+      toast.success("Foto atualizada");
+      void queryClient.invalidateQueries({ queryKey: ["my-profile"] });
     },
     onError: (error: Error) => toast.error(error.message),
   });
@@ -134,6 +151,17 @@ function DashboardPage() {
       {profile && (
         <div className="mt-8 grid gap-6 lg:grid-cols-[1.6fr_1fr]">
           <section className="rounded-3xl border border-border bg-card p-7">
+            <div className="mb-6 max-w-[260px]">
+              <ImageUpload
+                label="Foto de perfil"
+                round
+                value={profile.avatar_url ?? ""}
+                onChange={(url) => avatarMutation.mutate(url)}
+              />
+              {avatarMutation.isPending ? (
+                <p className="mt-2 text-xs text-muted-foreground">Salvando foto…</p>
+              ) : null}
+            </div>
             <div className="flex flex-wrap items-center gap-3">
               <span
                 className={`rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide ${status?.tone}`}
@@ -208,6 +236,10 @@ function DashboardPage() {
               </ul>
             </div>
           </aside>
+
+          <div className="lg:col-span-2">
+            <SocialAccountCards />
+          </div>
         </div>
       )}
     </div>
