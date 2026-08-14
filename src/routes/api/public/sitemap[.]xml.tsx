@@ -38,7 +38,7 @@ export const Route = createFileRoute("/api/public/sitemap.xml")({
           ),
           ...(data ?? []).map(
             (p) =>
-              `<url><loc>${SITE_URL}/${p.slug}</loc><lastmod>${new Date(
+              `<url><loc>${SITE_URL}/perfil/${p.slug}</loc><lastmod>${new Date(
                 p.updated_at,
               ).toISOString()}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>`,
           ),

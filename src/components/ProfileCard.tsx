@@ -96,7 +96,7 @@ export function ProfileCard({
 
       <div className="mt-auto flex border-t border-border">
         <Link
-          to="/$slug"
+          to="/perfil/$slug"
           params={{ slug: profile.slug }}
           className="flex-1 py-3.5 text-center text-[13px] font-bold text-foreground transition hover:bg-secondary"
         >

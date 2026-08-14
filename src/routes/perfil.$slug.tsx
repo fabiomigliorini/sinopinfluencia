@@ -12,7 +12,7 @@ const profileQueryOptions = (slug: string) =>
     queryFn: () => getProfileBySlug({ data: { slug } }),
   });
 
-export const Route = createFileRoute("/$slug")({
+export const Route = createFileRoute("/perfil/$slug")({
   loader: async ({ context, params }) => {
     const result = await context.queryClient.ensureQueryData(
       profileQueryOptions(params.slug),
@@ -55,7 +55,7 @@ export const Route = createFileRoute("/$slug")({
             ]
           : []),
       ],
-      links: [{ rel: "canonical", href: `${SITE_URL}/${profile.slug}` }],
+      links: [{ rel: "canonical", href: `${SITE_URL}/perfil/${profile.slug}` }],
       scripts: [
         {
           type: "application/ld+json",
@@ -66,7 +66,7 @@ export const Route = createFileRoute("/$slug")({
             description,
             ...(image ? { image } : {}),
             jobTitle: profile.niche ?? "Criador de conteúdo",
-            url: `${SITE_URL}/${profile.slug}`,
+            url: `${SITE_URL}/perfil/${profile.slug}`,
             address: {
               "@type": "PostalAddress",
               addressLocality: profile.city ?? "Sinop, MT",
