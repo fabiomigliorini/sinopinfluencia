@@ -1,0 +1,1 @@
+ALTER TABLE public.profile_works ADD COLUMN IF NOT EXISTS link_url text;

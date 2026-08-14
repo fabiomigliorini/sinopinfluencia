@@ -16,7 +16,6 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DiretorioRouteImport } from './routes/diretorio'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminPerfisRouteImport } from './routes/_authenticated/admin.perfis'
-import { Route as AuthenticatedPerfilEditRouteImport } from './routes/_authenticated/perfil.edit'
 import { Route as ApiPublicSitemapDotxmlRouteImport } from './routes/api/public/sitemap[.]xml'
 import { Route as AuthenticatedAdminPerfisIdRouteImport } from './routes/_authenticated/admin.perfis_.$id'
 import { Route as ApiPublicCronSyncSocialRouteImport } from './routes/api/public/cron/sync-social'
@@ -57,11 +56,6 @@ const AuthenticatedAdminPerfisRoute =
     path: '/admin/perfis',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedPerfilEditRoute = AuthenticatedPerfilEditRouteImport.update({
-  id: '/perfil/edit',
-  path: '/perfil/edit',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const ApiPublicSitemapDotxmlRoute = ApiPublicSitemapDotxmlRouteImport.update({
   id: '/api/public/sitemap.xml',
   path: '/api/public/sitemap.xml',
@@ -91,7 +85,6 @@ export interface FileRoutesByFullPath {
   '/diretorio': typeof DiretorioRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/admin/perfis': typeof AuthenticatedAdminPerfisRoute
-  '/perfil/edit': typeof AuthenticatedPerfilEditRoute
   '/api/public/sitemap.xml': typeof ApiPublicSitemapDotxmlRoute
   '/admin/perfis/$id': typeof AuthenticatedAdminPerfisIdRoute
   '/api/public/cron/sync-social': typeof ApiPublicCronSyncSocialRoute
@@ -104,7 +97,6 @@ export interface FileRoutesByTo {
   '/diretorio': typeof DiretorioRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/admin/perfis': typeof AuthenticatedAdminPerfisRoute
-  '/perfil/edit': typeof AuthenticatedPerfilEditRoute
   '/api/public/sitemap.xml': typeof ApiPublicSitemapDotxmlRoute
   '/admin/perfis/$id': typeof AuthenticatedAdminPerfisIdRoute
   '/api/public/cron/sync-social': typeof ApiPublicCronSyncSocialRoute
@@ -119,7 +111,6 @@ export interface FileRoutesById {
   '/diretorio': typeof DiretorioRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/admin/perfis': typeof AuthenticatedAdminPerfisRoute
-  '/_authenticated/perfil/edit': typeof AuthenticatedPerfilEditRoute
   '/api/public/sitemap.xml': typeof ApiPublicSitemapDotxmlRoute
   '/_authenticated/admin/perfis_/$id': typeof AuthenticatedAdminPerfisIdRoute
   '/api/public/cron/sync-social': typeof ApiPublicCronSyncSocialRoute
@@ -134,7 +125,6 @@ export interface FileRouteTypes {
     | '/diretorio'
     | '/dashboard'
     | '/admin/perfis'
-    | '/perfil/edit'
     | '/api/public/sitemap.xml'
     | '/admin/perfis/$id'
     | '/api/public/cron/sync-social'
@@ -147,7 +137,6 @@ export interface FileRouteTypes {
     | '/diretorio'
     | '/dashboard'
     | '/admin/perfis'
-    | '/perfil/edit'
     | '/api/public/sitemap.xml'
     | '/admin/perfis/$id'
     | '/api/public/cron/sync-social'
@@ -161,7 +150,6 @@ export interface FileRouteTypes {
     | '/diretorio'
     | '/_authenticated/dashboard'
     | '/_authenticated/admin/perfis'
-    | '/_authenticated/perfil/edit'
     | '/api/public/sitemap.xml'
     | '/_authenticated/admin/perfis_/$id'
     | '/api/public/cron/sync-social'
@@ -230,13 +218,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPerfisRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/perfil/edit': {
-      id: '/_authenticated/perfil/edit'
-      path: '/perfil/edit'
-      fullPath: '/perfil/edit'
-      preLoaderRoute: typeof AuthenticatedPerfilEditRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/api/public/sitemap.xml': {
       id: '/api/public/sitemap.xml'
       path: '/api/public/sitemap.xml'
@@ -271,14 +252,12 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedAdminPerfisRoute: typeof AuthenticatedAdminPerfisRoute
-  AuthenticatedPerfilEditRoute: typeof AuthenticatedPerfilEditRoute
   AuthenticatedAdminPerfisIdRoute: typeof AuthenticatedAdminPerfisIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedAdminPerfisRoute: AuthenticatedAdminPerfisRoute,
-  AuthenticatedPerfilEditRoute: AuthenticatedPerfilEditRoute,
   AuthenticatedAdminPerfisIdRoute: AuthenticatedAdminPerfisIdRoute,
 }
 

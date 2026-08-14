@@ -11,6 +11,11 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { ImageUpload } from "@/components/ImageUpload";
 import { SocialAccountCards } from "@/components/SocialAccountCards";
+import { BasicInfoCard } from "@/components/account/BasicInfoCard";
+import { FormatsCard } from "@/components/account/FormatsCard";
+import { BrandsCard } from "@/components/account/BrandsCard";
+import { PortfolioCard } from "@/components/account/PortfolioCard";
+
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardPage,
@@ -182,17 +187,11 @@ function DashboardPage() {
             <p className="mt-5 text-sm text-muted-foreground">{status?.hint}</p>
 
             <div className="mt-6 flex flex-wrap gap-2">
-              <Link
-                to="/perfil/edit"
-                className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
-              >
-                Editar perfil
-              </Link>
               {profile.status !== "pending" && profile.status !== "approved" && (
                 <button
                   onClick={() => submitMutation.mutate()}
                   disabled={submitMutation.isPending}
-                  className="rounded-full border border-border bg-card px-5 py-2.5 text-sm font-bold transition hover:bg-accent disabled:opacity-60"
+                  className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
                 >
                   {submitMutation.isPending ? "Enviando..." : "Enviar para curadoria"}
                 </button>
@@ -237,11 +236,16 @@ function DashboardPage() {
             </div>
           </aside>
 
-          <div className="lg:col-span-2">
+          <div className="space-y-6 lg:col-span-2">
+            <BasicInfoCard profile={profile} />
             <SocialAccountCards />
+            <FormatsCard formats={(data?.formats ?? []).map((f) => f.format)} />
+            <BrandsCard brands={data?.brands ?? []} />
+            <PortfolioCard works={data?.works ?? []} />
           </div>
         </div>
       )}
+
     </div>
   );
 }
