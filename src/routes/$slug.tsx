@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { getProfileBySlug } from "@/lib/profiles.functions";
 import { ProfileView } from "@/components/ProfileView";
-import type { Database } from "@/integrations/supabase/types";
+
 
 const SITE_URL = "https://sinopinfluencia.lovable.app";
 
