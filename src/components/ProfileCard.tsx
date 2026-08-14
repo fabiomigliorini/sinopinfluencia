@@ -79,7 +79,11 @@ export function ProfileCard({
     .filter(Boolean);
 
   return (
-    <div className="group flex flex-col overflow-hidden rounded-[20px] border border-border bg-card transition hover:-translate-y-1 hover:border-[#cfe4d3] hover:shadow-[0_22px_40px_-22px_rgba(13,68,36,0.35)]">
+    <Link
+      to="/perfil/$slug"
+      params={{ slug: profile.slug }}
+      className="group flex flex-col overflow-hidden rounded-[20px] border border-border bg-card transition hover:-translate-y-1 hover:border-[#cfe4d3] hover:shadow-[0_22px_40px_-22px_rgba(13,68,36,0.35)]"
+    >
       <div className="p-5 pb-0">
         <div className="flex items-start justify-between">
           <div
@@ -124,30 +128,12 @@ export function ProfileCard({
         </p>
       </div>
 
-      <div className="flex gap-2.5 px-5 py-4">
+      <div className="mt-auto flex gap-2.5 px-5 py-4">
         <StatLens value={ig} label="INSTA" />
         <StatLens value={tt} label="TIKTOK" />
         <StatLens value={topFormat} label="FORMATO" />
       </div>
-
-      <div className="mt-auto flex border-t border-border">
-        <Link
-          to="/perfil/$slug"
-          params={{ slug: profile.slug }}
-          className="flex-1 py-3.5 text-center text-[13px] font-bold text-foreground transition hover:bg-secondary"
-        >
-          Ver perfil
-        </Link>
-        <a
-          href={`https://wa.me/${profile.whatsapp?.replace(/\D/g, "") ?? ""}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex-1 border-l border-border py-3.5 text-center text-[13px] font-bold text-primary transition hover:bg-secondary"
-        >
-          Falar agora
-        </a>
-      </div>
-    </div>
+    </Link>
   );
 }
 
