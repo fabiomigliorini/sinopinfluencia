@@ -2,6 +2,18 @@ import { createServerFn } from "@tanstack/react-start";
 import { notFound } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
+import { tierRank } from "@/lib/tiers";
+
+type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
+
+/** Sorts by the official ACES ladder (4 stars first), then by name. */
+function sortByTier(rows: ProfileRow[]) {
+  return [...rows].sort(
+    (a, b) =>
+      tierRank(b.tier) - tierRank(a.tier) ||
+      a.display_name.localeCompare(b.display_name, "pt-BR"),
+  );
+}
 
 function createServerSupabaseClient() {
   return createClient<Database>(
@@ -23,12 +35,10 @@ export const listProfiles = createServerFn({ method: "GET" }).handler(
     const { data: profiles, error } = await supabase
       .from("profiles")
       .select("*")
-      .eq("status", "approved")
-      .order("tier", { ascending: false })
-      .order("display_name", { ascending: true });
+      .eq("status", "approved");
 
     if (error) throw new Error(error.message);
-    return profiles ?? [];
+    return sortByTier(profiles ?? []);
   },
 );
 
@@ -73,12 +83,10 @@ export const getFilteredProfiles = createServerFn({ method: "GET" })
       );
     }
 
-    const { data: profiles, error } = await builder
-      .order("tier", { ascending: false })
-      .order("display_name", { ascending: true });
+    const { data: profiles, error } = await builder;
 
     if (error) throw new Error(error.message);
-    return profiles ?? [];
+    return sortByTier(profiles ?? []);
   });
 
 export const listDirectoryMetadata = createServerFn({ method: "GET" }).handler(
