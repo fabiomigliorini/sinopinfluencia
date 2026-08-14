@@ -47,11 +47,12 @@ export function SocialAccountWizard({
 }) {
   const runPreview = useServerFn(previewNetworkHandle);
   const runAdd = useServerFn(addNetworkAccount);
+  const runDeclare = useServerFn(setDeclaredFollowers);
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [network, setNetwork] = useState<NetworkId | null>(null);
   const [handle, setHandle] = useState("");
-  const [manual, setManual] = useState("");
+  const [manual, setManual] = useState({ followers: "", posts: "", likes: "", views: "" });
   const [preview, setPreview] = useState<Preview | null>(null);
 
   const meta = network ? NETWORK_META[network] : null;
@@ -60,7 +61,7 @@ export function SocialAccountWizard({
     setStep(1);
     setNetwork(null);
     setHandle("");
-    setManual("");
+    setManual({ followers: "", posts: "", likes: "", views: "" });
     setPreview(null);
   }
 
