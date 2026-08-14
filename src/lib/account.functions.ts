@@ -292,3 +292,19 @@ export const getProfileForAdmin = createServerFn({ method: "POST" })
       brands: brands ?? [],
     };
   });
+
+/** Saves only the profile photo, so the dashboard can change it in one click. */
+export const setMyAvatar = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((input: unknown) =>
+    z.object({ avatarUrl: z.string().nullable() }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { error } = await supabase
+      .from("profiles")
+      .update({ avatar_url: data.avatarUrl || null })
+      .eq("user_id", userId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });

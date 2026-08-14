@@ -1,17 +1,12 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
-import { listProfiles } from "@/lib/profiles.functions";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { profilesQueryOptions } from "@/lib/profile-queries";
 import { ProfileCard, TierBadge } from "@/components/ProfileCard";
 import type { Database } from "@/integrations/supabase/types";
 
 type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
 type MetricRow = Database["public"]["Tables"]["profile_metrics"]["Row"];
-
-const profilesQueryOptions = queryOptions({
-  queryKey: ["profiles", "home"],
-  queryFn: () => listProfiles(),
-});
 
 export const Route = createFileRoute("/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(profilesQueryOptions),
