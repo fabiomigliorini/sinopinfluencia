@@ -102,6 +102,41 @@ function DashboardPage() {
 
   const profile = data?.profile;
   const status = profile ? statusLabel[profile.status] : undefined;
+  const hasPendingChanges = profile
+    ? new Date(profile.content_changed_at).getTime() >
+      new Date(profile.submitted_at ?? 0).getTime()
+    : false;
+  const banner = profile
+    ? hasPendingChanges
+      ? {
+          tone: "border-[#FFEB00] bg-[#FFEB00]/15",
+          title:
+            profile.status === "draft"
+              ? "Perfil ainda não enviado"
+              : "Você tem alterações não publicadas",
+          text:
+            profile.status === "draft"
+              ? "Complete as informações e publique para a curadoria da ACES avaliar."
+              : "As mudanças feitas depois do último envio só aparecem na vitrine após publicar novamente.",
+        }
+      : profile.status === "pending"
+        ? {
+            tone: "border-border bg-muted/50",
+            title: "Enviado para curadoria",
+            text: "Nenhuma alteração pendente. A ACES responde em até 5 dias úteis.",
+          }
+        : profile.status === "approved"
+          ? {
+              tone: "border-primary/40 bg-primary/10",
+              title: "Perfil publicado e atualizado",
+              text: "Tudo que você editou já está no ar na vitrine oficial.",
+            }
+          : {
+              tone: "border-destructive/40 bg-destructive/10",
+              title: "A curadoria pediu ajustes",
+              text: "Revise as informações e publique novamente para nova análise.",
+            }
+    : undefined;
   const completeness = profile
     ? [
         profile.bio,
@@ -112,6 +147,7 @@ function DashboardPage() {
         data?.formats.length ? "x" : null,
       ].filter(Boolean).length
     : 0;
+
 
   return (
     <div className="mx-auto max-w-[1180px] px-6 py-12 lg:px-7">
@@ -153,8 +189,29 @@ function DashboardPage() {
         </div>
       )}
 
+      {profile && banner && (
+        <div
+          className={`mt-8 flex flex-wrap items-center justify-between gap-4 rounded-3xl border p-5 ${banner.tone}`}
+        >
+          <div>
+            <p className="text-sm font-bold">{banner.title}</p>
+            <p className="mt-1 text-sm text-foreground/75">{banner.text}</p>
+          </div>
+          {hasPendingChanges && (
+            <button
+              onClick={() => submitMutation.mutate()}
+              disabled={submitMutation.isPending}
+              className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
+            >
+              {submitMutation.isPending ? "Publicando..." : "Publicar alterações"}
+            </button>
+          )}
+        </div>
+      )}
+
       {profile && (
-        <div className="mt-8 grid gap-6 lg:grid-cols-[1.6fr_1fr]">
+        <div className="mt-6 grid gap-6 lg:grid-cols-[1.6fr_1fr]">
+
           <section className="rounded-3xl border border-border bg-card p-7">
             <div className="mb-6 max-w-[260px]">
               <ImageUpload
@@ -187,15 +244,20 @@ function DashboardPage() {
             <p className="mt-5 text-sm text-muted-foreground">{status?.hint}</p>
 
             <div className="mt-6 flex flex-wrap gap-2">
-              {profile.status !== "pending" && profile.status !== "approved" && (
+              {hasPendingChanges && (
                 <button
                   onClick={() => submitMutation.mutate()}
                   disabled={submitMutation.isPending}
                   className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
                 >
-                  {submitMutation.isPending ? "Enviando..." : "Enviar para curadoria"}
+                  {submitMutation.isPending
+                    ? "Publicando..."
+                    : profile.status === "draft"
+                      ? "Publicar e enviar para curadoria"
+                      : "Publicar alterações"}
                 </button>
               )}
+
               {profile.status === "approved" && (
                 <Link
                   to="/$slug"
