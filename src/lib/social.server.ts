@@ -221,6 +221,38 @@ export async function fetchInstagramPublic(handle: string): Promise<PublicMetric
     }
   }
 
+  // The regular profile endpoints are frequently rate-limited, while Instagram's
+  // public embed payload still exposes the profile header counters without login.
+  try {
+    const embedHtml = await getText(`${profileUrl}embed/`, {
+      "User-Agent": CRAWLER_UA,
+    });
+    const followers =
+      firstNumber(/\\?"followers_count\\?"\s*:\s*(\d+)/, embedHtml) ??
+      firstNumber(/\\?"edge_followed_by\\?"\s*:\s*\{\\?"count\\?"\s*:\s*(\d+)/, embedHtml);
+    if (followers !== null) {
+      const posts =
+        firstNumber(/\\?"posts_count\\?"\s*:\s*(\d+)/, embedHtml) ??
+        firstNumber(/\\?"edge_owner_to_timeline_media\\?"\s*:\s*\{\\?"count\\?"\s*:\s*(\d+)/, embedHtml);
+      return {
+        handle,
+        // Keep the previously saved name/avatar. The embed HTML double-escapes
+        // these strings and their format changes independently of the counters.
+        displayName: null,
+        avatarUrl: null,
+        profileUrl,
+        followers,
+        following: null,
+        postsCount: posts,
+        likes: null,
+        views: null,
+        raw: { source: "instagram_embed" },
+      };
+    }
+  } catch {
+    /* continue with crawler preview and search snippet fallbacks */
+  }
+
   // Public link preview: Meta serves counters in og:description to crawlers.
   let html = "";
   try {
