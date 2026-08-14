@@ -1,22 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import type { Database } from "@/integrations/supabase/types";
+import { tierLabel, tierRank } from "@/lib/tiers";
 
 type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
 type MetricRow = Database["public"]["Tables"]["profile_metrics"]["Row"];
-
-const TIER_ORDER: Record<string, number> = {
-  creator: 1,
-  featured: 2,
-  reference: 3,
-  icon: 4,
-};
-
-const TIER_LABEL: Record<string, string> = {
-  creator: "Criador",
-  featured: "Destaque",
-  reference: "Referência",
-  icon: "Ícone",
-};
 
 const GRADIENTS = [
   "from-emerald-500 to-green-800",
@@ -47,7 +34,7 @@ function Pin({ filled, className }: { filled: boolean; className?: string }) {
 }
 
 export function TierBadge({ tier, light = false }: { tier: string; light?: boolean }) {
-  const order = TIER_ORDER[tier] ?? 1;
+  const order = tierRank(tier);
   return (
     <div
       className={`flex items-center gap-1.5 rounded-full px-2.5 py-1.5 ${
@@ -64,7 +51,7 @@ export function TierBadge({ tier, light = false }: { tier: string; light?: boole
         ))}
       </div>
       <span className={`text-[10.5px] font-bold uppercase tracking-wide ${light ? "text-white" : "text-foreground"}`}>
-        {TIER_LABEL[tier] ?? tier}
+        {tierLabel(tier)}
       </span>
     </div>
   );

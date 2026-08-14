@@ -11,9 +11,14 @@ import {
 import {
   adminGetYouTubeKeyStatus,
   adminAddAccount,
+  adminListAccounts,
+  adminRemoveAccount,
   adminSetYouTubeKey,
   adminSyncProfile,
 } from "@/lib/social.functions";
+import { setProfileTier } from "@/lib/account.functions";
+import { NetworkBadge, networkLabel } from "@/components/network-icons";
+import { TIER_OPTIONS, type Tier } from "@/lib/tiers";
 
 
 export const Route = createFileRoute("/_authenticated/admin/perfis")({
@@ -166,12 +171,22 @@ function AdminProfilesPage() {
             </div>
             <div className="flex flex-wrap gap-2">
               <Link
-                to="/$slug"
-                params={{ slug: p.slug }}
+                to="/admin/perfis/$id"
+                params={{ id: p.id }}
                 className="rounded-full border border-border px-4 py-2 text-xs font-bold transition hover:bg-accent"
               >
                 Ver perfil
               </Link>
+              {p.status === "approved" ? (
+                <Link
+                  to="/$slug"
+                  params={{ slug: p.slug }}
+                  className="rounded-full border border-border px-4 py-2 text-xs font-bold transition hover:bg-accent"
+                >
+                  Página pública
+                </Link>
+              ) : null}
+              <TierSelect profileId={p.id} tier={p.tier as Tier} />
               <AdminSocialTools profileId={p.id} />
               {p.status !== "approved" && (
                 <button
@@ -203,6 +218,38 @@ function AdminProfilesPage() {
   );
 }
 
+/** Curation control: sets the ACES ladder (1 to 4 stars) for one profile. */
+function TierSelect({ profileId, tier }: { profileId: string; tier: Tier }) {
+  const queryClient = useQueryClient();
+  const saveTier = useServerFn(setProfileTier);
+  const mutation = useMutation({
+    mutationFn: (value: Tier) => saveTier({ data: { profileId, tier: value } }),
+    onSuccess: () => {
+      toast.success("Nível atualizado");
+      void queryClient.invalidateQueries({ queryKey: ["admin-profiles"] });
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+
+  return (
+    <label className="flex items-center gap-2 rounded-full border border-border px-3 py-1.5 text-xs font-bold">
+      <span className="text-muted-foreground">Nível</span>
+      <select
+        value={tier}
+        disabled={mutation.isPending}
+        onChange={(event) => mutation.mutate(event.target.value as Tier)}
+        className="bg-transparent text-xs font-bold outline-none disabled:opacity-60"
+      >
+        {TIER_OPTIONS.map((option) => (
+          <option key={option.value} value={option.value}>
+            {"★".repeat(option.stars)} {option.label}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
 const ADMIN_NETWORKS = [
   "instagram",
   "tiktok",
@@ -213,14 +260,52 @@ const ADMIN_NETWORKS = [
   "twitter",
 ] as const;
 
-/** Lets the curation team correct a creator's @ and force a public refresh. */
+type AdminAccount = {
+  id: string;
+  network: string;
+  handle: string | null;
+  avatar_url: string | null;
+  display_name: string | null;
+  is_declared: boolean;
+  declared_followers: string | null;
+  last_synced_at: string | null;
+  sync_status: string;
+  sync_error: string | null;
+  latest: {
+    captured_at: string;
+    followers: number | null;
+    posts_count: number | null;
+    avg_likes: number | null;
+    avg_views: number | null;
+  } | null;
+};
+
+function formatNumber(value: number | null | undefined) {
+  if (value === null || value === undefined) return "—";
+  return value.toLocaleString("pt-BR");
+}
+
+/** Lets the curation team see, correct and refresh a creator's linked @s. */
 function AdminSocialTools({ profileId }: { profileId: string }) {
   const [open, setOpen] = useState(false);
   const [network, setNetwork] = useState<(typeof ADMIN_NETWORKS)[number]>("instagram");
   const [handle, setHandle] = useState("");
   const addAccountFn = useServerFn(adminAddAccount);
   const syncFn = useServerFn(adminSyncProfile);
+  const listFn = useServerFn(adminListAccounts);
+  const removeFn = useServerFn(adminRemoveAccount);
   const queryClient = useQueryClient();
+
+  const accountsQuery = useQuery({
+    queryKey: ["admin-accounts", profileId],
+    queryFn: async () => (await listFn({ data: { profileId } })) as AdminAccount[],
+    enabled: open,
+  });
+
+  function refreshAccounts() {
+    void queryClient.invalidateQueries({ queryKey: ["admin-accounts", profileId] });
+    void queryClient.invalidateQueries({ queryKey: ["admin-profiles"] });
+  }
 
   const saveMutation = useMutation({
     mutationFn: () =>
@@ -231,7 +316,8 @@ function AdminSocialTools({ profileId }: { profileId: string }) {
     onSuccess: (result) => {
       if (result.error) toast.warning(`Salvo, mas a coleta falhou: ${result.error}`);
       else toast.success("@ vinculado e métricas atualizadas");
-      void queryClient.invalidateQueries({ queryKey: ["admin-profiles"] });
+      setHandle("");
+      refreshAccounts();
     },
     onError: (error: Error) => toast.error(error.message),
   });
@@ -243,10 +329,21 @@ function AdminSocialTools({ profileId }: { profileId: string }) {
       if (!results.length) toast.info("Este perfil não tem redes informadas");
       else if (failed.length) toast.warning(`Falhas: ${failed.map((f) => f.network).join(", ")}`);
       else toast.success("Métricas públicas atualizadas");
-      void queryClient.invalidateQueries({ queryKey: ["admin-profiles"] });
+      refreshAccounts();
     },
     onError: (error: Error) => toast.error(error.message),
   });
+
+  const removeMutation = useMutation({
+    mutationFn: (accountRowId: string) => removeFn({ data: { accountRowId } }),
+    onSuccess: () => {
+      toast.success("Rede removida");
+      refreshAccounts();
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+
+  const accounts = accountsQuery.data ?? [];
 
   return (
     <>
@@ -266,34 +363,127 @@ function AdminSocialTools({ profileId }: { profileId: string }) {
         {syncMutation.isPending ? "Atualizando…" : "Atualizar métricas"}
       </button>
       {open ? (
-        <div className="mt-2 flex w-full flex-wrap items-center gap-2 rounded-2xl border border-border p-3">
-          <select
-            value={network}
-            onChange={(event) =>
-              setNetwork(event.target.value as (typeof ADMIN_NETWORKS)[number])
-            }
-            className="rounded-xl border border-input bg-background px-3 py-2 text-xs"
-          >
-            {ADMIN_NETWORKS.map((n) => (
-              <option key={n} value={n}>
-                {n}
-              </option>
-            ))}
-          </select>
-          <input
-            value={handle}
-            placeholder="@ ou link do perfil"
-            onChange={(event) => setHandle(event.target.value)}
-            className="min-w-[180px] flex-1 rounded-xl border border-input bg-background px-3 py-2 text-xs"
-          />
-          <button
-            type="button"
-            disabled={saveMutation.isPending}
-            onClick={() => saveMutation.mutate()}
-            className="rounded-full bg-primary px-4 py-2 text-xs font-bold text-primary-foreground disabled:opacity-60"
-          >
-            {saveMutation.isPending ? "Buscando…" : "Salvar e buscar"}
-          </button>
+        <div className="mt-2 w-full space-y-4 rounded-2xl border border-border p-4">
+          {accountsQuery.isLoading ? (
+            <div className="h-16 animate-pulse rounded-xl bg-secondary" />
+          ) : accounts.length === 0 ? (
+            <p className="text-xs text-muted-foreground">Nenhuma rede vinculada.</p>
+          ) : (
+            <div className="grid gap-3 sm:grid-cols-2">
+              {accounts.map((account) => (
+                <div
+                  key={account.id}
+                  className="rounded-2xl border border-border bg-card p-3"
+                >
+                  <div className="flex items-center gap-3">
+                    {account.avatar_url ? (
+                      <img
+                        src={account.avatar_url}
+                        alt={account.handle ?? account.network}
+                        className="h-10 w-10 rounded-full object-cover"
+                      />
+                    ) : (
+                      <NetworkBadge
+                        network={account.network}
+                        className="h-10 w-10"
+                        iconClassName="h-4 w-4"
+                      />
+                    )}
+                    <div className="min-w-0">
+                      <p className="truncate text-[13px] font-bold">
+                        {account.handle ? `@${account.handle}` : networkLabel(account.network)}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground">
+                        {networkLabel(account.network)} ·{" "}
+                        {account.is_declared || !account.latest
+                          ? "declarado"
+                          : "dados públicos"}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-3 grid grid-cols-2 gap-2 text-[11px] text-muted-foreground">
+                    <span>
+                      Seguidores:{" "}
+                      <strong className="text-foreground">
+                        {account.latest?.followers != null
+                          ? formatNumber(account.latest.followers)
+                          : (account.declared_followers ?? "—")}
+                      </strong>
+                    </span>
+                    <span>
+                      Posts:{" "}
+                      <strong className="text-foreground">
+                        {formatNumber(account.latest?.posts_count)}
+                      </strong>
+                    </span>
+                    <span>
+                      Curtidas:{" "}
+                      <strong className="text-foreground">
+                        {formatNumber(account.latest?.avg_likes)}
+                      </strong>
+                    </span>
+                    <span>
+                      Views:{" "}
+                      <strong className="text-foreground">
+                        {formatNumber(account.latest?.avg_views)}
+                      </strong>
+                    </span>
+                  </div>
+                  {account.sync_error ? (
+                    <p className="mt-2 text-[11px] text-destructive">{account.sync_error}</p>
+                  ) : null}
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      disabled={syncMutation.isPending}
+                      onClick={() => syncMutation.mutate()}
+                      className="rounded-full border border-border px-3 py-1.5 text-[11px] font-bold transition hover:bg-accent disabled:opacity-60"
+                    >
+                      Atualizar
+                    </button>
+                    <button
+                      type="button"
+                      disabled={removeMutation.isPending}
+                      onClick={() => removeMutation.mutate(account.id)}
+                      className="rounded-full border border-destructive/40 px-3 py-1.5 text-[11px] font-bold text-destructive transition hover:bg-destructive/10 disabled:opacity-60"
+                    >
+                      Remover
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="flex flex-wrap items-center gap-2 border-t border-border pt-3">
+            <select
+              value={network}
+              onChange={(event) =>
+                setNetwork(event.target.value as (typeof ADMIN_NETWORKS)[number])
+              }
+              className="rounded-xl border border-input bg-background px-3 py-2 text-xs"
+            >
+              {ADMIN_NETWORKS.map((n) => (
+                <option key={n} value={n}>
+                  {networkLabel(n)}
+                </option>
+              ))}
+            </select>
+            <input
+              value={handle}
+              placeholder="@ ou link do perfil"
+              onChange={(event) => setHandle(event.target.value)}
+              className="min-w-[180px] flex-1 rounded-xl border border-input bg-background px-3 py-2 text-xs"
+            />
+            <button
+              type="button"
+              disabled={saveMutation.isPending || !handle.trim()}
+              onClick={() => saveMutation.mutate()}
+              className="rounded-full bg-primary px-4 py-2 text-xs font-bold text-primary-foreground disabled:opacity-60"
+            >
+              {saveMutation.isPending ? "Buscando…" : "Salvar e buscar"}
+            </button>
+          </div>
         </div>
       ) : null}
     </>

@@ -326,9 +326,9 @@ function FeaturedDirectory({
 function TiersLegend() {
   const tiers = [
     { tier: "creator", label: "Criador" },
-    { tier: "featured", label: "Destaque" },
     { tier: "reference", label: "Referência" },
     { tier: "icon", label: "Ícone" },
+    { tier: "featured", label: "Destaque" },
   ];
   return (
     <div className="mt-8 flex flex-wrap gap-4 rounded-2xl bg-[#155C30] p-4 md:gap-6 md:p-4">

@@ -222,3 +222,73 @@ export const setProfileStatus = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+/** Curation panel: sets the ACES tier (1 to 4 stars) of one profile. */
+export const setProfileTier = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((input: unknown) =>
+    z
+      .object({
+        profileId: z.string().uuid(),
+        tier: z.enum(["creator", "reference", "icon", "featured"]),
+      })
+      .parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { error } = await context.supabase
+      .from("profiles")
+      .update({ tier: data.tier })
+      .eq("id", data.profileId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+/** Curation panel: full profile content of any profile, whatever its status. */
+export const getProfileForAdmin = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((input: unknown) => z.object({ profileId: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { supabase } = context;
+
+    const { data: profile, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", data.profileId)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!profile) throw new Error("Perfil não encontrado");
+
+    const [{ data: metrics }, { data: formats }, { data: works }, { data: brands }] =
+      await Promise.all([
+        supabase
+          .from("profile_metrics")
+          .select("*")
+          .eq("profile_id", profile.id)
+          .order("network", { ascending: true }),
+        supabase
+          .from("profile_formats")
+          .select("*")
+          .eq("profile_id", profile.id)
+          .order("format", { ascending: true }),
+        supabase
+          .from("profile_works")
+          .select("*")
+          .eq("profile_id", profile.id)
+          .order("sort_order", { ascending: true }),
+        supabase
+          .from("profile_brands")
+          .select("*")
+          .eq("profile_id", profile.id)
+          .order("brand_name", { ascending: true }),
+      ]);
+
+    return {
+      profile,
+      metrics: metrics ?? [],
+      formats: formats ?? [],
+      works: works ?? [],
+      brands: brands ?? [],
+    };
+  });
