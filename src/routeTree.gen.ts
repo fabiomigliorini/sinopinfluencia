@@ -15,6 +15,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DiretorioRouteImport } from './routes/diretorio'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as PerfilSlugRouteImport } from './routes/perfil.$slug'
 import { Route as AuthenticatedAdminPerfisRouteImport } from './routes/_authenticated/admin.perfis'
 import { Route as ApiPublicSitemapDotxmlRouteImport } from './routes/api/public/sitemap[.]xml'
 import { Route as AuthenticatedAdminPerfisIdRouteImport } from './routes/_authenticated/admin.perfis_.$id'
@@ -50,6 +51,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const PerfilSlugRoute = PerfilSlugRouteImport.update({
+  id: '/perfil/$slug',
+  path: '/perfil/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminPerfisRoute =
   AuthenticatedAdminPerfisRouteImport.update({
     id: '/admin/perfis',
@@ -84,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/diretorio': typeof DiretorioRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/perfil/$slug': typeof PerfilSlugRoute
   '/admin/perfis': typeof AuthenticatedAdminPerfisRoute
   '/api/public/sitemap.xml': typeof ApiPublicSitemapDotxmlRoute
   '/admin/perfis/$id': typeof AuthenticatedAdminPerfisIdRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/diretorio': typeof DiretorioRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/perfil/$slug': typeof PerfilSlugRoute
   '/admin/perfis': typeof AuthenticatedAdminPerfisRoute
   '/api/public/sitemap.xml': typeof ApiPublicSitemapDotxmlRoute
   '/admin/perfis/$id': typeof AuthenticatedAdminPerfisIdRoute
@@ -110,6 +118,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/diretorio': typeof DiretorioRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/perfil/$slug': typeof PerfilSlugRoute
   '/_authenticated/admin/perfis': typeof AuthenticatedAdminPerfisRoute
   '/api/public/sitemap.xml': typeof ApiPublicSitemapDotxmlRoute
   '/_authenticated/admin/perfis_/$id': typeof AuthenticatedAdminPerfisIdRoute
@@ -124,6 +133,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/diretorio'
     | '/dashboard'
+    | '/perfil/$slug'
     | '/admin/perfis'
     | '/api/public/sitemap.xml'
     | '/admin/perfis/$id'
@@ -136,6 +146,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/diretorio'
     | '/dashboard'
+    | '/perfil/$slug'
     | '/admin/perfis'
     | '/api/public/sitemap.xml'
     | '/admin/perfis/$id'
@@ -149,6 +160,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/diretorio'
     | '/_authenticated/dashboard'
+    | '/perfil/$slug'
     | '/_authenticated/admin/perfis'
     | '/api/public/sitemap.xml'
     | '/_authenticated/admin/perfis_/$id'
@@ -162,6 +174,7 @@ export interface RootRouteChildren {
   SlugRoute: typeof SlugRoute
   AuthRoute: typeof AuthRoute
   DiretorioRoute: typeof DiretorioRoute
+  PerfilSlugRoute: typeof PerfilSlugRoute
   ApiPublicSitemapDotxmlRoute: typeof ApiPublicSitemapDotxmlRoute
   ApiPublicCronSyncSocialRoute: typeof ApiPublicCronSyncSocialRoute
   ApiPublicImgSplatRoute: typeof ApiPublicImgSplatRoute
@@ -210,6 +223,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/perfil/$slug': {
+      id: '/perfil/$slug'
+      path: '/perfil/$slug'
+      fullPath: '/perfil/$slug'
+      preLoaderRoute: typeof PerfilSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/perfis': {
       id: '/_authenticated/admin/perfis'
@@ -270,6 +290,7 @@ const rootRouteChildren: RootRouteChildren = {
   SlugRoute: SlugRoute,
   AuthRoute: AuthRoute,
   DiretorioRoute: DiretorioRoute,
+  PerfilSlugRoute: PerfilSlugRoute,
   ApiPublicSitemapDotxmlRoute: ApiPublicSitemapDotxmlRoute,
   ApiPublicCronSyncSocialRoute: ApiPublicCronSyncSocialRoute,
   ApiPublicImgSplatRoute: ApiPublicImgSplatRoute,

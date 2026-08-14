@@ -65,3 +65,15 @@ export const splitNiches = (value?: string | null) =>
 
 export const joinNiches = (niches: string[]) =>
   Array.from(new Set(niches.map((n) => n.trim()).filter(Boolean))).join(", ");
+
+/** Turns any text into a URL friendly slug: "Fábio Migliorini" -> "fabio-migliorini". */
+export function normalizeSlug(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9.]+/g, "-")
+    .replace(/-{2,}/g, "-")
+    .replace(/^[-.]+|[-.]+$/g, "")
+    .slice(0, 60);
+}

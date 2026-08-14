@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { normalizeSlug } from "@/lib/profile-options";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
@@ -515,4 +516,33 @@ export const setMyNiches = createServerFn({ method: "POST" })
       .eq("user_id", userId);
     if (error) throw new Error(error.message);
     return { ok: true };
+  });
+
+/** Card "Informações básicas": changes the public address /perfil/<slug>. */
+export const setMySlug = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((input: unknown) =>
+    z.object({ slug: z.string().min(3, "Use ao menos 3 caracteres") }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const slug = normalizeSlug(data.slug);
+    if (slug.length < 3) throw new Error("Endereço inválido. Use letras e números.");
+
+    const { data: taken, error: checkError } = await supabase
+      .from("profiles")
+      .select("id, user_id")
+      .eq("slug", slug)
+      .maybeSingle();
+    if (checkError) throw new Error(checkError.message);
+    if (taken && taken.user_id !== userId) {
+      throw new Error("Esse endereço já está em uso. Escolha outro.");
+    }
+
+    const { error } = await supabase
+      .from("profiles")
+      .update({ slug, content_changed_at: new Date().toISOString() })
+      .eq("user_id", userId);
+    if (error) throw new Error(error.message);
+    return { ok: true, slug };
   });
