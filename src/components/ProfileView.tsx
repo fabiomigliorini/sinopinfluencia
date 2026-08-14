@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { NetworkBadge, networkLabel } from "@/components/network-icons";
 import { TierBadge } from "@/components/ProfileCard";
 import type { Database } from "@/integrations/supabase/types";
+import type { PublicSocialAccount } from "@/lib/social-public";
 
 type Tables = Database["public"]["Tables"];
 
@@ -11,6 +12,7 @@ export type ProfileViewData = {
   formats: Tables["profile_formats"]["Row"][];
   works: Tables["profile_works"]["Row"][];
   brands: Tables["profile_brands"]["Row"][];
+  socialAccounts?: PublicSocialAccount[];
 };
 
 export function ProfileView({
@@ -21,6 +23,7 @@ export function ProfileView({
   backLink?: React.ReactNode;
 }) {
   const { profile, metrics, formats, works, brands } = data;
+  const socialAccounts = data.socialAccounts ?? [];
 
   const avatarInitials = profile.display_name
     .split(" ")
@@ -28,11 +31,11 @@ export function ProfileView({
     .map((n) => n[0]?.toUpperCase() ?? "")
     .join("");
 
-  const mainMetrics = metrics;
   const niches = (profile.niche ?? "")
     .split(",")
     .map((n) => n.trim())
     .filter(Boolean);
+
 
 
   return (
