@@ -116,7 +116,10 @@ function AdminProfilesPage() {
     );
   }
 
-  const filtered = (profiles ?? []).filter((p) => p.status === tab);
+  // Approved profiles that submitted new changes still show up for review.
+  const inTab = (p: (typeof profiles extends undefined ? never : NonNullable<typeof profiles>)[number]) =>
+    tab === "pending" ? p.status === "pending" || p.review_pending : p.status === tab && !p.review_pending;
+  const filtered = (profiles ?? []).filter(inTab);
 
   return (
     <div className="mx-auto max-w-[1180px] px-6 py-12 lg:px-7">
@@ -140,7 +143,11 @@ function AdminProfilesPage() {
             }`}
           >
             {statusText[s]} (
-            {(profiles ?? []).filter((p) => p.status === s).length})
+            {(profiles ?? []).filter((p) =>
+              s === "pending"
+                ? p.status === "pending" || p.review_pending
+                : p.status === s && !p.review_pending,
+            ).length})
           </button>
         ))}
       </div>
@@ -171,6 +178,11 @@ function AdminProfilesPage() {
                 >
                   {statusText[p.status as Status]}
                 </span>
+                {p.review_pending && p.status === "approved" && (
+                  <span className="rounded-full bg-[#FFEB00] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#0D4424]">
+                    Alterações pendentes
+                  </span>
+                )}
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
                 {p.niche ?? "Sem nicho"} · {p.city ?? "Sinop, MT"} · {p.email ?? "sem e-mail"}
@@ -200,7 +212,7 @@ function AdminProfilesPage() {
               ) : null}
               <TierSelect profileId={p.id} tier={p.tier as Tier} />
               <AdminSocialTools profileId={p.id} />
-              {p.status !== "approved" && (
+              {(p.status !== "approved" || p.review_pending) && (
                 <button
                   disabled={mutation.isPending}
                   onClick={() =>
