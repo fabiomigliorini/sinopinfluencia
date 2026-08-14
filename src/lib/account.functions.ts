@@ -308,3 +308,163 @@ export const setMyAvatar = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+async function getMyProfileId(
+  supabase: SupabaseClient<Database>,
+  userId: string,
+) {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!data) throw new Error("Perfil não encontrado");
+  return data.id;
+}
+
+const basicsInput = z.object({
+  display_name: z.string().min(2, "Informe seu nome público"),
+  full_name: z.string().nullable(),
+  niche: z.string().nullable(),
+  city: z.string().nullable(),
+  bio: z.string().max(1200).nullable(),
+  main_network: networkEnum.nullable(),
+  whatsapp: z.string().nullable(),
+  email: z.string().email("E-mail inválido").nullable().or(z.literal("")),
+});
+
+export type BasicsInput = z.infer<typeof basicsInput>;
+
+/** Dialog "Informações básicas": saves only the main profile fields. */
+export const updateMyBasics = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((input: unknown) => basicsInput.parse(input))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { error } = await supabase
+      .from("profiles")
+      .update({
+        display_name: data.display_name,
+        full_name: data.full_name || null,
+        niche: data.niche || null,
+        city: data.city || null,
+        bio: data.bio || null,
+        main_network: (data.main_network || null) as Network | null,
+        whatsapp: data.whatsapp || null,
+        email: data.email || null,
+      })
+      .eq("user_id", userId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+/** Dialog "Formatos de trabalho": replaces the whole selection. */
+export const setMyFormats = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((input: unknown) =>
+    z.object({ formats: z.array(z.string().min(1)) }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const profileId = await getMyProfileId(supabase, userId);
+    const { error: deleteError } = await supabase
+      .from("profile_formats")
+      .delete()
+      .eq("profile_id", profileId);
+    if (deleteError) throw new Error(deleteError.message);
+    const unique = Array.from(new Set(data.formats));
+    if (unique.length) {
+      const { error } = await supabase
+        .from("profile_formats")
+        .insert(unique.map((format) => ({ profile_id: profileId, format })));
+      if (error) throw new Error(error.message);
+    }
+    return { ok: true };
+  });
+
+export const addMyBrand = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((input: unknown) =>
+    z.object({ brandName: z.string().min(1).max(80) }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const profileId = await getMyProfileId(supabase, userId);
+    const { error } = await supabase
+      .from("profile_brands")
+      .insert({ profile_id: profileId, brand_name: data.brandName.trim() });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const removeMyBrand = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((input: unknown) => z.object({ brandId: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase
+      .from("profile_brands")
+      .delete()
+      .eq("id", data.brandId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+const workInput = z.object({
+  id: z.string().uuid().optional().nullable(),
+  title: z.string().min(1, "Informe o título do trabalho"),
+  description: z.string().nullable(),
+  image_url: z.string().nullable(),
+  link_url: z.string().nullable(),
+});
+
+export type WorkInput = z.infer<typeof workInput>;
+
+/** Dialog "Trabalho do portfólio": creates or updates one item. */
+export const upsertMyWork = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((input: unknown) => workInput.parse(input))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const profileId = await getMyProfileId(supabase, userId);
+    const payload = {
+      title: data.title.trim(),
+      description: data.description || null,
+      image_url: data.image_url || null,
+      link_url: data.link_url || null,
+    };
+
+    if (data.id) {
+      const { error } = await supabase
+        .from("profile_works")
+        .update(payload)
+        .eq("id", data.id)
+        .eq("profile_id", profileId);
+      if (error) throw new Error(error.message);
+      return { ok: true };
+    }
+
+    const { count } = await supabase
+      .from("profile_works")
+      .select("id", { count: "exact", head: true })
+      .eq("profile_id", profileId);
+
+    const { error } = await supabase
+      .from("profile_works")
+      .insert({ ...payload, profile_id: profileId, sort_order: count ?? 0 });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const removeMyWork = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((input: unknown) => z.object({ workId: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase
+      .from("profile_works")
+      .delete()
+      .eq("id", data.workId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
