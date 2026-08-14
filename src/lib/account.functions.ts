@@ -541,7 +541,7 @@ export const setMyNiches = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-/** Card "Informações básicas": changes the public address /perfil/<slug>. */
+/** Card "Informações básicas": changes the public address /criador/<slug>. */
 export const setMySlug = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator((input: unknown) =>

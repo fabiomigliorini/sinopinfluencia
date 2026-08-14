@@ -267,7 +267,7 @@ function DashboardPage() {
 
               {profile.status === "approved" && (
                 <Link
-                  to="/perfil/$slug"
+                  to="/criador/$slug"
                   params={{ slug: profile.slug }}
                   className="rounded-full border border-border bg-card px-5 py-2.5 text-sm font-bold transition hover:bg-accent"
                 >

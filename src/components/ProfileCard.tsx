@@ -80,7 +80,7 @@ export function ProfileCard({
 
   return (
     <Link
-      to="/perfil/$slug"
+      to="/criador/$slug"
       params={{ slug: profile.slug }}
       className="group flex flex-col overflow-hidden rounded-[20px] border border-border bg-card transition hover:-translate-y-1 hover:border-[#cfe4d3] hover:shadow-[0_22px_40px_-22px_rgba(13,68,36,0.35)]"
     >

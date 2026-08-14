@@ -205,7 +205,7 @@ function AdminProfilesPage() {
               </Link>
               {p.status === "approved" ? (
                 <Link
-                  to="/perfil/$slug"
+                  to="/criador/$slug"
                   params={{ slug: p.slug }}
                   className="rounded-full border border-border px-4 py-2 text-xs font-bold transition hover:bg-accent"
                 >
