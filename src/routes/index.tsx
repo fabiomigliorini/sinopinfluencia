@@ -31,7 +31,16 @@ function HomePage() {
 
   const featured = profiles.slice(0, 6);
 
-  const niches = Array.from(new Set(profiles.map((p) => p.niche).filter(Boolean)));
+  const niches = Array.from(
+    new Set(
+      profiles.flatMap((p) =>
+        (p.niche ?? "")
+          .split(",")
+          .map((item) => item.trim())
+          .filter(Boolean),
+      ),
+    ),
+  ).sort((a, b) => a.localeCompare(b, "pt-BR"));
   const networks = [
     { value: "instagram", label: "Instagram" },
     { value: "tiktok", label: "TikTok" },
@@ -272,7 +281,8 @@ function FeaturedDirectory({
       !query ||
       p.display_name.toLowerCase().includes(query.toLowerCase()) ||
       (p.niche ?? "").toLowerCase().includes(query.toLowerCase());
-    const matchesNiche = !niche || p.niche === niche;
+    const matchesNiche =
+      !niche || (p.niche ?? "").toLowerCase().includes(niche.toLowerCase());
     const matchesNetwork = !network || p.main_network === network;
     return matchesQuery && matchesNiche && matchesNetwork;
   });

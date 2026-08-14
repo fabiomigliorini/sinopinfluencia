@@ -19,7 +19,6 @@ type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 const emptyForm = {
   display_name: "",
   full_name: "",
-  niche: "",
   city: "Sinop, MT",
   bio: "",
   main_network: "",
@@ -37,7 +36,6 @@ export function BasicInfoCard({ profile }: { profile: Profile }) {
     setForm({
       display_name: profile.display_name ?? "",
       full_name: profile.full_name ?? "",
-      niche: profile.niche ?? "",
       city: profile.city ?? "Sinop, MT",
       bio: profile.bio ?? "",
       main_network: profile.main_network ?? "",
@@ -52,7 +50,6 @@ export function BasicInfoCard({ profile }: { profile: Profile }) {
         data: {
           display_name: form.display_name.trim(),
           full_name: form.full_name.trim() || null,
-          niche: form.niche.trim() || null,
           city: form.city.trim() || null,
           bio: form.bio.trim() || null,
           main_network: (form.main_network || null) as BasicsInput["main_network"],
@@ -71,7 +68,6 @@ export function BasicInfoCard({ profile }: { profile: Profile }) {
   const rows: Array<[string, string]> = [
     ["Nome público", profile.display_name || "—"],
     ["Nome completo", profile.full_name || "—"],
-    ["Nicho", profile.niche || "—"],
     ["Cidade", profile.city || "—"],
     ["Rede principal", networkLabel(profile.main_network) ?? "—"],
     ["WhatsApp", profile.whatsapp || "—"],
@@ -112,15 +108,6 @@ export function BasicInfoCard({ profile }: { profile: Profile }) {
                   className={fieldCls}
                   value={form.full_name}
                   onChange={(e) => setForm({ ...form, full_name: e.target.value })}
-                />
-              </label>
-              <label className="space-y-1.5">
-                <span className={labelCls}>Nicho</span>
-                <input
-                  className={fieldCls}
-                  placeholder="Ex.: Gastronomia, Moda, Agro"
-                  value={form.niche}
-                  onChange={(e) => setForm({ ...form, niche: e.target.value })}
                 />
               </label>
               <label className="space-y-1.5">
