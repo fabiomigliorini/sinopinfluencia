@@ -19,6 +19,18 @@ import {
 import { setProfileTier } from "@/lib/account.functions";
 import { NetworkBadge, networkLabel } from "@/components/network-icons";
 import { TIER_OPTIONS, type Tier } from "@/lib/tiers";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 
 export const Route = createFileRoute("/_authenticated/admin/perfis")({
@@ -218,37 +230,76 @@ function AdminProfilesPage() {
   );
 }
 
-/** Curation control: sets the ACES ladder (1 to 4 stars) for one profile. */
+/** Curation control: sets the ACES ladder (1 to 4 stars) for one profile via dialog. */
 function TierSelect({ profileId, tier }: { profileId: string; tier: Tier }) {
   const queryClient = useQueryClient();
   const saveTier = useServerFn(setProfileTier);
+  const [open, setOpen] = useState(false);
+  const [draft, setDraft] = useState<Tier>(tier);
+  const current = TIER_OPTIONS.find((option) => option.value === tier);
   const mutation = useMutation({
     mutationFn: (value: Tier) => saveTier({ data: { profileId, tier: value } }),
     onSuccess: () => {
       toast.success("Nível atualizado");
+      setOpen(false);
       void queryClient.invalidateQueries({ queryKey: ["admin-profiles"] });
     },
     onError: (error: Error) => toast.error(error.message),
   });
 
   return (
-    <label className="flex items-center gap-2 rounded-full border border-border px-3 py-1.5 text-xs font-bold">
-      <span className="text-muted-foreground">Nível</span>
-      <select
-        value={tier}
-        disabled={mutation.isPending}
-        onChange={(event) => mutation.mutate(event.target.value as Tier)}
-        className="bg-transparent text-xs font-bold outline-none disabled:opacity-60"
-      >
-        {TIER_OPTIONS.map((option) => (
-          <option key={option.value} value={option.value}>
-            {"★".repeat(option.stars)} {option.label}
-          </option>
-        ))}
-      </select>
-    </label>
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        setOpen(next);
+        if (next) setDraft(tier);
+      }}
+    >
+      <DialogTrigger asChild>
+        <Button variant="outline" size="sm" className="rounded-full text-xs font-bold">
+          Nível{" "}
+          <span className="ml-1">
+            {current ? `${"★".repeat(current.stars)} ${current.label}` : tier}
+          </span>
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Alterar nível de curadoria</DialogTitle>
+          <DialogDescription>
+            Escolha a classificação da ACES para este criador e confirme a alteração.
+          </DialogDescription>
+        </DialogHeader>
+        <RadioGroup value={draft} onValueChange={(value) => setDraft(value as Tier)} className="gap-2">
+          {TIER_OPTIONS.map((option) => (
+            <Label
+              key={option.value}
+              htmlFor={`tier-${profileId}-${option.value}`}
+              className="flex cursor-pointer items-center gap-3 rounded-xl border border-border p-3 text-sm font-semibold has-[button[data-state=checked]]:border-primary"
+            >
+              <RadioGroupItem value={option.value} id={`tier-${profileId}-${option.value}`} />
+              <span>
+                {"★".repeat(option.stars)} {option.label}
+              </span>
+            </Label>
+          ))}
+        </RadioGroup>
+        <DialogFooter>
+          <Button variant="ghost" onClick={() => setOpen(false)} disabled={mutation.isPending}>
+            Cancelar
+          </Button>
+          <Button
+            onClick={() => mutation.mutate(draft)}
+            disabled={mutation.isPending || draft === tier}
+          >
+            {mutation.isPending ? "Salvando..." : "Confirmar"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
+
 
 const ADMIN_NETWORKS = [
   "instagram",
