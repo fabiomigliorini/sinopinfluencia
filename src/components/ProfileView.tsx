@@ -132,22 +132,58 @@ export function ProfileView({
                 {works.length > 0 ? (
                   <div className="mt-4 grid gap-4 sm:grid-cols-2">
                     {works.map((work) => (
-                      <div key={work.id} className="rounded-2xl border border-border bg-card p-5">
-                        <h3 className="font-bold text-foreground">{work.title}</h3>
-                        <p className="mt-1.5 text-sm text-muted-foreground">{work.description}</p>
-                        {work.image_url && (
-                          <img
-                            src={work.image_url}
-                            alt={work.title}
-                            className="mt-3 rounded-xl border border-border"
-                          />
-                        )}
+                      <div
+                        key={work.id}
+                        className="overflow-hidden rounded-2xl border border-border bg-card"
+                      >
+                        {work.image_url ? (
+                          work.link_url ? (
+                            <a
+                              href={work.link_url}
+                              target="_blank"
+                              rel="noreferrer noopener"
+                            >
+                              <img
+                                src={work.image_url}
+                                alt={work.title}
+                                loading="lazy"
+                                className="aspect-video w-full object-cover"
+                              />
+                            </a>
+                          ) : (
+                            <img
+                              src={work.image_url}
+                              alt={work.title}
+                              loading="lazy"
+                              className="aspect-video w-full object-cover"
+                            />
+                          )
+                        ) : null}
+                        <div className="p-5">
+                          <h3 className="font-bold text-foreground">{work.title}</h3>
+                          {work.description ? (
+                            <p className="mt-1.5 text-sm text-muted-foreground">
+                              {work.description}
+                            </p>
+                          ) : null}
+                          {work.link_url ? (
+                            <a
+                              href={work.link_url}
+                              target="_blank"
+                              rel="noreferrer noopener"
+                              className="mt-3 inline-block text-sm font-semibold text-primary hover:underline"
+                            >
+                              Ver post original
+                            </a>
+                          ) : null}
+                        </div>
                       </div>
                     ))}
                   </div>
                 ) : (
                   <p className="mt-2 text-sm text-muted-foreground">Nenhum trabalho cadastrado.</p>
                 )}
+
               </div>
 
               <aside>
