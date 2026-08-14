@@ -276,11 +276,10 @@ function FeaturedDirectory({
   niche: string;
   network: string;
 }) {
-  const [metricsMap, setMetricsMap] = useState<Record<string, MetricRow[]>>({});
+  const { data: metadata } = useSuspenseQuery(metadataQueryOptions);
+  const metricsMap = buildMetricsMap(metadata?.metrics ?? []);
+  const formatsMap = buildFormatsMap(metadata?.formats ?? []);
 
-  // Note: metrics are fetched alongside profile cards in a real implementation.
-  // For the home page we show compact cards without full metrics to keep the
-  // loader light; the directory page fetches related rows.
 
   const filtered = profiles.filter((p) => {
     const matchesQuery =
