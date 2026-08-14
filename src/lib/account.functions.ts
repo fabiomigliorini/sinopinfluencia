@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { normalizeSlug } from "@/lib/profile-options";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
@@ -516,18 +517,6 @@ export const setMyNiches = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
-
-/** Turns any text into a URL friendly slug: "Fábio Migliorini" -> "fabio-migliorini". */
-export function normalizeSlug(value: string) {
-  return value
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9.]+/g, "-")
-    .replace(/-{2,}/g, "-")
-    .replace(/^[-.]+|[-.]+$/g, "")
-    .slice(0, 60);
-}
 
 /** Card "Informações básicas": changes the public address /perfil/<slug>. */
 export const setMySlug = createServerFn({ method: "POST" })

@@ -10,13 +10,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { updateMyBasics, setMySlug, type BasicsInput } from "@/lib/account.functions";
 import {
-  updateMyBasics,
-  setMySlug,
+  NETWORKS,
+  fieldCls,
+  labelCls,
+  networkLabel,
   normalizeSlug,
-  type BasicsInput,
-} from "@/lib/account.functions";
-import { NETWORKS, fieldCls, labelCls, networkLabel } from "@/lib/profile-options";
+} from "@/lib/profile-options";
 import type { Database } from "@/integrations/supabase/types";
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
