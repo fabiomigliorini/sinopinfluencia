@@ -191,6 +191,7 @@ export type Database = {
           id: string
           main_network: Database["public"]["Enums"]["social_network"] | null
           niche: string | null
+          review_pending: boolean
           slug: string
           status: Database["public"]["Enums"]["profile_status"]
           submitted_at: string | null
@@ -213,6 +214,7 @@ export type Database = {
           id?: string
           main_network?: Database["public"]["Enums"]["social_network"] | null
           niche?: string | null
+          review_pending?: boolean
           slug: string
           status?: Database["public"]["Enums"]["profile_status"]
           submitted_at?: string | null
@@ -235,6 +237,7 @@ export type Database = {
           id?: string
           main_network?: Database["public"]["Enums"]["social_network"] | null
           niche?: string | null
+          review_pending?: boolean
           slug?: string
           status?: Database["public"]["Enums"]["profile_status"]
           submitted_at?: string | null

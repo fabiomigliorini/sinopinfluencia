@@ -127,11 +127,17 @@ function DashboardPage() {
             text: "Nenhuma alteração pendente. A ACES responde em até 5 dias úteis.",
           }
         : profile.status === "approved"
-          ? {
-              tone: "border-primary/40 bg-primary/10",
-              title: "Perfil publicado e atualizado",
-              text: "Tudo que você editou já está no ar na vitrine oficial.",
-            }
+          ? profile.review_pending
+            ? {
+                tone: "border-[#FFEB00] bg-[#FFEB00]/15",
+                title: "Alterações em análise",
+                text: "Seu perfil continua no ar na vitrine enquanto a curadoria da ACES revisa as últimas mudanças.",
+              }
+            : {
+                tone: "border-primary/40 bg-primary/10",
+                title: "Perfil publicado e atualizado",
+                text: "Tudo que você editou já está no ar na vitrine oficial.",
+              }
           : {
               tone: "border-destructive/40 bg-destructive/10",
               title: "A curadoria pediu ajustes",
