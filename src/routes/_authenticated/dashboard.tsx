@@ -223,15 +223,20 @@ function DashboardPage() {
             <p className="mt-5 text-sm text-muted-foreground">{status?.hint}</p>
 
             <div className="mt-6 flex flex-wrap gap-2">
-              {profile.status !== "pending" && profile.status !== "approved" && (
+              {hasPendingChanges && (
                 <button
                   onClick={() => submitMutation.mutate()}
                   disabled={submitMutation.isPending}
                   className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
                 >
-                  {submitMutation.isPending ? "Enviando..." : "Enviar para curadoria"}
+                  {submitMutation.isPending
+                    ? "Publicando..."
+                    : profile.status === "draft"
+                      ? "Publicar e enviar para curadoria"
+                      : "Publicar alterações"}
                 </button>
               )}
+
               {profile.status === "approved" && (
                 <Link
                   to="/$slug"
