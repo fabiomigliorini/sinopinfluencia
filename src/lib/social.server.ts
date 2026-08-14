@@ -140,43 +140,94 @@ function compactToNumber(text: string): number | null {
   return Math.round(base * 1_000_000_000);
 }
 
+/** Last-resort source: search engines index Instagram's own meta description. */
+async function fetchInstagramFromSearch(handle: string): Promise<PublicMetrics | null> {
+  const query = `instagram.com/${handle} followers`;
+  let html: string;
+  try {
+    html = await getText(
+      `https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`,
+    );
+  } catch {
+    return null;
+  }
+
+  const target = handle.toLowerCase();
+  const blocks = html.split(/class="result__snippet"/).slice(1);
+  for (const block of blocks) {
+    const chunk = decodeEntities(
+      block.slice(0, 1200).replace(/<[^>]+>/g, " ").replace(/\s+/g, " "),
+    );
+    // The snippet link is rewritten by DuckDuckGo — decode it to check the handle.
+    const linked = decodeURIComponent(block.match(/uddg=([^&"]+)/)?.[1] ?? "");
+    const linkedHandle = linked
+      .match(/instagram\.com\/([^/?#]+)\/?$/i)?.[1]
+      ?.toLowerCase();
+    if (linkedHandle !== target) continue;
+
+    const followers = numberBefore(chunk, /followers/i) ?? numberBefore(chunk, /seguidores/i);
+    if (followers === null) continue;
+    return {
+      handle,
+      displayName: chunk.match(/-\s*([^(]{2,60})\s*\(@/)?.[1]?.trim() || null,
+      avatarUrl: null,
+      profileUrl: `https://www.instagram.com/${handle}/`,
+      followers,
+      following: numberBefore(chunk, /following/i) ?? numberBefore(chunk, /seguindo/i),
+      postsCount: numberBefore(chunk, /posts/i) ?? numberBefore(chunk, /publica[çc][õo]es/i),
+      likes: null,
+      views: null,
+      raw: { source: "instagram_search_snippet", snippet: chunk.slice(0, 300) },
+    };
+  }
+  return null;
+}
+
 export async function fetchInstagramPublic(handle: string): Promise<PublicMetrics> {
   const profileUrl = `https://www.instagram.com/${handle}/`;
   // Public web profile endpoint first — it returns clean JSON when available.
-  try {
-    const json = await getText(
-      `https://i.instagram.com/api/v1/users/web_profile_info/?username=${encodeURIComponent(handle)}`,
-      { "x-ig-app-id": "936619743392459" },
-    );
-    const parsed = JSON.parse(json) as {
-      data?: { user?: Record<string, any> };
-    };
-    const user = parsed.data?.user;
-    if (user) {
-      return {
-        handle,
-        displayName: user["full_name"] ?? null,
-        avatarUrl: user["profile_pic_url_hd"] ?? user["profile_pic_url"] ?? null,
-        profileUrl,
-        followers: user["edge_followed_by"]?.count ?? null,
-        following: user["edge_follow"]?.count ?? null,
-        postsCount: user["edge_owner_to_timeline_media"]?.count ?? null,
-        likes: null,
-        views: null,
-        raw: {
-          source: "instagram_web_profile_info",
-          is_private: user["is_private"] ?? null,
-          full_name: user["full_name"] ?? null,
-          biography: user["biography"] ?? null,
-        },
+  const apiHosts = ["https://i.instagram.com", "https://www.instagram.com"];
+  for (const host of apiHosts) {
+    try {
+      const json = await getText(
+        `${host}/api/v1/users/web_profile_info/?username=${encodeURIComponent(handle)}`,
+        { "x-ig-app-id": "936619743392459", "x-requested-with": "XMLHttpRequest" },
+      );
+      const parsed = JSON.parse(json) as {
+        data?: { user?: Record<string, any> };
       };
+      const user = parsed.data?.user;
+      if (user) {
+        return {
+          handle,
+          displayName: user["full_name"] ?? null,
+          avatarUrl: user["profile_pic_url_hd"] ?? user["profile_pic_url"] ?? null,
+          profileUrl,
+          followers: user["edge_followed_by"]?.count ?? null,
+          following: user["edge_follow"]?.count ?? null,
+          postsCount: user["edge_owner_to_timeline_media"]?.count ?? null,
+          likes: null,
+          views: null,
+          raw: {
+            source: "instagram_web_profile_info",
+            is_private: user["is_private"] ?? null,
+            full_name: user["full_name"] ?? null,
+            biography: user["biography"] ?? null,
+          },
+        };
+      }
+    } catch {
+      /* try the next source */
     }
-  } catch {
-    /* fall back to the public HTML page */
   }
 
   // Public link preview: Meta serves counters in og:description to crawlers.
-  const html = await getText(profileUrl, { "User-Agent": CRAWLER_UA });
+  let html = "";
+  try {
+    html = await getText(profileUrl, { "User-Agent": CRAWLER_UA });
+  } catch {
+    html = "";
+  }
   const description = decodeEntities(
     html.match(/property="og:description" content="([^"]+)"/)?.[1] ??
       html.match(/name="description" content="([^"]+)"/)?.[1] ??
@@ -193,7 +244,11 @@ export async function fetchInstagramPublic(handle: string): Promise<PublicMetric
   const following = numberBefore(description, /(?:following|seguindo)/i);
 
   if (followers === null) {
-    throw new Error("Não foi possível ler os seguidores públicos do Instagram");
+    const fromSearch = await fetchInstagramFromSearch(handle);
+    if (fromSearch) return fromSearch;
+    throw new Error(
+      "O Instagram está bloqueando a coleta automática agora. Tente novamente em alguns minutos ou informe os números manualmente.",
+    );
   }
   return {
     handle,
@@ -210,6 +265,7 @@ export async function fetchInstagramPublic(handle: string): Promise<PublicMetric
     raw: { source: "instagram_preview", description },
   };
 }
+
 
 export async function fetchTikTokPublic(handle: string): Promise<PublicMetrics> {
   const profileUrl = `https://www.tiktok.com/@${handle}`;
