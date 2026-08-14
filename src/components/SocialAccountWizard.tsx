@@ -85,9 +85,23 @@ export function SocialAccountWizard({
   const addMutation = useMutation({
     mutationFn: async () => {
       if (!network) throw new Error("Escolha uma rede");
-      return (await runAdd({
-        data: { network, handle, declaredFollowers: manual.trim() || undefined },
-      })) as { ok: boolean; error: string | null };
+      const followers = manual.followers.trim();
+      const result = (await runAdd({
+        data: { network, handle, declaredFollowers: followers || undefined },
+      })) as { ok: boolean; accountId: string; error: string | null };
+      const extras = [manual.posts, manual.likes, manual.views].some((v) => v.trim());
+      if (result.accountId && followers && extras) {
+        await runDeclare({
+          data: {
+            accountRowId: result.accountId,
+            followers,
+            posts: manual.posts.trim() || undefined,
+            likes: manual.likes.trim() || undefined,
+            views: manual.views.trim() || undefined,
+          },
+        });
+      }
+      return result;
     },
     onSuccess: (result) => {
       if (result.error) toast.warning(`Rede vinculada. ${result.error}`);
