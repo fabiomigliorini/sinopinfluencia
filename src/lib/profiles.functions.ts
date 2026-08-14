@@ -2,6 +2,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import { sortByTier } from "@/lib/tiers";
+import { loadPublicSocialAccounts } from "@/lib/social-public";
+
 
 function createServerSupabaseClient() {
   return createClient<Database>(
