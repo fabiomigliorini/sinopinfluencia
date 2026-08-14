@@ -234,18 +234,12 @@ export async function fetchInstagramPublic(handle: string): Promise<PublicMetric
       const posts =
         firstNumber(/\\?"posts_count\\?"\s*:\s*(\d+)/, embedHtml) ??
         firstNumber(/\\?"edge_owner_to_timeline_media\\?"\s*:\s*\{\\?"count\\?"\s*:\s*(\d+)/, embedHtml);
-      const readString = (key: string) => {
-        const match = embedHtml.match(
-          new RegExp(`\\\\?"${key}\\\\?"\\s*:\\s*\\\\?"([^"\\\\]*(?:\\\\.[^"\\\\]*)*)`),
-        );
-        return match?.[1]
-          ? decodeEntities(match[1].replace(/\\u0026/g, "&").replace(/\\u002F/g, "/").replace(/\\\"/g, '"'))
-          : null;
-      };
       return {
         handle,
-        displayName: readString("full_name"),
-        avatarUrl: readString("profile_pic_url_hd") ?? readString("profile_pic_url"),
+        // Keep the previously saved name/avatar. The embed HTML double-escapes
+        // these strings and their format changes independently of the counters.
+        displayName: null,
+        avatarUrl: null,
         profileUrl,
         followers,
         following: null,
