@@ -252,18 +252,31 @@ export function SocialAccountWizard({
                 <p className="rounded-2xl bg-destructive/10 p-3 text-xs text-destructive">
                   {preview?.error ?? "Não foi possível coletar os dados públicos."}
                 </p>
-                <label className="block text-sm font-semibold">
-                  Informe seus seguidores
-                  <input
-                    className={`${field} mt-2 font-normal`}
-                    placeholder="Ex.: 18,4 mil"
-                    value={manual}
-                    onChange={(e) => setManual(e.target.value)}
-                  />
-                  <span className="mt-1 block text-xs font-normal text-muted-foreground">
-                    Este número aparecerá como “declarado pelo criador”.
-                  </span>
-                </label>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {(
+                    [
+                      { key: "followers", label: "Seguidores", placeholder: "Ex.: 18400" },
+                      { key: "posts", label: "Posts", placeholder: "Ex.: 291" },
+                      { key: "likes", label: "Curtidas", placeholder: "Ex.: 1200" },
+                      { key: "views", label: "Views", placeholder: "Ex.: 8500" },
+                    ] as const
+                  ).map((f) => (
+                    <label key={f.key} className="block text-sm font-semibold">
+                      {f.label}
+                      <input
+                        className={`${field} mt-2 font-normal`}
+                        placeholder={f.placeholder}
+                        value={manual[f.key]}
+                        onChange={(e) =>
+                          setManual((prev) => ({ ...prev, [f.key]: e.target.value }))
+                        }
+                      />
+                    </label>
+                  ))}
+                </div>
+                <span className="block text-xs text-muted-foreground">
+                  Estes números aparecerão como “declarados pelo criador”.
+                </span>
               </div>
             )}
 
