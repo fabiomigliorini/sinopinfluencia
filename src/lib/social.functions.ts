@@ -154,6 +154,8 @@ export const addNetworkAccount = createServerFn({ method: "POST" })
       .single();
     if (error) throw new Error(error.message);
 
+    await touchProfileContent(context.supabase, profileId);
+
     if (declared) {
       await writeDeclaredMetric(context.supabase, profileId, saved.id, data.network, handle, declared);
       return { ok: true, accountId: saved.id, error: null as string | null };
@@ -202,6 +204,14 @@ async function writeDeclaredMetric(
     verified_at: null,
   });
   if (error) throw new Error(error.message);
+}
+
+/** Marks profile content as changed so the dashboard shows "pending publish". */
+async function touchProfileContent(supabase: any, profileId: string) {
+  await supabase
+    .from("profiles")
+    .update({ content_changed_at: new Date().toISOString() })
+    .eq("id", profileId);
 }
 
 function toNumber(value?: string | null) {
@@ -268,6 +278,8 @@ export const setDeclaredFollowers = createServerFn({ method: "POST" })
       });
     }
 
+    await touchProfileContent(context.supabase, profileId);
+
     return { ok: true, removed: !data.followers };
   });
 
@@ -286,7 +298,9 @@ export const syncMyAccount = createServerFn({ method: "POST" })
     if (!owned) throw new Error("Rede não encontrada");
 
     const { syncSocialAccount } = await import("./social.server");
-    return syncSocialAccount(data.accountRowId);
+    const result = await syncSocialAccount(data.accountRowId);
+    await touchProfileContent(context.supabase, profileId);
+    return result;
   });
 
 export const removeMyAccount = createServerFn({ method: "POST" })
@@ -315,6 +329,7 @@ export const removeMyAccount = createServerFn({ method: "POST" })
       .eq("id", account.id)
       .eq("profile_id", profileId);
     if (error) throw new Error(error.message);
+    await touchProfileContent(context.supabase, profileId);
     return { ok: true };
   });
 
