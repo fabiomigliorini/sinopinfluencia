@@ -10,7 +10,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { NETWORK_META, NETWORK_ORDER, NetworkBadge, type NetworkId } from "@/components/network-icons";
-import { addNetworkAccount, previewNetworkHandle } from "@/lib/social.functions";
+import {
+  addNetworkAccount,
+  previewNetworkHandle,
+  setDeclaredFollowers,
+} from "@/lib/social.functions";
 
 type Preview = {
   handle: string;
