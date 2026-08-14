@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { getProfileBySlug } from "@/lib/profiles.functions";
 import { ProfileView } from "@/components/ProfileView";
@@ -13,8 +13,13 @@ const profileQueryOptions = (slug: string) =>
   });
 
 export const Route = createFileRoute("/$slug")({
-  loader: ({ context, params }) =>
-    context.queryClient.ensureQueryData(profileQueryOptions(params.slug)),
+  loader: async ({ context, params }) => {
+    const result = await context.queryClient.ensureQueryData(
+      profileQueryOptions(params.slug),
+    );
+    if (!result) throw notFound();
+    return result;
+  },
   head: ({ loaderData }) => {
     if (!loaderData) {
       return {
