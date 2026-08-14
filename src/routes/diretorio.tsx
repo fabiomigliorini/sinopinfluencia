@@ -3,6 +3,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import { directoryQueryOptions, metadataQueryOptions } from "@/lib/profile-queries";
+import { buildFormatsMap, buildMetricsMap } from "@/lib/directory-maps";
+
 import { ProfileCard } from "@/components/ProfileCard";
 import { TierBadge } from "@/components/ProfileCard";
 import type { Database } from "@/integrations/supabase/types";
