@@ -125,6 +125,27 @@ export function BasicInfoCard({ profile }: { profile: Profile }) {
                   onChange={(e) => setForm({ ...form, full_name: e.target.value })}
                 />
               </label>
+              <label className="space-y-1.5 md:col-span-2">
+                <span className={labelCls}>Endereço do perfil</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground">/perfil/</span>
+                  <input
+                    className={fieldCls}
+                    value={form.slug}
+                    maxLength={60}
+                    placeholder="fabio.migliorini"
+                    onChange={(e) => setForm({ ...form, slug: e.target.value })}
+                    onBlur={(e) =>
+                      setForm({ ...form, slug: normalizeSlug(e.target.value) })
+                    }
+                  />
+                </div>
+                <span className="block text-xs text-muted-foreground">
+                  Use letras, números, ponto ou hífen. Este é o link público do seu
+                  perfil.
+                </span>
+              </label>
+
               <label className="space-y-1.5">
                 <span className={labelCls}>Cidade</span>
                 <input
