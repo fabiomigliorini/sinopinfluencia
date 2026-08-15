@@ -123,64 +123,6 @@ function HeroSearch({
               <TrustChip>Contato direto, sem intermediação</TrustChip>
               <TrustChip>Métricas verificadas</TrustChip>
             </div>
-
-            <div className="mt-9 rounded-[22px] bg-white p-5 shadow-[0_30px_60px_-25px_rgba(0,0,0,0.35)]">
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_auto]">
-                <div className="flex flex-col gap-1.5">
-                  <label className="pl-0.5 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
-                    O que você procura
-                  </label>
-                  <input
-                    type="text"
-                    value={query}
-                    onChange={(e) => onQueryChange(e.target.value)}
-                    placeholder="Ex.: gastronomia, moda, agro…"
-                    className="rounded-xl border border-border bg-white px-3.5 py-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
-                  />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="pl-0.5 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
-                    Categoria
-                  </label>
-                  <select
-                    value={niche}
-                    onChange={(e) => onNicheChange(e.target.value)}
-                    className="rounded-xl border border-border bg-white px-3.5 py-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
-                  >
-                    <option value="">Todas as categorias</option>
-                    {niches.map((n) => (
-                      <option key={n} value={n ?? ""}>
-                        {n}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="pl-0.5 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
-                    Rede principal
-                  </label>
-                  <select
-                    value={network}
-                    onChange={(e) => onNetworkChange(e.target.value)}
-                    className="rounded-xl border border-border bg-white px-3.5 py-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
-                  >
-                    <option value="">Todas as redes</option>
-                    {networks.map((n) => (
-                      <option key={n.value} value={n.value}>
-                        {n.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <Link
-                  to="/diretorio"
-                  search={{ q: query, niche, network, tier: "" }}
-                  className="flex items-center justify-center gap-2 self-end rounded-full bg-primary px-6 py-3 text-sm font-bold text-white shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90"
-                >
-                  Buscar
-                </Link>
-              </div>
-            </div>
           </div>
 
           <div className="hidden justify-center md:flex">
