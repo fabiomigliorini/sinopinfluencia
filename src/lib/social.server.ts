@@ -390,7 +390,9 @@ export async function fetchFacebookPublic(handle: string): Promise<PublicMetrics
   for (const url of candidates) {
     let html = "";
     try {
-      html = await getText(url, { "User-Agent": CRAWLER_UA });
+      // The crawler UA must be the ONLY header, otherwise Meta serves the
+      // login shell without any og: metadata.
+      html = await getText(url, { "User-Agent": CRAWLER_UA }, { exactHeaders: true });
     } catch (error) {
       lastError = error;
       continue;
@@ -400,11 +402,18 @@ export async function fetchFacebookPublic(handle: string): Promise<PublicMetrics
         html.match(/name="description" content="([^"]+)"/)?.[1] ??
         "",
     );
+    // Meta answers in whatever locale it picks, so accept the usual labels and
+    // fall back to the first counter in the preview text ("Name, City. N likes").
     const followers =
       firstNumber(/"follower_count":(\d+)/, html) ??
-      numberBefore(description, /(?:followers|seguidores)/i) ??
-      numberBefore(description, /(?:pessoas curtiram|curtidas|likes|gillar|me gusta)/i);
+      numberBefore(description, /(?:followers|seguidores|volgers)/i) ??
+      numberBefore(
+        description,
+        /(?:pessoas curtiram|curtidas|likes|vind-ik-leuks|gillar|me gusta|j.aime)/i,
+      ) ??
+      numberBefore(description, /\S/);
     if (followers === null) continue;
+
     return {
       handle,
       displayName:
