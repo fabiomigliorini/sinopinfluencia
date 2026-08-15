@@ -2,17 +2,17 @@ import { Link } from "@tanstack/react-router";
 import type { Database } from "@/integrations/supabase/types";
 import { tierLabel, tierRank } from "@/lib/tiers";
 import type { DirectoryMetric } from "@/lib/directory-maps";
+import { NETWORK_META, NETWORK_ORDER, type NetworkId } from "@/components/network-icons";
 
 type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
 
-
 const GRADIENTS = [
-  "from-emerald-500 to-green-800",
-  "from-yellow-300 to-emerald-500",
-  "from-green-900 to-emerald-500",
-  "from-green-800 to-green-950",
-  "from-emerald-500 to-green-900",
-  "from-yellow-300 to-green-800",
+  "from-green-950 to-emerald-900",
+  "from-emerald-950 to-green-900",
+  "from-[#0f3d24] to-[#145c32]",
+  "from-[#143d22] to-[#1a5230]",
+  "from-green-900 to-emerald-950",
+  "from-[#0d3b20] to-[#124f2a]",
 ];
 
 function initials(name: string) {
@@ -28,7 +28,7 @@ function Pin({ filled, className }: { filled: boolean; className?: string }) {
     <svg className={className} viewBox="0 0 24 28" aria-hidden="true">
       <path
         d="M12 2c5 0 9 3.6 9 9 0 6-9 15-9 15s-9-9-9-15c0-5.4 4-9 9-9z"
-        fill={filled ? "currentColor" : "#DCE7DE"}
+        fill={filled ? "currentColor" : "rgba(255,255,255,0.25)"}
       />
     </svg>
   );
@@ -39,7 +39,9 @@ export function TierBadge({ tier, light = false }: { tier: string; light?: boole
   return (
     <div
       className={`flex items-center gap-1.5 rounded-full px-2.5 py-1.5 ${
-        light ? "bg-white/10" : "bg-secondary"
+        light
+          ? "bg-white/10 backdrop-blur-xl border border-white/20"
+          : "bg-secondary"
       }`}
     >
       <div className="flex gap-0.5">
@@ -47,14 +49,40 @@ export function TierBadge({ tier, light = false }: { tier: string; light?: boole
           <Pin
             key={i}
             filled={i < order}
-            className={`h-2.5 w-2 ${i < order ? (light ? "text-[#FFEB00]" : "text-[#FFEB00]") : "text-[#DCE7DE]"}`}
+            className={`h-2.5 w-2 ${
+              i < order ? "text-[#FFEB00]" : "text-white/25"
+            }`}
           />
         ))}
       </div>
-      <span className={`text-[10.5px] font-bold uppercase tracking-wide ${light ? "text-white" : "text-foreground"}`}>
+      <span
+        className={`text-[10.5px] font-bold uppercase tracking-wide ${
+          light ? "text-white" : "text-foreground"
+        }`}
+      >
         {tierLabel(tier)}
       </span>
     </div>
+  );
+}
+
+function formatNumber(value: string | null | undefined): string {
+  if (!value || value === "—") return "—";
+  const num = Number(value.replace(/\D/g, ""));
+  if (Number.isNaN(num)) return value;
+  if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1).replace(/\.0$/, "")}M`;
+  if (num >= 1_000) return `${(num / 1_000).toFixed(1).replace(/\.0$/, "")}K`;
+  return num.toLocaleString("pt-BR");
+}
+
+function NetworkIconButton({ network }: { network: NetworkId }) {
+  const meta = NETWORK_META[network] ?? NETWORK_META.instagram;
+  const { Icon } = meta;
+
+  return (
+    <span className="grid h-10 w-10 place-items-center rounded-2xl border border-white/10 bg-white/5 text-white transition-all duration-300 group-hover/card-hover:bg-white group-hover/card-hover:text-[var(--brand-dark)]">
+      <Icon className="h-4 w-4" />
+    </span>
   );
 }
 
@@ -69,83 +97,118 @@ export function ProfileCard({
   formats?: string[];
   index?: number;
 }) {
-  const followersOf = (network: string) =>
-    metrics.find((m) => m.network === network && m.followers)?.followers ?? "—";
-  const ig = followersOf("instagram");
-  const tt = followersOf("tiktok");
-  const topFormat = formats[0] ?? "—";
   const niches = (profile.niche ?? "")
     .split(",")
     .map((n) => n.trim())
     .filter(Boolean);
 
+  const networksWithHandles = metrics
+    .map((m) => m.network as NetworkId)
+    .filter((n) => NETWORK_META[n]);
+
+  const orderedNetworks = NETWORK_ORDER.filter((n) => networksWithHandles.includes(n));
+  const availableNetworks = orderedNetworks.length > 0 ? orderedNetworks : networksWithHandles;
+
+  const topNetworkMetric = metrics
+    .filter((m) => m.followers && !Number.isNaN(Number(m.followers.replace(/\D/g, ""))))
+    .sort((a, b) => Number(b.followers!.replace(/\D/g, "")) - Number(a.followers!.replace(/\D/g, "")))[0];
+
+  const topValue = topNetworkMetric ? formatNumber(topNetworkMetric.followers) : undefined;
+  const topLabel = topNetworkMetric
+    ? `${NETWORK_META[topNetworkMetric.network as NetworkId]?.label ?? "Seguidores"}`
+    : undefined;
+
   return (
     <Link
       to="/criador/$slug"
       params={{ slug: profile.slug }}
-      className="group flex flex-col overflow-hidden rounded-[20px] border border-border bg-card transition hover:-translate-y-1 hover:border-[#cfe4d3] hover:shadow-[0_22px_40px_-22px_rgba(13,68,36,0.35)]"
+      className="group relative flex flex-col overflow-hidden rounded-[28px] border border-white/20 bg-gradient-to-b from-[var(--brand-green-deep)] to-[var(--brand-dark)] shadow-2xl shadow-black/20 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_32px_64px_-24px_rgba(0,0,0,0.35)]"
     >
-      <div className="p-5 pb-0">
-        <div className="flex items-start justify-between">
+      {/* Photo area: larger, 3:4 aspect ratio */}
+      <div className="relative aspect-[3/4] overflow-hidden">
+        {profile.avatar_url ? (
+            <img
+              src={profile.avatar_url}
+              alt={profile.display_name}
+              loading="lazy"
+              className="h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
+            />
+        ) : (
           <div
-            className={`relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br text-lg font-extrabold text-white ${GRADIENTS[index % GRADIENTS.length]}`}
+            className={`flex h-full w-full items-center justify-center bg-gradient-to-br text-5xl font-extrabold text-white ${
+              GRADIENTS[index % GRADIENTS.length]
+            }`}
           >
-            {profile.avatar_url ? (
-              <img
-                src={profile.avatar_url}
-                alt={profile.display_name}
-                loading="lazy"
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              initials(profile.display_name)
-            )}
+            {initials(profile.display_name)}
           </div>
-          <TierBadge tier={profile.tier} />
-        </div>
-        <h3 className="mt-3.5 text-lg font-bold text-foreground">{profile.display_name}</h3>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-[var(--brand-dark)] via-[var(--brand-dark)]/30 to-transparent" />
+
+        {/* Top-left niches */}
         {niches.length > 0 ? (
-          <div className="mt-1.5 flex flex-wrap gap-1.5">
-            {niches.slice(0, 3).map((n) => (
+          <div className="absolute top-4 left-4 flex max-w-[70%] flex-wrap gap-1.5">
+            {niches.slice(0, 2).map((n) => (
               <span
                 key={n}
-                className="rounded-full bg-secondary px-2.5 py-1 text-[11px] font-bold text-primary"
+                className="rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-white backdrop-blur-xl"
               >
                 {n}
               </span>
             ))}
-            {niches.length > 3 ? (
-              <span className="rounded-full bg-secondary px-2.5 py-1 text-[11px] font-bold text-muted-foreground">
-                +{niches.length - 3}
+            {niches.length > 2 ? (
+              <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-white backdrop-blur-xl">
+                +{niches.length - 2}
               </span>
             ) : null}
           </div>
         ) : null}
-        {profile.city ? (
-          <p className="mt-2 text-xs font-semibold text-muted-foreground">{profile.city}</p>
-        ) : null}
-        <p className="mt-2.5 min-h-[52px] text-[13px] leading-relaxed text-muted-foreground">
+
+        {/* Top-right tier badge */}
+        <div className="absolute top-4 right-4">
+          <TierBadge tier={profile.tier} light />
+        </div>
+      </div>
+
+      {/* Glassmorphism content overlay at bottom */}
+      <div className="absolute bottom-0 left-0 right-0 border-t border-white/10 bg-[var(--brand-dark)]/60 p-6 backdrop-blur-2xl">
+        <div className="flex items-end justify-between gap-4">
+          <div className="min-w-0">
+            <h3 className="truncate text-2xl font-extrabold leading-tight tracking-tight text-white">
+              {profile.display_name}
+            </h3>
+            {profile.city ? (
+              <p className="mt-1 text-xs font-semibold text-white/70">{profile.city}</p>
+            ) : null}
+          </div>
+          {topValue ? (
+            <div className="shrink-0 text-right">
+              <p className="text-xl font-black leading-none text-white">{topValue}</p>
+              <p className="text-[9px] font-bold uppercase tracking-tighter text-white/50">
+                {topLabel}
+              </p>
+            </div>
+          ) : null}
+        </div>
+
+        {/* Bio: limited to 2 lines */}
+        <p className="!bio-clamp mt-3 text-sm font-medium leading-relaxed text-white/80">
           {profile.bio ?? "Sem descrição"}
         </p>
-      </div>
 
-      <div className="mt-auto flex gap-2.5 px-5 py-4">
-        <StatLens value={ig} label="INSTA" />
-        <StatLens value={tt} label="TIKTOK" />
-        <StatLens value={topFormat} label="FORMATO" />
+        {/* Redesigned social icons + CTA */}
+        <div className="mt-6 flex items-center justify-between gap-3">
+          {availableNetworks.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {availableNetworks.slice(0, 4).map((network) => (
+                <NetworkIconButton key={network} network={network} />
+              ))}
+            </div>
+          ) : null}
+          <span className="ml-auto shrink-0 rounded-2xl bg-white px-5 py-2.5 text-[11px] font-black uppercase tracking-[0.15em] text-[var(--brand-dark)] transition-all group-hover:bg-white/90 active:scale-95">
+            Ver perfil
+          </span>
+        </div>
       </div>
     </Link>
-  );
-}
-
-
-function StatLens({ value, label }: { value: string; label: string }) {
-  return (
-    <div className="flex h-11 w-11 rotate-45 items-center justify-center rounded-xl bg-secondary">
-      <div className="-rotate-45 text-center">
-        <b className="block text-[11px] font-extrabold leading-none">{value}</b>
-        <small className="block text-[7px] font-bold tracking-wide text-muted-foreground">{label}</small>
-      </div>
-    </div>
   );
 }
