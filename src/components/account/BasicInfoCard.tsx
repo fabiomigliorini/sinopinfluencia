@@ -172,12 +172,13 @@ export function BasicInfoCard({ profile }: { profile: Profile }) {
               </label>
               <label className="space-y-1.5">
                 <span className={labelCls}>WhatsApp</span>
-                <input
-                  className={fieldCls}
-                  placeholder="66 99999-9999"
+                <PhoneInput
                   value={form.whatsapp}
-                  onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}
+                  onChange={(next) => setForm({ ...form, whatsapp: next })}
                 />
+                <span className="block text-xs text-muted-foreground">
+                  Selecione o país ou digite o número completo com +55.
+                </span>
               </label>
               <label className="space-y-1.5 md:col-span-2">
                 <span className={labelCls}>E-mail para contato</span>
