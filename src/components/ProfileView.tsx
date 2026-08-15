@@ -239,17 +239,13 @@ export function ProfileView({
                 {brands.map((b) => (
                   <span
                     key={b.id}
-                    className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-2"
+                    className="rounded-full border border-border bg-secondary px-4 py-2 text-sm font-semibold text-foreground"
                   >
-                    <span className="grid h-7 w-7 place-items-center rounded-full bg-secondary text-xs font-bold text-primary">
-                      {b.brand_name[0]?.toUpperCase()}
-                    </span>
-                    <span className="text-sm font-semibold text-foreground">
-                      {b.brand_name}
-                    </span>
+                    {b.brand_name}
                   </span>
                 ))}
               </div>
+
             ) : (
               <p className="mt-3 text-sm text-muted-foreground">Nenhuma marca cadastrada.</p>
             )}
