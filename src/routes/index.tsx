@@ -40,27 +40,6 @@ export const Route = createFileRoute("/")({
 
 function HomePage() {
   const { data: profiles } = useSuspenseQuery(profilesQueryOptions);
-  const [query, setQuery] = useState("");
-  const [niche, setNiche] = useState("");
-  const [network, setNetwork] = useState("");
-
-  const niches = Array.from(
-    new Set(
-      profiles.flatMap((p) =>
-        (p.niche ?? "")
-          .split(",")
-          .map((item) => item.trim())
-          .filter(Boolean),
-      ),
-    ),
-  ).sort((a, b) => a.localeCompare(b, "pt-BR"));
-  const networks = [
-    { value: "instagram", label: "Instagram" },
-    { value: "tiktok", label: "TikTok" },
-    { value: "youtube", label: "YouTube" },
-    { value: "kwai", label: "Kwai" },
-    { value: "linkedin", label: "LinkedIn" },
-  ];
 
   return (
     <>
