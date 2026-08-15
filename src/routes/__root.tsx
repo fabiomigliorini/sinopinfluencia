@@ -300,15 +300,20 @@ function Header() {
 
 function MobileNavLink({
   children,
+  to,
+  hash,
   onClick,
-  ...linkProps
 }: {
   children: React.ReactNode;
+  to: string;
+  hash?: string;
   onClick: () => void;
-} & React.ComponentProps<typeof Link>) {
+}) {
   return (
     <Link
-      {...linkProps}
+      to={to as any}
+      hash={hash}
+      search={to === "/diretorio" ? ({}) as any : undefined}
       onClick={onClick}
       className="block rounded-xl px-4 py-3 text-[15px] font-semibold text-white/90 transition hover:bg-white/10 hover:text-white"
     >
