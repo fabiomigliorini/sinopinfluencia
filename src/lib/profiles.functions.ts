@@ -181,12 +181,3 @@ export const getProfileBySlug = createServerFn({ method: "GET" })
       socialAccounts,
     };
   });
-
-
-
-/** Short follower label (1.2K / 3.4M) used by the directory cards. */
-function compactNumber(value: number) {
-  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1).replace(".0", "")}M`;
-  if (value >= 1_000) return `${(value / 1_000).toFixed(1).replace(".0", "")}K`;
-  return String(value);
-}
