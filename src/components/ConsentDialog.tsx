@@ -27,6 +27,10 @@ export function ConsentDialog({
 }: ConsentDialogProps) {
   const [agreed, setAgreed] = useState(false);
 
+  useEffect(() => {
+    if (!open) setAgreed(false);
+  }, [open]);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
