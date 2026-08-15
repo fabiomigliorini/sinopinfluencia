@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { useState } from "react";
 import {
   getMyProfile,
   submitMyProfile,
@@ -16,6 +17,7 @@ import { FormatsCard } from "@/components/account/FormatsCard";
 import { BrandsCard } from "@/components/account/BrandsCard";
 import { NichesCard } from "@/components/account/NichesCard";
 import { PortfolioCard } from "@/components/account/PortfolioCard";
+import { ConsentDialog } from "@/components/ConsentDialog";
 
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
