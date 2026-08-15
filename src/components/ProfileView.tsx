@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { NetworkBadge, networkLabel } from "@/components/network-icons";
 import { TierBadge } from "@/components/ProfileCard";
+import { whatsappDigits } from "@/components/PhoneInput";
 import type { Database } from "@/integrations/supabase/types";
 import type { PublicSocialAccount } from "@/lib/social-public";
 
@@ -105,7 +106,7 @@ export function ProfileView({
 
               </div>
               <a
-                href={`https://wa.me/${profile.whatsapp?.replace(/\D/g, "") ?? ""}`}
+                href={`https://wa.me/${whatsappDigits(profile.whatsapp)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-full bg-primary px-6 py-3 text-sm font-bold text-white shadow-lg shadow-primary/25 transition hover:bg-primary/90"
@@ -239,7 +240,7 @@ export function ProfileView({
                     <p className="mt-4 text-sm font-semibold text-foreground">{profile.email}</p>
                   )}
                   <a
-                    href={`https://wa.me/${profile.whatsapp?.replace(/\D/g, "") ?? ""}`}
+                    href={`https://wa.me/${whatsappDigits(profile.whatsapp)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="mt-4 block w-full rounded-full bg-primary py-3 text-center text-sm font-bold text-white transition hover:bg-primary/90"

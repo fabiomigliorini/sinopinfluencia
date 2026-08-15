@@ -18,6 +18,7 @@ import {
   networkLabel,
   normalizeSlug,
 } from "@/lib/profile-options";
+import { PhoneInput, formatPhoneDisplay } from "@/components/PhoneInput";
 import type { Database } from "@/integrations/supabase/types";
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
@@ -85,7 +86,7 @@ export function BasicInfoCard({ profile }: { profile: Profile }) {
     ["Endereço do perfil", `/criador/${profile.slug}`],
     ["Cidade", profile.city || "—"],
     ["Rede principal", networkLabel(profile.main_network) ?? "—"],
-    ["WhatsApp", profile.whatsapp || "—"],
+    ["WhatsApp", formatPhoneDisplay(profile.whatsapp) || "—"],
     ["E-mail de contato", profile.email || "—"],
   ];
 
@@ -172,12 +173,13 @@ export function BasicInfoCard({ profile }: { profile: Profile }) {
               </label>
               <label className="space-y-1.5">
                 <span className={labelCls}>WhatsApp</span>
-                <input
-                  className={fieldCls}
-                  placeholder="66 99999-9999"
+                <PhoneInput
                   value={form.whatsapp}
-                  onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}
+                  onChange={(next) => setForm({ ...form, whatsapp: next })}
                 />
+                <span className="block text-xs text-muted-foreground">
+                  Selecione o país ou digite o número completo com +55.
+                </span>
               </label>
               <label className="space-y-1.5 md:col-span-2">
                 <span className={labelCls}>E-mail para contato</span>
