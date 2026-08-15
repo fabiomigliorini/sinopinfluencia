@@ -156,6 +156,12 @@ export const addNetworkAccount = createServerFn({ method: "POST" })
     await touchProfileContent(context.supabase, profileId);
 
     if (declared) {
+      const followers = toNumber(declared);
+      if (followers !== null) {
+        await context.supabase
+          .from("social_snapshots")
+          .insert({ social_account_id: saved.id, followers });
+      }
       return { ok: true, accountId: saved.id, error: null as string | null };
     }
 
