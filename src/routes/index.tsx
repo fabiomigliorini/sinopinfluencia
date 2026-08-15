@@ -20,9 +20,17 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Sinop Influencia — Vitrine oficial de criadores de conteúdo" },
-      { name: "description", content: "Encontre criadores de conteúdo certificados pela ACES em Sinop. Perfis verificados, métricas e contato direto com influenciadores locais." },
+      {
+        name: "description",
+        content:
+          "Encontre criadores de conteúdo certificados pela ACES em Sinop. Perfis verificados, métricas e contato direto com influenciadores locais.",
+      },
       { property: "og:title", content: "Sinop Influencia — Vitrine oficial de criadores de conteúdo" },
-      { property: "og:description", content: "Encontre criadores de conteúdo certificados pela ACES em Sinop. Perfis verificados, métricas e contato direto com influenciadores locais." },
+      {
+        property: "og:description",
+        content:
+          "Encontre criadores de conteúdo certificados pela ACES em Sinop. Perfis verificados, métricas e contato direto com influenciadores locais.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -102,15 +110,13 @@ function HeroSearch({
       <div className="relative mx-auto max-w-[1180px] px-6 lg:px-7">
         <div className="grid items-center gap-12 md:grid-cols-[1.1fr_0.9fr]">
           <div>
-            <div className="text-xs font-bold uppercase tracking-[2.5px] text-[#FFEB00]">
-              Vitrine oficial da ACES
-            </div>
+            <div className="text-xs font-bold uppercase tracking-[2.5px] text-[#FFEB00]">Vitrine oficial da ACES</div>
             <h1 className="mt-4 text-3xl font-extrabold leading-tight tracking-tight text-white md:text-[44px]">
-              A criatividade de Sinop,{" "}
-              <em className="not-italic text-[#FFEB00]">pronta para o seu negócio.</em>
+              A criatividade de Sinop, <em className="not-italic text-[#FFEB00]">pronta para o seu negócio.</em>
             </h1>
             <p className="lead mt-4 max-w-lg text-base text-[#CFE8D6] md:text-lg">
-              Encontre criadores de conteúdo certificados pela ACES, filtrados por especialidade e categoria — e fale direto com quem vai divulgar sua marca.
+              Encontre criadores de conteúdo certificados pela ACES, filtrados por especialidade e categoria — e fale
+              direto com quem vai divulgar sua marca.
             </p>
             <div className="mt-6 flex flex-wrap gap-2.5">
               <TrustChip>Perfis com curadoria da ACES</TrustChip>
@@ -239,15 +245,7 @@ function HowItWorks() {
   );
 }
 
-function StepCard({
-  number,
-  title,
-  description,
-}: {
-  number: number;
-  title: string;
-  description: string;
-}) {
+function StepCard({ number, title, description }: { number: number; title: string; description: string }) {
   return (
     <div className="rounded-[20px] border border-border bg-card p-7">
       <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-[11px] bg-[#0D4424] text-sm font-extrabold text-[#FFEB00]">
@@ -270,10 +268,6 @@ function FeaturedDirectory({ profiles }: { profiles: ProfileRow[] }) {
           <div className="text-xs font-bold uppercase tracking-[2.5px] text-primary">Diretório</div>
           <h2 className="mt-3 text-2xl font-extrabold tracking-tight md:text-[30px]">Criadores certificados</h2>
         </div>
-
-        <!--
-        <TiersLegend />
-          -->
       </div>
 
       <div className="mt-8">
@@ -281,8 +275,6 @@ function FeaturedDirectory({ profiles }: { profiles: ProfileRow[] }) {
       </div>
 
       <div className="mx-auto max-w-[1180px] px-6 lg:px-7">
-
-
         <div className="mt-10 text-center">
           <Link
             to="/diretorio"
