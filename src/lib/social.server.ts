@@ -326,36 +326,103 @@ export async function fetchTikTokPublic(handle: string): Promise<PublicMetrics> 
   };
 }
 
+/** Search engines index the Facebook page preview, which carries the counters. */
+async function fetchFacebookFromSearch(handle: string): Promise<PublicMetrics | null> {
+  let html: string;
+  try {
+    html = await getText(
+      `https://html.duckduckgo.com/html/?q=${encodeURIComponent(
+        `facebook.com/${handle} seguidores`,
+      )}`,
+    );
+  } catch {
+    return null;
+  }
+  const target = handle.toLowerCase();
+  const blocks = html.split(/class="result__snippet"/).slice(1);
+  for (const block of blocks) {
+    const linked = decodeURIComponent(block.match(/uddg=([^&"]+)/)?.[1] ?? "");
+    if (!/facebook\.com/i.test(linked)) continue;
+    if (!linked.toLowerCase().includes(target)) continue;
+    const chunk = decodeEntities(
+      block.slice(0, 1200).replace(/<[^>]+>/g, " ").replace(/\s+/g, " "),
+    );
+    const followers =
+      numberBefore(chunk, /(?:followers|seguidores)/i) ??
+      numberBefore(chunk, /(?:pessoas curtiram|curtidas|likes)/i);
+    if (followers === null) continue;
+    return {
+      handle,
+      displayName: null,
+      avatarUrl: null,
+      profileUrl: `https://www.facebook.com/${handle}`,
+      followers,
+      following: null,
+      postsCount: null,
+      likes: null,
+      views: null,
+      raw: { source: "facebook_search_snippet", snippet: chunk.slice(0, 300) },
+    };
+  }
+  return null;
+}
+
 export async function fetchFacebookPublic(handle: string): Promise<PublicMetrics> {
   const profileUrl = `https://www.facebook.com/${handle}`;
-  const html = await getText(profileUrl, { "User-Agent": CRAWLER_UA });
-  const description = decodeEntities(
-    html.match(/property="og:description" content="([^"]+)"/)?.[1] ??
-      html.match(/name="description" content="([^"]+)"/)?.[1] ??
-      "",
-  );
-  const followers =
-    firstNumber(/"follower_count":(\d+)/, html) ??
-    numberBefore(description, /(?:followers|seguidores)/i) ??
-    numberBefore(description, /(?:pessoas curtiram|curtidas|likes|gillar|me gusta)/i);
-  if (followers === null) {
-    throw new Error("Não foi possível ler os seguidores públicos do Facebook");
-  }
-  return {
-    handle,
-    displayName: decodeEntities(
-      html.match(/property="og:title" content="([^"]+)"/)?.[1] ?? "",
-    ) || null,
-    avatarUrl: html.match(/property="og:image" content="([^"]+)"/)?.[1] ?? null,
+  // Meta only serves the counters in the link preview it gives to crawlers, and
+  // only for Pages. Try a few hosts because some of them rate-limit separately.
+  const candidates = [
     profileUrl,
-    followers,
-    following: null,
-    postsCount: null,
-    likes: null,
-    views: null,
-    raw: { source: "facebook_preview", description },
-  };
+    `https://www.facebook.com/${handle}/?locale=pt_BR`,
+    `https://m.facebook.com/${handle}`,
+    `https://web.facebook.com/${handle}`,
+  ];
+  let lastError: unknown = null;
+  for (const url of candidates) {
+    let html = "";
+    try {
+      html = await getText(url, { "User-Agent": CRAWLER_UA });
+    } catch (error) {
+      lastError = error;
+      continue;
+    }
+    const description = decodeEntities(
+      html.match(/property="og:description" content="([^"]+)"/)?.[1] ??
+        html.match(/name="description" content="([^"]+)"/)?.[1] ??
+        "",
+    );
+    const followers =
+      firstNumber(/"follower_count":(\d+)/, html) ??
+      numberBefore(description, /(?:followers|seguidores)/i) ??
+      numberBefore(description, /(?:pessoas curtiram|curtidas|likes|gillar|me gusta)/i);
+    if (followers === null) continue;
+    return {
+      handle,
+      displayName:
+        decodeEntities(html.match(/property="og:title" content="([^"]+)"/)?.[1] ?? "") ||
+        null,
+      avatarUrl: html.match(/property="og:image" content="([^"]+)"/)?.[1] ?? null,
+      profileUrl,
+      followers,
+      following: null,
+      postsCount: null,
+      likes: null,
+      views: null,
+      raw: { source: "facebook_preview", description },
+    };
+  }
+
+  const fromSearch = await fetchFacebookFromSearch(handle);
+  if (fromSearch) return fromSearch;
+
+  if (lastError instanceof Error && /limite de acessos/i.test(lastError.message)) {
+    throw lastError;
+  }
+  throw new Error(
+    "O Facebook só divulga seguidores de Páginas. Se este @ é um perfil pessoal, informe o número manualmente (ou cadastre a Página do criador).",
+  );
 }
+
 
 export const YOUTUBE_KEY_SETTING = "youtube_api_key";
 
