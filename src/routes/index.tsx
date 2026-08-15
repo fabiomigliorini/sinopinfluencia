@@ -45,6 +45,7 @@ function HomePage() {
     <>
       <HeroSearch />
       <HowItWorks />
+      <CreatorOnboarding />
       <TiersLegend />
       <FeaturedDirectory profiles={profiles} />
     </>
