@@ -8,7 +8,6 @@ type Tables = Database["public"]["Tables"];
 
 export type ProfileViewData = {
   profile: Tables["profiles"]["Row"];
-  metrics: Tables["profile_metrics"]["Row"][];
   formats: Tables["profile_formats"]["Row"][];
   works: Tables["profile_works"]["Row"][];
   brands: Tables["profile_brands"]["Row"][];
@@ -22,7 +21,7 @@ export function ProfileView({
   data: ProfileViewData;
   backLink?: React.ReactNode;
 }) {
-  const { profile, metrics, formats, works, brands } = data;
+  const { profile, formats, works, brands } = data;
   const socialAccounts = data.socialAccounts ?? [];
 
   const avatarInitials = profile.display_name
@@ -36,14 +35,6 @@ export function ProfileView({
     .map((n) => n.trim())
     .filter(Boolean);
 
-  // Legacy metric rows (no linked social account) duplicate a network that
-  // already has account-based metrics — hide them.
-  const networksWithAccountMetrics = new Set(
-    metrics.filter((m) => m.social_account_id).map((m) => m.network),
-  );
-  const visibleMetrics = metrics.filter(
-    (m) => m.social_account_id || !networksWithAccountMetrics.has(m.network),
-  );
 
 
 
@@ -128,21 +119,11 @@ export function ProfileView({
             </p>
 
             <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {socialAccounts.length > 0
-                ? socialAccounts.map((account) => (
-                    <SocialCard key={account.id} account={account} />
-                  ))
-                : visibleMetrics.map((metric) => (
-                    <MetricCard
-                      key={metric.id}
-                      network={metric.network}
-                      handle={metric.handle ?? null}
-                      followers={metric.followers ?? "—"}
-                      verified={metric.source === "api" && Boolean(metric.verified_at)}
-                      verifiedAt={metric.verified_at ?? null}
-                    />
-                  ))}
-              {socialAccounts.length === 0 && visibleMetrics.length === 0 && (
+              {socialAccounts.length > 0 ? (
+                socialAccounts.map((account) => (
+                  <SocialCard key={account.id} account={account} />
+                ))
+              ) : (
                 <p className="col-span-full text-sm text-muted-foreground">
                   Nenhuma métrica pública disponível.
                 </p>
@@ -271,47 +252,6 @@ export function ProfileView({
           </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-function MetricCard({
-  network,
-  handle = null,
-  followers,
-  verified = false,
-  verifiedAt = null,
-}: {
-  network: string;
-  handle?: string | null;
-  followers: string;
-  verified?: boolean;
-  verifiedAt?: string | null;
-}) {
-  return (
-    <div className="rounded-2xl border border-border bg-card p-5 transition hover:border-primary/30">
-      <div className="flex items-center gap-2">
-        <NetworkBadge network={network} className="h-7 w-7" iconClassName="h-3.5 w-3.5" />
-        <span className="min-w-0 truncate text-xs font-bold uppercase tracking-wider text-muted-foreground">
-          {handle ? `@${handle}` : networkLabel(network)}
-        </span>
-      </div>
-      <div className="mt-2 flex items-center gap-2">
-        <span className="text-2xl font-extrabold text-foreground">{followers}</span>
-        {verified ? (
-          <span
-            title="Número coletado dos dados públicos da rede social"
-            className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary"
-          >
-            Dados públicos
-          </span>
-        ) : null}
-      </div>
-      <p className="mt-1 text-[11px] text-muted-foreground">
-        {verified && verifiedAt
-          ? `Atualizado em ${new Date(verifiedAt).toLocaleDateString("pt-BR")}`
-          : "Declarado pelo criador"}
-      </p>
     </div>
   );
 }
