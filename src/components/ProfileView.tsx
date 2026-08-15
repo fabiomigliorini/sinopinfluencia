@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { NetworkBadge, networkLabel } from "@/components/network-icons";
 import { TierBadge } from "@/components/ProfileCard";
+import { whatsappDigits } from "@/components/PhoneInput";
 import type { Database } from "@/integrations/supabase/types";
 import type { PublicSocialAccount } from "@/lib/social-public";
 
