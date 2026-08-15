@@ -76,6 +76,16 @@ function HeroSearch() {
               <TrustChip>Contato direto, sem intermediação</TrustChip>
               <TrustChip>Métricas verificadas</TrustChip>
             </div>
+            <div className="mt-7">
+              <Link
+                to="/diretorio"
+                search={{}}
+                className="inline-flex items-center gap-2 rounded-full bg-[#FFEB00] px-7 py-3.5 text-sm font-bold text-[#0D4424] transition hover:brightness-95"
+              >
+                Ver todos os criadores
+              </Link>
+            </div>
+
           </div>
 
           <div className="hidden justify-center md:flex">
@@ -159,19 +169,11 @@ function FeaturedDirectory({ profiles }: { profiles: ProfileRow[] }) {
   return (
     <section id="diretorio" className="pb-20 pt-4">
       <div className="mx-auto max-w-[1180px] px-6 lg:px-7">
-        <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div className="max-w-xl text-center sm:text-left">
-            <div className="text-xs font-bold uppercase tracking-[2.5px] text-primary">Diretório</div>
-            <h2 className="mt-3 text-2xl font-extrabold tracking-tight md:text-[30px]">Criadores certificados</h2>
-          </div>
-          <Link
-            to="/diretorio"
-            search={{}}
-            className="inline-flex shrink-0 items-center gap-2 rounded-full border border-border bg-card px-6 py-3 text-sm font-bold text-foreground transition hover:border-primary hover:text-primary"
-          >
-            Ver todos os criadores
-          </Link>
+        <div className="max-w-xl text-center sm:text-left">
+          <div className="text-xs font-bold uppercase tracking-[2.5px] text-primary">Diretório</div>
+          <h2 className="mt-3 text-2xl font-extrabold tracking-tight md:text-[30px]">Criadores certificados</h2>
         </div>
+
       </div>
 
       <div className="mt-8">
