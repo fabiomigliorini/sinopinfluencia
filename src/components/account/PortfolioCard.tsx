@@ -144,15 +144,20 @@ export function PortfolioCard({ works }: { works: Work[] }) {
       </div>
 
       {works.length ? (
-        <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {works.map((work) => (
             <article
               key={work.id}
-              className="overflow-hidden rounded-2xl border border-border bg-background"
+              className="min-w-0 overflow-hidden rounded-2xl border border-border bg-background"
             >
               {work.image_url ? (
                 work.link_url ? (
-                  <a href={work.link_url} target="_blank" rel="noreferrer noopener">
+                  <a
+                    href={work.link_url}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="block w-full"
+                  >
                     <img
                       src={work.image_url}
                       alt={work.title}

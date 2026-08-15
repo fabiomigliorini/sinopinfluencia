@@ -161,7 +161,7 @@ export function SocialAccountCards() {
         </p>
       )}
 
-      <div className="mt-5 grid gap-4 md:grid-cols-2">
+      <div className="mt-5 grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-cols-2">
         {accountsQuery.isLoading && (
           <p className="text-sm text-muted-foreground">Carregando redes...</p>
         )}
@@ -180,7 +180,7 @@ export function SocialAccountCards() {
           return (
             <article
               key={account.id}
-              className="rounded-3xl border border-border p-4 transition hover:border-primary/40"
+              className="min-w-0 rounded-3xl border border-border p-4 transition hover:border-primary/40"
             >
               <div className="flex items-start gap-3">
                 <div className="relative">

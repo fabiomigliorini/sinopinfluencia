@@ -36,6 +36,16 @@ export function ProfileView({
     .map((n) => n.trim())
     .filter(Boolean);
 
+  // Legacy metric rows (no linked social account) duplicate a network that
+  // already has account-based metrics — hide them.
+  const networksWithAccountMetrics = new Set(
+    metrics.filter((m) => m.social_account_id).map((m) => m.network),
+  );
+  const visibleMetrics = metrics.filter(
+    (m) => m.social_account_id || !networksWithAccountMetrics.has(m.network),
+  );
+
+
 
 
   return (
@@ -122,7 +132,7 @@ export function ProfileView({
                 ? socialAccounts.map((account) => (
                     <SocialCard key={account.id} account={account} />
                   ))
-                : metrics.map((metric) => (
+                : visibleMetrics.map((metric) => (
                     <MetricCard
                       key={metric.id}
                       network={metric.network}
@@ -132,7 +142,7 @@ export function ProfileView({
                       verifiedAt={metric.verified_at ?? null}
                     />
                   ))}
-              {socialAccounts.length === 0 && metrics.length === 0 && (
+              {socialAccounts.length === 0 && visibleMetrics.length === 0 && (
                 <p className="col-span-full text-sm text-muted-foreground">
                   Nenhuma métrica pública disponível.
                 </p>
@@ -160,11 +170,11 @@ export function ProfileView({
 
                 <h2 className="mt-10 text-lg font-extrabold text-foreground">Portfólio</h2>
                 {works.length > 0 ? (
-                  <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                  <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
                     {works.map((work) => (
                       <div
                         key={work.id}
-                        className="overflow-hidden rounded-2xl border border-border bg-card"
+                        className="min-w-0 overflow-hidden rounded-2xl border border-border bg-card"
                       >
                         {work.image_url ? (
                           work.link_url ? (
@@ -172,6 +182,7 @@ export function ProfileView({
                               href={work.link_url}
                               target="_blank"
                               rel="noreferrer noopener"
+                              className="block w-full"
                             >
                               <img
                                 src={work.image_url}
