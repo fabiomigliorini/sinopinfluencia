@@ -51,25 +51,7 @@ function HomePage() {
   );
 }
 
-function HeroSearch({
-  query,
-  onQueryChange,
-  niche,
-  onNicheChange,
-  network,
-  onNetworkChange,
-  niches,
-  networks,
-}: {
-  query: string;
-  onQueryChange: (v: string) => void;
-  niche: string;
-  onNicheChange: (v: string) => void;
-  network: string;
-  onNetworkChange: (v: string) => void;
-  niches: (string | null)[];
-  networks: { value: string; label: string }[];
-}) {
+function HeroSearch() {
   return (
     <section
       className="relative overflow-hidden py-16 md:py-20"
