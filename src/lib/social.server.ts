@@ -531,34 +531,6 @@ export async function syncSocialAccount(accountRowId: string) {
       })
       .eq("id", account.id);
 
-    const followersLabel = formatFollowers(metrics.followers);
-    if (followersLabel) {
-      const { data: existing } = await supabaseAdmin
-        .from("profile_metrics")
-        .select("id")
-        .eq("profile_id", account.profile_id)
-        .eq("network", account.network)
-        .eq("handle", account.handle)
-        .maybeSingle();
-
-      if (existing) {
-        await supabaseAdmin
-          .from("profile_metrics")
-          .update({ followers: followersLabel, source: "api", verified_at: now })
-          .eq("id", existing.id);
-      } else {
-        await supabaseAdmin.from("profile_metrics").insert({
-          profile_id: account.profile_id,
-          network: account.network,
-          handle: account.handle,
-          social_account_id: account.id,
-          followers: followersLabel,
-          source: "api",
-          verified_at: now,
-        });
-      }
-    }
-
     return { ok: true as const, followers: metrics.followers, network: account.network, error: null as string | null };
   } catch (syncError) {
     const message = syncError instanceof Error ? syncError.message : "Erro desconhecido";

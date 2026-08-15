@@ -30,15 +30,6 @@ const profileInput = z.object({
   whatsapp: z.string().optional().nullable(),
   email: z.string().email("E-mail inválido").optional().nullable().or(z.literal("")),
   avatar_url: z.string().optional().nullable(),
-  metrics: z
-    .array(
-      z.object({
-        network: networkEnum,
-        followers: z.string().optional().nullable(),
-        audience_pct: z.number().min(0).max(100).optional().nullable(),
-      }),
-    )
-    .default([]),
   formats: z.array(z.string().min(1)).default([]),
   brands: z.array(z.string().min(1)).default([]),
   works: z
@@ -67,9 +58,8 @@ export const getMyProfile = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
     if (!profile) return null;
 
-    const [{ data: metrics }, { data: formats }, { data: works }, { data: brands }] =
+    const [{ data: formats }, { data: works }, { data: brands }, socialAccounts] =
       await Promise.all([
-        supabase.from("profile_metrics").select("*").eq("profile_id", profile.id),
         supabase.from("profile_formats").select("*").eq("profile_id", profile.id),
         supabase
           .from("profile_works")
@@ -77,14 +67,15 @@ export const getMyProfile = createServerFn({ method: "GET" })
           .eq("profile_id", profile.id)
           .order("sort_order", { ascending: true }),
         supabase.from("profile_brands").select("*").eq("profile_id", profile.id),
+        loadPublicSocialAccounts(supabase, profile.id),
       ]);
 
     return {
       profile,
-      metrics: metrics ?? [],
       formats: formats ?? [],
       works: works ?? [],
       brands: brands ?? [],
+      socialAccounts,
     };
   });
 
@@ -282,13 +273,8 @@ export const getProfileForAdmin = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     if (!profile) throw new Error("Perfil não encontrado");
 
-    const [{ data: metrics }, { data: formats }, { data: works }, { data: brands }, socialAccounts] =
+    const [{ data: formats }, { data: works }, { data: brands }, socialAccounts] =
       await Promise.all([
-        supabase
-          .from("profile_metrics")
-          .select("*")
-          .eq("profile_id", profile.id)
-          .order("network", { ascending: true }),
         supabase
           .from("profile_formats")
           .select("*")
@@ -309,7 +295,6 @@ export const getProfileForAdmin = createServerFn({ method: "POST" })
 
     return {
       profile,
-      metrics: metrics ?? [],
       formats: formats ?? [],
       works: works ?? [],
       brands: brands ?? [],
