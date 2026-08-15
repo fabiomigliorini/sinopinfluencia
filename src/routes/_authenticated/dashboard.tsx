@@ -320,6 +320,12 @@ function DashboardPage() {
         </div>
       )}
 
+      <ConsentDialog
+        open={consentOpen}
+        onOpenChange={setConsentOpen}
+        onConfirm={() => submitMutation.mutate()}
+        isPending={submitMutation.isPending}
+      />
     </div>
   );
 }
