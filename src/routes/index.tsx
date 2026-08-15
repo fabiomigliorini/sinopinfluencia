@@ -271,7 +271,9 @@ function FeaturedDirectory({ profiles }: { profiles: ProfileRow[] }) {
           <h2 className="mt-3 text-2xl font-extrabold tracking-tight md:text-[30px]">Criadores certificados</h2>
         </div>
 
+        <!--
         <TiersLegend />
+          -->
       </div>
 
       <div className="mt-8">
