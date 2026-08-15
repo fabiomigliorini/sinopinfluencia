@@ -257,7 +257,7 @@ function DashboardPage() {
             <div className="mt-6 flex flex-wrap gap-2">
               {hasPendingChanges && (
                 <button
-                  onClick={() => submitMutation.mutate()}
+                  onClick={() => setConsentOpen(true)}
                   disabled={submitMutation.isPending}
                   className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
                 >
