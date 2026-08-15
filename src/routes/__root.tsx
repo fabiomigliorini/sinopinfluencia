@@ -9,6 +9,7 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
+import { Menu, ChevronDown, X } from "lucide-react";
 
 import appCss from "../styles.css?url";
 import brandMark from "@/assets/sinop-influencia-mark.png.asset.json";
@@ -18,6 +19,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { getMyHeaderProfile } from "@/lib/account.functions";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 
 function useSession() {
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
