@@ -64,17 +64,9 @@ function HomePage() {
 
   return (
     <>
-      <HeroSearch
-        query={query}
-        onQueryChange={setQuery}
-        niche={niche}
-        onNicheChange={setNiche}
-        network={network}
-        onNetworkChange={setNetwork}
-        niches={niches}
-        networks={networks}
-      />
+      <HeroSearch />
       <HowItWorks />
+      <TiersLegend />
       <FeaturedDirectory profiles={profiles} />
     </>
   );
