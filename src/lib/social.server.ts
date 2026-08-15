@@ -243,12 +243,25 @@ export async function fetchInstagramPublic(handle: string): Promise<PublicMetric
       const posts =
         firstNumber(/\\?"posts_count\\?"\s*:\s*(\d+)/, embedHtml) ??
         firstNumber(/\\?"edge_owner_to_timeline_media\\?"\s*:\s*\{\\?"count\\?"\s*:\s*(\d+)/, embedHtml);
+      // The embed payload double-escapes its JSON strings, so unescape before
+      // pulling the profile header name/avatar out of it.
+      const unescaped = embedHtml.replace(/\\{1,2}"/g, '"').replace(/\\u0026/g, "&");
+      const embedName =
+        cleanDisplayName(unescaped.match(/"full_name"\s*:\s*"([^"]*)"/)?.[1]) ??
+        cleanDisplayName(
+          decodeEntities(
+            embedHtml.match(/property="og:title" content="([^"]+)"/)?.[1] ?? "",
+          ).replace(/\s*[•|]\s*Instagram.*$/i, ""),
+        );
+      const embedAvatar =
+        unescaped
+          .match(/"profile_pic_url(?:_hd)?"\s*:\s*"([^"]+)"/)?.[1]
+          ?.replace(/\\u002F/gi, "/")
+          .replace(/\\\//g, "/") ?? null;
       return {
         handle,
-        // Keep the previously saved name/avatar. The embed HTML double-escapes
-        // these strings and their format changes independently of the counters.
-        displayName: null,
-        avatarUrl: null,
+        displayName: embedName,
+        avatarUrl: embedAvatar,
         profileUrl,
         followers,
         following: null,
@@ -257,6 +270,7 @@ export async function fetchInstagramPublic(handle: string): Promise<PublicMetric
         views: null,
         raw: { source: "instagram_embed" },
       };
+
     }
   } catch {
     /* continue with crawler preview and search snippet fallbacks */
