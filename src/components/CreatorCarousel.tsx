@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import type { Database } from "@/integrations/supabase/types";
 import type { DirectoryMetric } from "@/lib/directory-maps";
+import { TierBadge } from "./ProfileCard";
+
 
 type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
 
