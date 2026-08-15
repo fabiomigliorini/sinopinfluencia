@@ -54,6 +54,8 @@ export const NICHE_OPTIONS = [
   "Esportes",
   "Infantil",
   "Sustentabilidade",
+  "Política",
+  "Marketing",
 ];
 
 /** profiles.niche stores a comma separated list of niches. */
