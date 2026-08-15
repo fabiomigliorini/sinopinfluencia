@@ -28,6 +28,7 @@ const emptyForm = {
   full_name: "",
   slug: "",
   city: "Sinop, MT",
+  tagline: "",
   bio: "",
   main_network: "",
   whatsapp: "",
