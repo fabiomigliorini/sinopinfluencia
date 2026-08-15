@@ -217,10 +217,7 @@ export const setDeclaredFollowers = createServerFn({ method: "POST" })
 
     await context.supabase
       .from("social_accounts")
-      .update({
-        is_declared: Boolean(data.followers),
-        declared_followers: data.followers || null,
-      })
+      .update({ is_declared: true })
       .eq("id", account.id);
 
     const followers = toNumber(data.followers);
