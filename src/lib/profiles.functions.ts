@@ -90,7 +90,7 @@ export const listDirectoryMetadata = createServerFn({ method: "GET" }).handler(
           .eq("status", "approved"),
         supabase
           .from("social_accounts")
-          .select("id, profile_id, network, declared_followers"),
+          .select("id, profile_id, network"),
         supabase.from("profile_formats").select("profile_id, format"),
       ]);
 
