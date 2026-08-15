@@ -264,13 +264,10 @@ function formatNumber(value: number) {
 
 function SocialCard({ account }: { account: PublicSocialAccount }) {
   const snap = account.latest;
-  const declared = account.declared_followers?.trim() || null;
 
   const followers =
-    snap?.followers != null && snap.followers > 0
-      ? formatNumber(snap.followers)
-      : declared || null;
-  const isDeclared = !(snap?.followers != null && snap.followers > 0) && Boolean(declared);
+    snap?.followers != null && snap.followers > 0 ? formatNumber(snap.followers) : null;
+  const isDeclared = account.is_declared;
 
   const stats: Array<{ label: string; value: string }> = [];
   if (followers) stats.push({ label: "Seguidores", value: followers });

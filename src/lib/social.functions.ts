@@ -37,7 +37,7 @@ async function getMyProfileId(supabase: any, userId: string) {
 }
 
 const ACCOUNT_COLUMNS =
-  "id, network, handle, profile_url, avatar_url, display_name, is_declared, declared_followers, last_synced_at, sync_status, sync_error";
+  "id, network, handle, profile_url, avatar_url, display_name, is_declared, last_synced_at, sync_status, sync_error";
 
 async function loadAccounts(supabase: any, profileId: string) {
   const { data, error } = await supabase
@@ -146,7 +146,6 @@ export const addNetworkAccount = createServerFn({ method: "POST" })
           sync_status: "pending",
           sync_error: null,
           is_declared: declaredOnly,
-          declared_followers: declared || null,
         },
         { onConflict: "profile_id,network,handle" },
       )
@@ -157,6 +156,12 @@ export const addNetworkAccount = createServerFn({ method: "POST" })
     await touchProfileContent(context.supabase, profileId);
 
     if (declared) {
+      const followers = toNumber(declared);
+      if (followers !== null) {
+        await context.supabase
+          .from("social_snapshots")
+          .insert({ social_account_id: saved.id, followers });
+      }
       return { ok: true, accountId: saved.id, error: null as string | null };
     }
 
@@ -218,10 +223,7 @@ export const setDeclaredFollowers = createServerFn({ method: "POST" })
 
     await context.supabase
       .from("social_accounts")
-      .update({
-        is_declared: Boolean(data.followers),
-        declared_followers: data.followers || null,
-      })
+      .update({ is_declared: true })
       .eq("id", account.id);
 
     const followers = toNumber(data.followers);

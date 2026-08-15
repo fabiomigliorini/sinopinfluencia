@@ -90,7 +90,7 @@ export const listDirectoryMetadata = createServerFn({ method: "GET" }).handler(
           .eq("status", "approved"),
         supabase
           .from("social_accounts")
-          .select("id, profile_id, network, declared_followers"),
+          .select("id, profile_id, network"),
         supabase.from("profile_formats").select("profile_id, format"),
       ]);
 
@@ -109,9 +109,7 @@ export const listDirectoryMetadata = createServerFn({ method: "GET" }).handler(
     const metrics = accountRows.map((account) => {
       const latest = (snapshots ?? []).find((s) => s.social_account_id === account.id);
       const followers =
-        latest?.followers != null && latest.followers > 0
-          ? compactNumber(latest.followers)
-          : account.declared_followers?.trim() || null;
+        latest?.followers != null && latest.followers > 0 ? compactNumber(latest.followers) : null;
       return { profile_id: account.profile_id, network: account.network as string, followers };
     });
     const niches = Array.from(

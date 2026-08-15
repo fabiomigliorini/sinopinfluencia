@@ -202,7 +202,6 @@ export type Database = {
           avatar_url: string | null
           connected_at: string
           created_at: string
-          declared_followers: string | null
           display_name: string | null
           handle: string | null
           id: string
@@ -222,7 +221,6 @@ export type Database = {
           avatar_url?: string | null
           connected_at?: string
           created_at?: string
-          declared_followers?: string | null
           display_name?: string | null
           handle?: string | null
           id?: string
@@ -242,7 +240,6 @@ export type Database = {
           avatar_url?: string | null
           connected_at?: string
           created_at?: string
-          declared_followers?: string | null
           display_name?: string | null
           handle?: string | null
           id?: string

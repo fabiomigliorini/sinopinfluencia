@@ -28,7 +28,6 @@ type Account = {
   avatar_url: string | null;
   display_name: string | null;
   is_declared: boolean;
-  declared_followers: string | null;
   last_synced_at: string | null;
   sync_status: string;
   sync_error: string | null;
@@ -126,11 +125,7 @@ export function SocialAccountCards() {
   function openManual(account: Account) {
     setManualFor(account);
     setManualForm({
-      followers: account.is_declared
-        ? (account.declared_followers ?? "")
-        : account.latest?.followers != null
-          ? String(account.latest.followers)
-          : "",
+      followers: account.latest?.followers != null ? String(account.latest.followers) : "",
       posts: account.latest?.posts_count != null ? String(account.latest.posts_count) : "",
       likes: account.latest?.avg_likes != null ? String(account.latest.avg_likes) : "",
       views: account.latest?.avg_views != null ? String(account.latest.avg_views) : "",
@@ -176,11 +171,8 @@ export function SocialAccountCards() {
         )}
 
         {accounts.map((account) => {
-          const followers = account.is_declared
-            ? account.declared_followers
-            : account.latest?.followers != null
-              ? formatNumber(account.latest.followers)
-              : null;
+          const followers =
+            account.latest?.followers != null ? formatNumber(account.latest.followers) : null;
           return (
             <article
               key={account.id}
