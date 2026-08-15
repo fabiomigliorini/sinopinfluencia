@@ -38,6 +38,16 @@ const BROWSER_UA =
 const CRAWLER_UA =
   "facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)";
 
+/**
+ * Scraped names sometimes carry leftover JSON from the surrounding payload
+ * (e.g. `MG Papelaria","verified":false`). Cut at the first quote/brace.
+ */
+export function cleanDisplayName(value?: string | null): string | null {
+  if (!value) return null;
+  const cut = value.split(/["'{}\\]|,\s*"/)[0]?.replace(/\s+/g, " ").trim() ?? "";
+  return cut.length >= 2 ? cut.slice(0, 80) : null;
+}
+
 async function getText(
   url: string,
   headers: Record<string, string> = {},
