@@ -198,7 +198,7 @@ export function ProfileView({
             Portfólio
           </h2>
           {works.length > 0 ? (
-            <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-4 grid items-start gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {works.map((work) => (
                 <WorkCard key={work.id} work={work} />
               ))}
