@@ -134,3 +134,9 @@ export function PhoneInput({
     </div>
   );
 }
+
+/** Digits for wa.me links, always with country code (assumes Brazil if absent). */
+export function whatsappDigits(value: string | null | undefined) {
+  const { country, national } = parsePhone(value);
+  return national ? `${country.dial}${national}` : "";
+}
