@@ -53,10 +53,6 @@ function CarouselCard({
   metrics: DirectoryMetric[];
   index: number;
 }) {
-  const niches = (profile.niche ?? "")
-    .split(",")
-    .map((n) => n.trim())
-    .filter(Boolean);
   const followers = totalFollowers(metrics);
 
   return (
