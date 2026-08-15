@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import {
   Outlet,
   Link,
@@ -8,6 +8,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 
 import appCss from "../styles.css?url";
 import brandMark from "@/assets/sinop-influencia-mark.png.asset.json";
@@ -16,6 +17,7 @@ import brandLockup from "@/assets/sinop-influencia-logo.png.asset.json";
 import { supabase } from "@/integrations/supabase/client";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
+import { getMyHeaderProfile } from "@/lib/account.functions";
 
 function useSession() {
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
