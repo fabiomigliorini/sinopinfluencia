@@ -112,6 +112,7 @@ export const listDirectoryMetadata = createServerFn({ method: "GET" }).handler(
         latest?.followers != null && latest.followers > 0 ? compactNumber(latest.followers) : null;
       return { profile_id: account.profile_id, network: account.network as string, followers };
     });
+    console.log("[DEBUG listDirectoryMetadata] accounts:", accountRows.length, "snapshots:", snapshots?.length, "metrics sample:", metrics.filter(m => m.profile_id === '8edf29e2-a9ff-46e1-8abe-b0ed28047e22'));
     const niches = Array.from(
       new Set(
         (profiles ?? []).flatMap((p) =>
