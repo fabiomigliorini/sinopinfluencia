@@ -113,7 +113,7 @@ export function ProfileCard({
     const n = Number((m.followers ?? "").replace(/\D/g, ""));
     return sum + (Number.isNaN(n) ? 0 : n);
   }, 0);
-  console.log("[DEBUG ProfileCard]", profile.display_name, profile.id, metrics, totalFollowers);
+  console.log("[DEBUG ProfileCard]", profile.display_name, profile.id, JSON.stringify(metrics), totalFollowers);
   const totalValue = totalFollowers > 0 ? formatNumber(String(totalFollowers)) : undefined;
 
   return (
