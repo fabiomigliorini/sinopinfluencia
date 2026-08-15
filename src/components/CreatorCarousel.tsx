@@ -30,7 +30,7 @@ function compact(num: number): string {
 
 function totalFollowers(metrics: DirectoryMetric[]): number {
   return metrics.reduce((sum, m) => {
-    const n = Number((m.followers ?? "").replace(/\D/g, ""));
+    const n = Number(m.followers ?? 0);
     return sum + (Number.isNaN(n) ? 0 : n);
   }, 0);
 }
