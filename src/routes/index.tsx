@@ -2,8 +2,9 @@ import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { metadataQueryOptions, profilesQueryOptions } from "@/lib/profile-queries";
-import { buildFormatsMap, buildMetricsMap } from "@/lib/directory-maps";
-import { ProfileCard, TierBadge } from "@/components/ProfileCard";
+import { buildMetricsMap } from "@/lib/directory-maps";
+import { TierBadge } from "@/components/ProfileCard";
+import { CreatorCarousel } from "@/components/CreatorCarousel";
 import type { Database } from "@/integrations/supabase/types";
 
 type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
@@ -34,8 +35,6 @@ function HomePage() {
   const [query, setQuery] = useState("");
   const [niche, setNiche] = useState("");
   const [network, setNetwork] = useState("");
-
-  const featured = profiles.slice(0, 6);
 
   const niches = Array.from(
     new Set(
@@ -68,12 +67,7 @@ function HomePage() {
         networks={networks}
       />
       <HowItWorks />
-      <FeaturedDirectory
-        profiles={featured}
-        query={query}
-        niche={niche}
-        network={network}
-      />
+      <FeaturedDirectory profiles={profiles} />
     </>
   );
 }
