@@ -37,7 +37,7 @@ async function getMyProfileId(supabase: any, userId: string) {
 }
 
 const ACCOUNT_COLUMNS =
-  "id, network, handle, profile_url, avatar_url, display_name, is_declared, declared_followers, last_synced_at, sync_status, sync_error";
+  "id, network, handle, profile_url, avatar_url, display_name, is_declared, last_synced_at, sync_status, sync_error";
 
 async function loadAccounts(supabase: any, profileId: string) {
   const { data, error } = await supabase

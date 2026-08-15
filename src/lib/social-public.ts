@@ -6,7 +6,6 @@ export type PublicSocialAccount = {
   avatar_url: string | null;
   display_name: string | null;
   is_declared: boolean;
-  declared_followers: string | null;
   last_synced_at: string | null;
   latest: {
     captured_at: string;
@@ -18,7 +17,7 @@ export type PublicSocialAccount = {
 };
 
 const COLUMNS =
-  "id, network, handle, profile_url, avatar_url, display_name, is_declared, declared_followers, last_synced_at";
+  "id, network, handle, profile_url, avatar_url, display_name, is_declared, last_synced_at";
 
 /** Loads every social account of a profile with its most recent snapshot. */
 export async function loadPublicSocialAccounts(

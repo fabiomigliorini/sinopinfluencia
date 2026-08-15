@@ -332,7 +332,6 @@ type AdminAccount = {
   avatar_url: string | null;
   display_name: string | null;
   is_declared: boolean;
-  declared_followers: string | null;
   last_synced_at: string | null;
   sync_status: string;
   sync_error: string | null;
@@ -470,9 +469,7 @@ function AdminSocialTools({ profileId }: { profileId: string }) {
                     <span>
                       Seguidores:{" "}
                       <strong className="text-foreground">
-                        {account.latest?.followers != null
-                          ? formatNumber(account.latest.followers)
-                          : (account.declared_followers ?? "—")}
+                        {formatNumber(account.latest?.followers)}
                       </strong>
                     </span>
                     <span>
