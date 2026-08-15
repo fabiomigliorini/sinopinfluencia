@@ -126,7 +126,11 @@ export function SocialAccountCards() {
   function openManual(account: Account) {
     setManualFor(account);
     setManualForm({
-      followers: account.declared_followers ?? "",
+      followers: account.is_declared
+        ? (account.declared_followers ?? "")
+        : account.latest?.followers != null
+          ? String(account.latest.followers)
+          : "",
       posts: account.latest?.posts_count != null ? String(account.latest.posts_count) : "",
       likes: account.latest?.avg_likes != null ? String(account.latest.avg_likes) : "",
       views: account.latest?.avg_views != null ? String(account.latest.avg_views) : "",

@@ -637,6 +637,7 @@ export async function syncSocialAccount(accountRowId: string) {
         last_synced_at: now,
         profile_url: metrics.profileUrl,
         is_declared: false,
+        declared_followers: null,
         ...(avatarUrl ? { avatar_url: avatarUrl } : {}),
         ...(cleanDisplayName(metrics.displayName)
           ? { display_name: cleanDisplayName(metrics.displayName) }
