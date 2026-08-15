@@ -365,8 +365,8 @@ function Footer() {
             <h5 className="mb-3.5 text-xs font-bold uppercase tracking-widest text-white">Para criadores</h5>
             <ul className="space-y-2 text-[13.5px] text-[#B9D8C1]">
               <li><Link to="/auth" className="transition hover:text-white">Cadastre seu perfil</Link></li>
-              <li><span className="transition hover:text-white cursor-pointer">Academia Sinop Influencia</span></li>
-              <li><span className="transition hover:text-white cursor-pointer">Código de conduta</span></li>
+              <li><Link to="/academia" className="transition hover:text-white">Academia Sinop Influencia</Link></li>
+              <li><Link to="/codigo-de-conduta" className="transition hover:text-white">Código de conduta</Link></li>
             </ul>
           </div>
         </div>
