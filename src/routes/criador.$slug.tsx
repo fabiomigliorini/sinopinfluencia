@@ -32,6 +32,7 @@ export const Route = createFileRoute("/criador/$slug")({
     const { profile } = loaderData;
     const title = `${profile.display_name} — Criador de conteúdo em ${profile.city ?? "Sinop, MT"}`;
     const description =
+      profile.tagline ??
       profile.bio ??
       `Perfil de ${profile.display_name}, criador de conteúdo certificado pela ACES em Sinop.`;
     const image = profile.avatar_url

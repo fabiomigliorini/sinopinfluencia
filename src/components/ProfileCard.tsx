@@ -122,7 +122,7 @@ export function ProfileCard({
       className="group relative flex flex-col overflow-hidden rounded-[28px] border border-white/20 bg-gradient-to-b from-[var(--brand-green-deep)] to-[var(--brand-dark)] shadow-2xl shadow-black/20 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_32px_64px_-24px_rgba(0,0,0,0.35)]"
     >
       {/* Photo area: larger, 3:4 aspect ratio */}
-      <div className="relative aspect-[3/4] overflow-hidden">
+      <div className="relative aspect-[7/10] overflow-hidden">
         {profile.avatar_url ? (
             <img
               src={profile.avatar_url}
@@ -158,9 +158,9 @@ export function ProfileCard({
       </div>
 
       {/* Glassmorphism content overlay at bottom */}
-      <div className="absolute bottom-0 left-0 right-0 border-t border-white/10 bg-[var(--brand-dark)]/60 p-6 backdrop-blur-2xl">
+      <div className="absolute bottom-0 left-0 right-0 border-t border-white/10 bg-[var(--brand-dark)]/60 px-5 pb-5 pt-4 backdrop-blur-2xl">
         {niches.length > 0 ? (
-          <div className="mb-3 flex flex-wrap gap-1.5">
+          <div className="mb-2.5 flex flex-wrap gap-1.5">
             {niches.slice(0, 3).map((n) => (
               <span
                 key={n}
@@ -177,28 +177,28 @@ export function ProfileCard({
           </div>
         ) : null}
 
-        <h3 className="truncate text-2xl font-extrabold leading-tight tracking-tight text-white">
+        <h3 className="truncate text-xl font-extrabold leading-tight tracking-tight text-white">
           {profile.display_name}
         </h3>
         {profile.city ? (
-          <p className="mt-1 text-xs font-semibold text-white/70">{profile.city}</p>
+          <p className="mt-0.5 text-xs font-semibold text-white/70">{profile.city}</p>
         ) : null}
 
-        {/* Bio: limited to 2 lines */}
-        <p className="!bio-clamp mt-3 text-sm font-medium leading-relaxed text-white/80">
-          {profile.bio ?? "Sem descrição"}
-        </p>
+        {/* Short card description (tagline), limited to 2 lines */}
+        {profile.tagline ? (
+          <p className="!bio-clamp mt-2 text-sm font-medium leading-relaxed text-white/80">
+            {profile.tagline}
+          </p>
+        ) : null}
 
         {/* Redesigned social icons */}
-        <div className="mt-6 flex flex-wrap items-center gap-3">
-          {availableNetworks.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
-              {availableNetworks.slice(0, 4).map((network) => (
-                <NetworkIconButton key={network} network={network} />
-              ))}
-            </div>
-          ) : null}
-        </div>
+        {availableNetworks.length > 0 ? (
+          <div className="mt-4 flex flex-wrap gap-2">
+            {availableNetworks.slice(0, 4).map((network) => (
+              <NetworkIconButton key={network} network={network} />
+            ))}
+          </div>
+        ) : null}
       </div>
     </Link>
   );

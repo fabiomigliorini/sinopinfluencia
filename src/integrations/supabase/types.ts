@@ -144,6 +144,7 @@ export type Database = {
           slug: string
           status: Database["public"]["Enums"]["profile_status"]
           submitted_at: string | null
+          tagline: string | null
           tier: Database["public"]["Enums"]["tier"]
           updated_at: string
           user_id: string
@@ -167,6 +168,7 @@ export type Database = {
           slug: string
           status?: Database["public"]["Enums"]["profile_status"]
           submitted_at?: string | null
+          tagline?: string | null
           tier?: Database["public"]["Enums"]["tier"]
           updated_at?: string
           user_id: string
@@ -190,6 +192,7 @@ export type Database = {
           slug?: string
           status?: Database["public"]["Enums"]["profile_status"]
           submitted_at?: string | null
+          tagline?: string | null
           tier?: Database["public"]["Enums"]["tier"]
           updated_at?: string
           user_id?: string
