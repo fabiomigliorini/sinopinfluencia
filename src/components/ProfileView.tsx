@@ -160,11 +160,11 @@ export function ProfileView({
 
                 <h2 className="mt-10 text-lg font-extrabold text-foreground">Portfólio</h2>
                 {works.length > 0 ? (
-                  <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                  <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
                     {works.map((work) => (
                       <div
                         key={work.id}
-                        className="overflow-hidden rounded-2xl border border-border bg-card"
+                        className="min-w-0 overflow-hidden rounded-2xl border border-border bg-card"
                       >
                         {work.image_url ? (
                           work.link_url ? (
@@ -172,6 +172,7 @@ export function ProfileView({
                               href={work.link_url}
                               target="_blank"
                               rel="noreferrer noopener"
+                              className="block w-full"
                             >
                               <img
                                 src={work.image_url}
