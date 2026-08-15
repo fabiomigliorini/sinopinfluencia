@@ -402,6 +402,7 @@ async function fetchFacebookFromSearch(handle: string): Promise<PublicMetrics | 
 
 export async function fetchFacebookPublic(handle: string): Promise<PublicMetrics> {
   const profileUrl = `https://www.facebook.com/${handle}`;
+  const avatarUrl = `https://graph.facebook.com/${encodeURIComponent(handle)}/picture?type=large`;
   // Meta only serves the counters in the link preview it gives to crawlers, and
   // only for Pages. Try a few hosts because some of them rate-limit separately.
   const candidates = [
@@ -443,7 +444,9 @@ export async function fetchFacebookPublic(handle: string): Promise<PublicMetrics
       displayName:
         decodeEntities(html.match(/property="og:title" content="([^"]+)"/)?.[1] ?? "") ||
         null,
-      avatarUrl: html.match(/property="og:image" content="([^"]+)"/)?.[1] ?? null,
+      // Facebook's og:image points to a crawler-only lookaside URL. It returns
+      // HTML to normal browsers, so use the public profile-picture endpoint.
+      avatarUrl,
       profileUrl,
       followers,
       following: null,
@@ -573,14 +576,19 @@ export async function storeSocialAvatar(
   if (!remoteUrl) return null;
   try {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const response = await fetch(remoteUrl, { headers: { "User-Agent": BROWSER_UA } });
+    const isFacebookCrawlerImage = /lookaside\.fbsbx\.com\/lookaside\/crawler/i.test(remoteUrl);
+    const response = await fetch(remoteUrl, {
+      headers: { "User-Agent": isFacebookCrawlerImage ? CRAWLER_UA : BROWSER_UA },
+    });
     if (!response.ok) return null;
+    const contentType = response.headers.get("content-type")?.split(";")[0]?.trim();
+    if (!contentType?.startsWith("image/")) return null;
     const bytes = new Uint8Array(await response.arrayBuffer());
     if (!bytes.byteLength) return null;
     const path = `social/${accountId}.jpg`;
     const { error } = await supabaseAdmin.storage
       .from("profile-images")
-      .upload(path, bytes, { contentType: "image/jpeg", upsert: true });
+      .upload(path, bytes, { contentType, upsert: true });
     if (error) return null;
     return `/api/public/img/${path}?v=${Date.now()}`;
   } catch {
