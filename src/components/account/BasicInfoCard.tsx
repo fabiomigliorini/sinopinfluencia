@@ -18,6 +18,7 @@ import {
   networkLabel,
   normalizeSlug,
 } from "@/lib/profile-options";
+import { PhoneInput, formatPhoneDisplay } from "@/components/PhoneInput";
 import type { Database } from "@/integrations/supabase/types";
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
