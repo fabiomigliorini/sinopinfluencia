@@ -36,6 +36,16 @@ export function ProfileView({
     .map((n) => n.trim())
     .filter(Boolean);
 
+  // Legacy metric rows (no linked social account) duplicate a network that
+  // already has account-based metrics — hide them.
+  const networksWithAccountMetrics = new Set(
+    metrics.filter((m) => m.social_account_id).map((m) => m.network),
+  );
+  const visibleMetrics = metrics.filter(
+    (m) => m.social_account_id || !networksWithAccountMetrics.has(m.network),
+  );
+
+
 
 
   return (
