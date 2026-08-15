@@ -86,7 +86,7 @@ export function BasicInfoCard({ profile }: { profile: Profile }) {
     ["Endereço do perfil", `/criador/${profile.slug}`],
     ["Cidade", profile.city || "—"],
     ["Rede principal", networkLabel(profile.main_network) ?? "—"],
-    ["WhatsApp", profile.whatsapp || "—"],
+    ["WhatsApp", formatPhoneDisplay(profile.whatsapp) || "—"],
     ["E-mail de contato", profile.email || "—"],
   ];
 
