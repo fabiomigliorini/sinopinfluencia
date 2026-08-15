@@ -45,6 +45,7 @@ function HomePage() {
     <>
       <HeroSearch />
       <HowItWorks />
+      <CreatorOnboarding />
       <TiersLegend />
       <FeaturedDirectory profiles={profiles} />
     </>
@@ -159,6 +160,49 @@ function StepCard({ number, title, description }: { number: number; title: strin
       <h3 className="text-lg font-bold text-foreground">{title}</h3>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{description}</p>
     </div>
+  );
+}
+
+function CreatorOnboarding() {
+  return (
+    <section id="para-criadores" className="bg-[#F6FBF8] py-16 md:py-20 dark:bg-[#0d2616]">
+      <div className="mx-auto max-w-[1180px] px-6 lg:px-7">
+        <div className="mx-auto max-w-xl text-center">
+          <div className="text-xs font-bold uppercase tracking-[2.5px] text-primary">Para influenciadores e criadores de conteúdo</div>
+          <h2 className="mt-3 text-2xl font-extrabold tracking-tight md:text-[30px]">
+            Três passos para fazer parte da vitrine
+          </h2>
+          <p className="mt-3 text-[15.5px] text-muted-foreground">
+            Entre para o diretório oficial de criadores de Sinop e seja encontrado por marcas e empresas associadas.
+          </p>
+        </div>
+        <div className="mt-12 grid gap-6 md:grid-cols-3">
+          <StepCard
+            number={1}
+            title="Cadastre seu perfil"
+            description="Crie sua conta, preencha suas informações básicas e escreva uma bio que mostre quem você é."
+          />
+          <StepCard
+            number={2}
+            title="Conecte suas redes"
+            description="Vincule Instagram, TikTok, YouTube e outras redes. Suas métricas são atualizadas automaticamente."
+          />
+          <StepCard
+            number={3}
+            title="Seja descoberto por marcas"
+            description="Após aprovação da curadoria da ACES, seu perfil entra na vitrine e fica disponível para parcerias."
+          />
+        </div>
+        <div className="mt-10 text-center">
+          <Link
+            to="/auth"
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
+          >
+            Quero fazer parte
+          </Link>
+        </div>
+      </div>
+    </section>
   );
 }
 
