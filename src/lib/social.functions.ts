@@ -146,7 +146,6 @@ export const addNetworkAccount = createServerFn({ method: "POST" })
           sync_status: "pending",
           sync_error: null,
           is_declared: declaredOnly,
-          declared_followers: declared || null,
         },
         { onConflict: "profile_id,network,handle" },
       )
