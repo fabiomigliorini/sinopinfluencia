@@ -109,14 +109,11 @@ export function ProfileCard({
   const orderedNetworks = NETWORK_ORDER.filter((n) => networksWithHandles.includes(n));
   const availableNetworks = orderedNetworks.length > 0 ? orderedNetworks : networksWithHandles;
 
-  const topNetworkMetric = metrics
-    .filter((m) => m.followers && !Number.isNaN(Number(m.followers.replace(/\D/g, ""))))
-    .sort((a, b) => Number(b.followers!.replace(/\D/g, "")) - Number(a.followers!.replace(/\D/g, "")))[0];
-
-  const topValue = topNetworkMetric ? formatNumber(topNetworkMetric.followers) : undefined;
-  const topLabel = topNetworkMetric
-    ? `${NETWORK_META[topNetworkMetric.network as NetworkId]?.label ?? "Seguidores"}`
-    : undefined;
+  const totalFollowers = metrics.reduce((sum, m) => {
+    const n = Number((m.followers ?? "").replace(/\D/g, ""));
+    return sum + (Number.isNaN(n) ? 0 : n);
+  }, 0);
+  const totalValue = totalFollowers > 0 ? formatNumber(String(totalFollowers)) : undefined;
 
   return (
     <Link
@@ -144,22 +141,13 @@ export function ProfileCard({
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--brand-dark)] via-[var(--brand-dark)]/30 to-transparent" />
 
-        {/* Top-left niches */}
-        {niches.length > 0 ? (
-          <div className="absolute top-4 left-4 flex max-w-[70%] flex-wrap gap-1.5">
-            {niches.slice(0, 2).map((n) => (
-              <span
-                key={n}
-                className="rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-white backdrop-blur-xl"
-              >
-                {n}
-              </span>
-            ))}
-            {niches.length > 2 ? (
-              <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-white backdrop-blur-xl">
-                +{niches.length - 2}
-              </span>
-            ) : null}
+        {/* Top-left total followers */}
+        {totalValue ? (
+          <div className="absolute left-4 top-4 rounded-2xl border border-white/20 bg-white/10 px-3 py-1.5 text-left backdrop-blur-xl">
+            <p className="text-base font-black leading-none text-white">{totalValue}</p>
+            <p className="mt-0.5 text-[9px] font-bold uppercase tracking-widest text-white/60">
+              Seguidores
+            </p>
           </div>
         ) : null}
 
@@ -171,24 +159,30 @@ export function ProfileCard({
 
       {/* Glassmorphism content overlay at bottom */}
       <div className="absolute bottom-0 left-0 right-0 border-t border-white/10 bg-[var(--brand-dark)]/60 p-6 backdrop-blur-2xl">
-        <div className="flex items-end justify-between gap-4">
-          <div className="min-w-0">
-            <h3 className="truncate text-2xl font-extrabold leading-tight tracking-tight text-white">
-              {profile.display_name}
-            </h3>
-            {profile.city ? (
-              <p className="mt-1 text-xs font-semibold text-white/70">{profile.city}</p>
+        {niches.length > 0 ? (
+          <div className="mb-3 flex flex-wrap gap-1.5">
+            {niches.slice(0, 3).map((n) => (
+              <span
+                key={n}
+                className="rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-[9.5px] font-bold uppercase tracking-widest text-white backdrop-blur-xl"
+              >
+                {n}
+              </span>
+            ))}
+            {niches.length > 3 ? (
+              <span className="rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-[9.5px] font-bold uppercase tracking-widest text-white backdrop-blur-xl">
+                +{niches.length - 3}
+              </span>
             ) : null}
           </div>
-          {topValue ? (
-            <div className="shrink-0 text-right">
-              <p className="text-xl font-black leading-none text-white">{topValue}</p>
-              <p className="text-[9px] font-bold uppercase tracking-tighter text-white/50">
-                {topLabel}
-              </p>
-            </div>
-          ) : null}
-        </div>
+        ) : null}
+
+        <h3 className="truncate text-2xl font-extrabold leading-tight tracking-tight text-white">
+          {profile.display_name}
+        </h3>
+        {profile.city ? (
+          <p className="mt-1 text-xs font-semibold text-white/70">{profile.city}</p>
+        ) : null}
 
         {/* Bio: limited to 2 lines */}
         <p className="!bio-clamp mt-3 text-sm font-medium leading-relaxed text-white/80">
