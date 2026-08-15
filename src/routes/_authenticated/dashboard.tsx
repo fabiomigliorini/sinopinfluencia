@@ -71,6 +71,7 @@ function DashboardPage() {
   const fetchRole = useServerFn(getMyRole);
   const submit = useServerFn(submitMyProfile);
   const saveAvatar = useServerFn(setMyAvatar);
+  const [consentOpen, setConsentOpen] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey: ["my-profile"],
@@ -82,6 +83,7 @@ function DashboardPage() {
     mutationFn: () => submit(),
     onSuccess: () => {
       toast.success("Perfil enviado para curadoria!");
+      setConsentOpen(false);
       queryClient.invalidateQueries({ queryKey: ["my-profile"] });
     },
     onError: (error: Error) => toast.error(error.message),
