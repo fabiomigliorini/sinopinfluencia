@@ -1,11 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { Search, Eye, MessageCircle, UserPlus, Share2, Award, Sparkles } from "lucide-react";
 import { metadataQueryOptions, profilesQueryOptions } from "@/lib/profile-queries";
 import { buildMetricsMap } from "@/lib/directory-maps";
 import { TierBadge } from "@/components/ProfileCard";
 import { CreatorCarousel } from "@/components/CreatorCarousel";
 import { tierRank, type Tier } from "@/lib/tiers";
 import type { Database } from "@/integrations/supabase/types";
+
+import type { LucideIcon } from "lucide-react";
 
 type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
 
@@ -45,6 +48,7 @@ function HomePage() {
     <>
       <HeroSearch />
       <HowItWorks />
+      <SectionDivider />
       <CreatorOnboarding />
       <TiersLegend />
       <FeaturedDirectory profiles={profiles} />
@@ -117,6 +121,28 @@ function TrustChip({ children }: { children: React.ReactNode }) {
 }
 
 function HowItWorks() {
+  const steps: { number: number; title: string; description: string; icon: LucideIcon }[] = [
+    {
+      number: 1,
+      title: "Filtre por nicho e categoria",
+      description:
+        "Busque por especialidade — gastronomia, moda, agro, humor — e pelo nível de maturidade do criador.",
+      icon: Search,
+    },
+    {
+      number: 2,
+      title: "Veja o perfil completo",
+      description: "Métricas, formatos de trabalho, portfólio de campanhas já realizadas e com quem já atuou.",
+      icon: Eye,
+    },
+    {
+      number: 3,
+      title: "Fale direto com o criador",
+      description: "Sem intermediários. O contrato e a negociação são combinados diretamente entre as partes.",
+      icon: MessageCircle,
+    },
+  ];
+
   return (
     <section id="como-funciona" className="py-16 md:py-20">
       <div className="mx-auto max-w-[1180px] px-6 lg:px-7">
@@ -130,73 +156,122 @@ function HowItWorks() {
           </p>
         </div>
         <div className="mt-12 grid gap-6 md:grid-cols-3">
-          <StepCard
-            number={1}
-            title="Filtre por nicho e categoria"
-            description="Busque por especialidade — gastronomia, moda, agro, humor — e pelo nível de maturidade do criador."
-          />
-          <StepCard
-            number={2}
-            title="Veja o perfil completo"
-            description="Métricas, formatos de trabalho, portfólio de campanhas já realizadas e com quem já atuou."
-          />
-          <StepCard
-            number={3}
-            title="Fale direto com o criador"
-            description="Sem intermediários. O contrato e a negociação são combinados diretamente entre as partes."
-          />
+          {steps.map((step) => (
+            <StepCard key={step.number} variant="light" {...step} />
+          ))}
         </div>
       </div>
     </section>
   );
 }
 
-function StepCard({ number, title, description }: { number: number; title: string; description: string }) {
+type StepCardProps = {
+  number: number;
+  title: string;
+  description: string;
+  icon: LucideIcon;
+  variant?: "light" | "brand";
+};
+
+function StepCard({ number, title, description, icon: Icon, variant = "light" }: StepCardProps) {
+  const isBrand = variant === "brand";
   return (
-    <div className="rounded-[20px] border border-border bg-card p-7">
-      <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-[11px] bg-[#0D4424] text-sm font-extrabold text-[#FFEB00]">
-        {number}
+    <div
+      className={`rounded-[20px] border p-7 transition ${
+        isBrand
+          ? "border-white/10 bg-white/[0.06] text-white backdrop-blur-sm hover:border-[#FFEB00]/30 hover:bg-white/[0.09]"
+          : "border-border bg-card hover:border-primary/20 hover:shadow-sm"
+      }`}
+    >
+      <div
+        className={`mb-4 flex h-10 w-10 items-center justify-center rounded-[11px] ${
+          isBrand ? "bg-[#FFEB00] text-[#0D4424]" : "bg-[#0D4424] text-[#FFEB00]"
+        }`}
+      >
+        <Icon className="h-5 w-5" strokeWidth={2.5} />
       </div>
-      <h3 className="text-lg font-bold text-foreground">{title}</h3>
-      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{description}</p>
+      <div className={`text-xs font-extrabold ${isBrand ? "text-[#FFEB00]/80" : "text-muted-foreground"}`}>
+        Passo {number}
+      </div>
+      <h3 className={`mt-1 text-lg font-bold ${isBrand ? "text-white" : "text-foreground"}`}>{title}</h3>
+      <p className={`mt-2 text-sm leading-relaxed ${isBrand ? "text-[#CFE8D6]" : "text-muted-foreground"}`}>
+        {description}
+      </p>
+    </div>
+  );
+}
+
+function SectionDivider() {
+  return (
+    <div className="relative h-24 overflow-hidden bg-[#0D4424]">
+      <div className="absolute inset-0 opacity-30">
+        <div className="absolute -left-20 top-0 h-40 w-40 rounded-full bg-[#FFEB00] blur-3xl" />
+        <div className="absolute -right-20 bottom-0 h-40 w-40 rounded-full bg-[#FFEB00] blur-3xl" />
+      </div>
+      <div className="relative flex h-full items-center justify-center gap-3">
+        <div className="h-px w-20 bg-gradient-to-r from-transparent to-[#FFEB00]/60" />
+        <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#FFEB00]/30 bg-[#FFEB00]/10">
+          <Sparkles className="h-5 w-5 text-[#FFEB00]" />
+        </div>
+        <div className="h-px w-20 bg-gradient-to-l from-transparent to-[#FFEB00]/60" />
+      </div>
     </div>
   );
 }
 
 function CreatorOnboarding() {
+  const steps: { number: number; title: string; description: string; icon: LucideIcon }[] = [
+    {
+      number: 1,
+      title: "Cadastre seu perfil",
+      description: "Crie sua conta, preencha suas informações básicas e escreva uma bio que mostre quem você é.",
+      icon: UserPlus,
+    },
+    {
+      number: 2,
+      title: "Conecte suas redes",
+      description: "Vincule Instagram, TikTok, YouTube e outras redes. Suas métricas são atualizadas automaticamente.",
+      icon: Share2,
+    },
+    {
+      number: 3,
+      title: "Seja descoberto por marcas",
+      description: "Após aprovação da curadoria da ACES, seu perfil entra na vitrine e fica disponível para parcerias.",
+      icon: Award,
+    },
+  ];
+
   return (
-    <section id="para-criadores" className="bg-[#F6FBF8] py-16 md:py-20 dark:bg-[#0d2616]">
-      <div className="mx-auto max-w-[1180px] px-6 lg:px-7">
+    <section
+      id="para-criadores"
+      className="relative overflow-hidden py-16 md:py-20"
+      style={{
+        background: "radial-gradient(circle at 15% 50%, #14622f 0%, #0D4424 60%)",
+      }}
+    >
+      <div className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-[#FFEB00]/10 blur-3xl" />
+      <div className="absolute -bottom-16 -left-16 h-64 w-64 rounded-full bg-[#FFEB00]/10 blur-3xl" />
+      <div className="relative mx-auto max-w-[1180px] px-6 lg:px-7">
         <div className="mx-auto max-w-xl text-center">
-          <div className="text-xs font-bold uppercase tracking-[2.5px] text-primary">Para influenciadores e criadores de conteúdo</div>
-          <h2 className="mt-3 text-2xl font-extrabold tracking-tight md:text-[30px]">
+          <div className="text-xs font-bold uppercase tracking-[2.5px] text-[#FFEB00]">
+            Para influenciadores e criadores de conteúdo
+          </div>
+          <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-white md:text-[30px]">
             Três passos para fazer parte da vitrine
           </h2>
-          <p className="mt-3 text-[15.5px] text-muted-foreground">
+          <p className="mt-3 text-[15.5px] text-[#CFE8D6]">
             Entre para o diretório oficial de criadores de Sinop e seja encontrado por marcas e empresas associadas.
           </p>
         </div>
         <div className="mt-12 grid gap-6 md:grid-cols-3">
-          <StepCard
-            number={1}
-            title="Cadastre seu perfil"
-            description="Crie sua conta, preencha suas informações básicas e escreva uma bio que mostre quem você é."
-          />
-          <StepCard
-            number={2}
-            title="Conecte suas redes"
-            description="Vincule Instagram, TikTok, YouTube e outras redes. Suas métricas são atualizadas automaticamente."
-          />
-          <StepCard
-            number={3}
-            title="Seja descoberto por marcas"
-            description="Após aprovação da curadoria da ACES, seu perfil entra na vitrine e fica disponível para parcerias."
-          />
+          {steps.map((step) => (
+            <StepCard key={step.number} variant="brand" {...step} />
+          ))}
         </div>
         <div className="mt-10 text-center">
           <Link
             to="/auth"
-            className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
+            className="inline-flex items-center gap-2 rounded-full bg-[#FFEB00] px-7 py-3.5 text-sm font-bold text-[#0D4424] transition hover:brightness-95"
           >
             Quero fazer parte
           </Link>
