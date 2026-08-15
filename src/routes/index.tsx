@@ -185,20 +185,65 @@ function FeaturedDirectory({ profiles }: { profiles: ProfileRow[] }) {
 }
 
 function TiersLegend() {
-  const tiers = [
-    { tier: "creator", label: "Criador" },
-    { tier: "reference", label: "Referência" },
-    { tier: "icon", label: "Ícone" },
-    { tier: "featured", label: "Destaque" },
+  const tiers: { tier: Tier; label: string; description: string }[] = [
+    {
+      tier: "creator",
+      label: "Criador",
+      description:
+        "Perfil aprovado pela curadoria da ACES. Criador ativo com presença digital verificada e potencial para parcerias locais.",
+    },
+    {
+      tier: "reference",
+      label: "Referência",
+      description:
+        "Criador reconhecido como referência em seu nicho. Produção consistente, público fiel e histórico de colaborações comerciais.",
+    },
+    {
+      tier: "icon",
+      label: "Ícone",
+      description:
+        "Criador de grande relevância e influência consolidada. Alto alcance, engajamento forte e presença de destaque na comunidade.",
+    },
+    {
+      tier: "featured",
+      label: "Destaque",
+      description:
+        "Criador de excelência com impacto comprovado. Alcance significativo, múltiplas parcerias de peso e representatividade especial para marcas.",
+    },
   ];
+
   return (
-    <div className="mt-8 flex flex-wrap gap-4 rounded-2xl bg-[#155C30] p-4 md:gap-6 md:p-4">
-      {tiers.map(({ tier, label }) => (
-        <div key={tier} className="flex items-center gap-2.5 text-xs font-semibold text-white">
-          <TierBadge tier={tier} />
-          {label}
+    <section className="bg-[#0D4424] py-14 md:py-20">
+      <div className="mx-auto max-w-[1180px] px-6 lg:px-7">
+        <div className="mx-auto max-w-2xl text-center">
+          <div className="text-xs font-bold uppercase tracking-[2.5px] text-[#FFEB00]">Níveis de certificação</div>
+          <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-white md:text-[30px]">
+            Classificação com critérios da ACES
+          </h2>
+          <p className="mt-3 text-[15.5px] text-[#CFE8D6]">
+            Cada perfil é avaliado pela nossa curadoria com base em alcance, engajamento, histórico de parcerias e
+            relevância no nicho. As estrelas indicam o nível de maturidade do criador.
+          </p>
         </div>
-      ))}
-    </div>
+
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {tiers.map(({ tier, label, description }) => (
+            <div
+              key={tier}
+              className="rounded-[22px] border border-white/10 bg-white/[0.06] p-6 backdrop-blur-sm transition hover:border-[#FFEB00]/30 hover:bg-white/[0.09]"
+            >
+              <div className="flex items-center justify-between gap-3">
+                <TierBadge tier={tier} light />
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#FFEB00]">
+                  {tierRank(tier)} {tierRank(tier) === 1 ? "estrela" : "estrelas"}
+                </span>
+              </div>
+              <h3 className="mt-4 text-lg font-bold text-white">{label}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-[#CFE8D6]">{description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
