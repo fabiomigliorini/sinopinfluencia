@@ -159,6 +159,14 @@ function BrandLogo() {
 
 function Header() {
   const signedIn = useSession();
+  const fetchHeaderProfile = useServerFn(getMyHeaderProfile);
+  const { data: headerProfile } = useQuery({
+    queryKey: ["my-header-profile"],
+    queryFn: () => fetchHeaderProfile(),
+    enabled: signedIn === true,
+    staleTime: 5 * 60 * 1000,
+  });
+
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur-md">
       <div className="mx-auto flex max-w-[1180px] items-center justify-between px-6 py-3.5 lg:px-7">
@@ -183,21 +191,43 @@ function Header() {
         {signedIn ? (
           <Link
             to="/dashboard"
-            className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90"
+            className="group relative flex items-center justify-center overflow-hidden rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90"
+            aria-label={headerProfile ? `Minha conta — ${headerProfile.display_name ?? ""}` : "Minha conta"}
+            title="Minha conta"
           >
-            Minha conta
+            {headerProfile?.avatar_url ? (
+              <img
+                src={headerProfile.avatar_url}
+                alt={headerProfile.display_name ?? ""}
+                className="h-10 w-10 rounded-full object-cover"
+              />
+            ) : (
+              <span className="flex h-10 w-10 items-center justify-center text-sm font-bold">
+                {initials(headerProfile?.display_name)}
+              </span>
+            )}
           </Link>
         ) : (
           <Link
             to="/auth"
             className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90"
           >
-            Cadastrar meu perfil
+            Entrar
           </Link>
         )}
       </div>
     </header>
   );
+}
+
+function initials(name?: string | null) {
+  if (!name) return "?";
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((n) => n[0]?.toUpperCase() ?? "")
+    .join("");
 }
 
 function Footer() {
