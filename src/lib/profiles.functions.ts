@@ -108,9 +108,11 @@ export const listDirectoryMetadata = createServerFn({ method: "GET" }).handler(
 
     const metrics = accountRows.map((account) => {
       const latest = (snapshots ?? []).find((s) => s.social_account_id === account.id);
-      const followers =
-        latest?.followers != null && latest.followers > 0 ? compactNumber(latest.followers) : null;
-      return { profile_id: account.profile_id, network: account.network as string, followers };
+      return {
+        profile_id: account.profile_id,
+        network: account.network as string,
+        followers: latest?.followers ?? null,
+      };
     });
     const niches = Array.from(
       new Set(
@@ -179,12 +181,3 @@ export const getProfileBySlug = createServerFn({ method: "GET" })
       socialAccounts,
     };
   });
-
-
-
-/** Short follower label (1.2K / 3.4M) used by the directory cards. */
-function compactNumber(value: number) {
-  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1).replace(".0", "")}M`;
-  if (value >= 1_000) return `${(value / 1_000).toFixed(1).replace(".0", "")}K`;
-  return String(value);
-}

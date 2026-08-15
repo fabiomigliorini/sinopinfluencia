@@ -3,7 +3,7 @@ import type { Database } from "@/integrations/supabase/types";
 export type DirectoryMetric = {
   profile_id: string;
   network: string;
-  followers: string | null;
+  followers: number | null;
 };
 type FormatRow = Database["public"]["Tables"]["profile_formats"]["Row"];
 

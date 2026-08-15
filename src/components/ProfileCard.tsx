@@ -66,10 +66,10 @@ export function TierBadge({ tier, light = false }: { tier: string; light?: boole
   );
 }
 
-function formatNumber(value: string | null | undefined): string {
-  if (!value || value === "—") return "—";
-  const num = Number(value.replace(/\D/g, ""));
-  if (Number.isNaN(num)) return value;
+function formatNumber(value: string | number | null | undefined): string {
+  if (value === null || value === undefined || value === "—") return "—";
+  const num = typeof value === "string" ? Number(value.replace(/\D/g, "")) : Number(value);
+  if (Number.isNaN(num)) return String(value);
   if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1).replace(/\.0$/, "")}M`;
   if (num >= 1_000) return `${(num / 1_000).toFixed(1).replace(/\.0$/, "")}K`;
   return num.toLocaleString("pt-BR");
@@ -110,10 +110,10 @@ export function ProfileCard({
   const availableNetworks = orderedNetworks.length > 0 ? orderedNetworks : networksWithHandles;
 
   const totalFollowers = metrics.reduce((sum, m) => {
-    const n = Number((m.followers ?? "").replace(/\D/g, ""));
+    const n = Number(m.followers ?? 0);
     return sum + (Number.isNaN(n) ? 0 : n);
   }, 0);
-  const totalValue = totalFollowers > 0 ? formatNumber(String(totalFollowers)) : undefined;
+  const totalValue = totalFollowers > 0 ? formatNumber(totalFollowers) : undefined;
 
   return (
     <Link
