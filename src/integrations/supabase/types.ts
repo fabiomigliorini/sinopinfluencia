@@ -87,57 +87,6 @@ export type Database = {
           },
         ]
       }
-      profile_metrics: {
-        Row: {
-          audience_pct: number | null
-          followers: string | null
-          handle: string | null
-          id: string
-          network: Database["public"]["Enums"]["social_network"]
-          profile_id: string
-          social_account_id: string | null
-          source: Database["public"]["Enums"]["metric_source"]
-          verified_at: string | null
-        }
-        Insert: {
-          audience_pct?: number | null
-          followers?: string | null
-          handle?: string | null
-          id?: string
-          network: Database["public"]["Enums"]["social_network"]
-          profile_id: string
-          social_account_id?: string | null
-          source?: Database["public"]["Enums"]["metric_source"]
-          verified_at?: string | null
-        }
-        Update: {
-          audience_pct?: number | null
-          followers?: string | null
-          handle?: string | null
-          id?: string
-          network?: Database["public"]["Enums"]["social_network"]
-          profile_id?: string
-          social_account_id?: string | null
-          source?: Database["public"]["Enums"]["metric_source"]
-          verified_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "profile_metrics_profile_id_fkey"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "profile_metrics_social_account_id_fkey"
-            columns: ["social_account_id"]
-            isOneToOne: false
-            referencedRelation: "social_accounts"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       profile_works: {
         Row: {
           description: string | null
@@ -408,7 +357,6 @@ export type Database = {
     }
     Enums: {
       app_role: "admin"
-      metric_source: "manual" | "api"
       profile_status: "draft" | "pending" | "approved" | "rejected"
       social_network:
         | "instagram"
@@ -548,7 +496,6 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin"],
-      metric_source: ["manual", "api"],
       profile_status: ["draft", "pending", "approved", "rejected"],
       social_network: [
         "instagram",

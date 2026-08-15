@@ -1,15 +1,18 @@
 import type { Database } from "@/integrations/supabase/types";
 
-type MetricRow = Database["public"]["Tables"]["profile_metrics"]["Row"];
+export type DirectoryMetric = {
+  profile_id: string;
+  network: string;
+  followers: string | null;
+};
 type FormatRow = Database["public"]["Tables"]["profile_formats"]["Row"];
 
-/** Groups all metric rows by profile (a creator can have many networks/handles). */
-export function buildMetricsMap(metrics: Array<Partial<MetricRow>>) {
-  const map: Record<string, MetricRow[]> = {};
+/** Groups social-account metrics by profile (a creator can have many handles). */
+export function buildMetricsMap(metrics: DirectoryMetric[]) {
+  const map: Record<string, DirectoryMetric[]> = {};
   for (const metric of metrics) {
-    const id = metric.profile_id as string | undefined;
-    if (!id) continue;
-    (map[id] ??= []).push(metric as MetricRow);
+    if (!metric.profile_id) continue;
+    (map[metric.profile_id] ??= []).push(metric);
   }
   return map;
 }

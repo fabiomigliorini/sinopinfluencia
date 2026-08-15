@@ -1,9 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import type { Database } from "@/integrations/supabase/types";
 import { tierLabel, tierRank } from "@/lib/tiers";
+import type { DirectoryMetric } from "@/lib/directory-maps";
 
 type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
-type MetricRow = Database["public"]["Tables"]["profile_metrics"]["Row"];
+
 
 const GRADIENTS = [
   "from-emerald-500 to-green-800",
@@ -64,7 +65,7 @@ export function ProfileCard({
   index = 0,
 }: {
   profile: ProfileRow;
-  metrics: MetricRow[];
+  metrics: DirectoryMetric[];
   formats?: string[];
   index?: number;
 }) {

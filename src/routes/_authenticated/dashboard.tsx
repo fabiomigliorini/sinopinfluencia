@@ -150,7 +150,7 @@ function DashboardPage() {
         profile.niche,
         profile.whatsapp,
         profile.main_network,
-        data?.metrics.length ? "x" : null,
+        data?.socialAccounts.length ? "x" : null,
         data?.formats.length ? "x" : null,
       ].filter(Boolean).length
     : 0;
@@ -297,7 +297,7 @@ function DashboardPage() {
                 Resumo
               </h3>
               <ul className="mt-3 space-y-2 text-foreground/80">
-                <li>{data?.metrics.length ?? 0} redes com métricas</li>
+                <li>{data?.socialAccounts.length ?? 0} redes vinculadas</li>
                 <li>{data?.formats.length ?? 0} formatos de trabalho</li>
                 <li>{data?.works.length ?? 0} itens no portfólio</li>
                 <li>{data?.brands.length ?? 0} marcas parceiras</li>

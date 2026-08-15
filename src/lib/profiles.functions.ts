@@ -82,17 +82,38 @@ export const getFilteredProfiles = createServerFn({ method: "GET" })
 export const listDirectoryMetadata = createServerFn({ method: "GET" }).handler(
   async () => {
     const supabase = createServerSupabaseClient();
-    const [{ data: profiles }, { data: metrics }, { data: formats }] =
+    const [{ data: profiles }, { data: accounts }, { data: formats }] =
       await Promise.all([
         supabase
           .from("profiles")
           .select("id, niche, tier")
           .eq("status", "approved"),
         supabase
-          .from("profile_metrics")
-          .select("profile_id, network, followers, handle, source, verified_at"),
+          .from("social_accounts")
+          .select("id, profile_id, network, declared_followers"),
         supabase.from("profile_formats").select("profile_id, format"),
       ]);
+
+    const accountRows = accounts ?? [];
+    const { data: snapshots } = accountRows.length
+      ? await supabase
+          .from("social_snapshots")
+          .select("social_account_id, followers, captured_at")
+          .in(
+            "social_account_id",
+            accountRows.map((a) => a.id),
+          )
+          .order("captured_at", { ascending: false })
+      : { data: [] as Array<{ social_account_id: string; followers: number | null }> };
+
+    const metrics = accountRows.map((account) => {
+      const latest = (snapshots ?? []).find((s) => s.social_account_id === account.id);
+      const followers =
+        latest?.followers != null && latest.followers > 0
+          ? compactNumber(latest.followers)
+          : account.declared_followers?.trim() || null;
+      return { profile_id: account.profile_id, network: account.network as string, followers };
+    });
     const niches = Array.from(
       new Set(
         (profiles ?? []).flatMap((p) =>
@@ -105,7 +126,7 @@ export const listDirectoryMetadata = createServerFn({ method: "GET" }).handler(
     ).sort((a, b) => a.localeCompare(b, "pt-BR"));
     return {
       niches,
-      metrics: metrics ?? [],
+      metrics,
       formats: formats ?? [],
       count: (profiles ?? []).length,
     };
@@ -129,17 +150,11 @@ export const getProfileBySlug = createServerFn({ method: "GET" })
     }
 
     const [
-      { data: metrics },
       { data: formats },
       { data: works },
       { data: brands },
       socialAccounts,
     ] = await Promise.all([
-      supabase
-        .from("profile_metrics")
-        .select("*")
-        .eq("profile_id", profile.id)
-        .order("network", { ascending: true }),
       supabase
         .from("profile_formats")
         .select("*")
@@ -160,7 +175,6 @@ export const getProfileBySlug = createServerFn({ method: "GET" })
 
     return {
       profile,
-      metrics: metrics ?? [],
       formats: formats ?? [],
       works: works ?? [],
       brands: brands ?? [],
@@ -169,3 +183,10 @@ export const getProfileBySlug = createServerFn({ method: "GET" })
   });
 
 
+
+/** Short follower label (1.2K / 3.4M) used by the directory cards. */
+function compactNumber(value: number) {
+  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1).replace(".0", "")}M`;
+  if (value >= 1_000) return `${(value / 1_000).toFixed(1).replace(".0", "")}K`;
+  return String(value);
+}

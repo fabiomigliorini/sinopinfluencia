@@ -157,7 +157,6 @@ export const addNetworkAccount = createServerFn({ method: "POST" })
     await touchProfileContent(context.supabase, profileId);
 
     if (declared) {
-      await writeDeclaredMetric(context.supabase, profileId, saved.id, data.network, handle, declared);
       return { ok: true, accountId: saved.id, error: null as string | null };
     }
 
@@ -176,35 +175,6 @@ export const addNetworkAccount = createServerFn({ method: "POST" })
       };
     }
   });
-
-async function writeDeclaredMetric(
-  supabase: any,
-  profileId: string,
-  accountId: string,
-  network: string,
-  handle: string,
-  followers: string,
-) {
-  await supabase
-    .from("profile_metrics")
-    .delete()
-    .eq("profile_id", profileId)
-    .eq("network", network)
-    .eq("handle", handle);
-
-  if (!followers) return;
-
-  const { error } = await supabase.from("profile_metrics").insert({
-    profile_id: profileId,
-    network,
-    handle,
-    social_account_id: accountId,
-    followers,
-    source: "manual",
-    verified_at: null,
-  });
-  if (error) throw new Error(error.message);
-}
 
 /** Marks profile content as changed so the dashboard shows "pending publish". */
 async function touchProfileContent(supabase: any, profileId: string) {
@@ -253,15 +223,6 @@ export const setDeclaredFollowers = createServerFn({ method: "POST" })
         declared_followers: data.followers || null,
       })
       .eq("id", account.id);
-
-    await writeDeclaredMetric(
-      context.supabase,
-      profileId,
-      account.id,
-      account.network,
-      account.handle ?? "",
-      data.followers,
-    );
 
     const followers = toNumber(data.followers);
     const posts = toNumber(data.posts);
@@ -315,13 +276,6 @@ export const removeMyAccount = createServerFn({ method: "POST" })
       .eq("profile_id", profileId)
       .maybeSingle();
     if (!account) throw new Error("Rede não encontrada");
-
-    await context.supabase
-      .from("profile_metrics")
-      .delete()
-      .eq("profile_id", profileId)
-      .eq("network", account.network)
-      .eq("handle", account.handle ?? "");
 
     const { error } = await context.supabase
       .from("social_accounts")
