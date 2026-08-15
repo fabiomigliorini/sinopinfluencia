@@ -243,15 +243,16 @@ export function BasicInfoCard({ profile }: { profile: Profile }) {
         ))}
         <div className="sm:col-span-2">
           <dt className={labelCls}>Descrição curta (card)</dt>
-          <dd className="mt-1 text-sm leading-relaxed text-foreground/80">
+          <dd className="mt-1 text-sm leading-relaxed text-foreground/80 whitespace-pre-line">
             {profile.tagline || "Sem descrição curta cadastrada."}
           </dd>
         </div>
         <div className="sm:col-span-2">
           <dt className={labelCls}>Bio</dt>
-          <dd className="mt-1 text-sm leading-relaxed text-foreground/80">
+          <dd className="mt-1 text-sm leading-relaxed text-foreground/80 whitespace-pre-line">
             {profile.bio || "Você ainda não escreveu sua bio."}
           </dd>
+
         </div>
       </dl>
     </section>

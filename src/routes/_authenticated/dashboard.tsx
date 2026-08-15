@@ -249,9 +249,15 @@ function DashboardPage() {
             <p className="mt-1 text-sm text-muted-foreground">
               {profile.niche ?? "Nicho não informado"} · {profile.city ?? "Sinop, MT"}
             </p>
-            <p className="mt-4 text-sm leading-relaxed text-foreground/80">
+            {profile.tagline ? (
+              <p className="mt-3 text-sm font-semibold text-foreground/90 whitespace-pre-line">
+                {profile.tagline}
+              </p>
+            ) : null}
+            <p className="mt-4 text-sm leading-relaxed text-foreground/80 whitespace-pre-line">
               {profile.bio ?? "Você ainda não escreveu sua bio."}
             </p>
+
             <p className="mt-5 text-sm text-muted-foreground">{status?.hint}</p>
 
             <div className="mt-6 flex flex-wrap gap-2">
