@@ -194,6 +194,20 @@ export function BasicInfoCard({ profile }: { profile: Profile }) {
                 />
               </label>
               <label className="space-y-1.5 md:col-span-2">
+                <span className={labelCls}>Descrição curta (card)</span>
+                <textarea
+                  className={`${fieldCls} min-h-[70px] resize-y`}
+                  maxLength={160}
+                  placeholder="Ex.: Conteúdo de tecnologia e negócios para o agro de Sinop."
+                  value={form.tagline}
+                  onChange={(e) => setForm({ ...form, tagline: e.target.value })}
+                />
+                <span className="block text-xs text-muted-foreground">
+                  Aparece nos cards do diretório e da home. Até 160 caracteres (
+                  {form.tagline.length}/160).
+                </span>
+              </label>
+              <label className="space-y-1.5 md:col-span-2">
                 <span className={labelCls}>Bio</span>
                 <textarea
                   className={`${fieldCls} min-h-[120px] resize-y`}
@@ -202,6 +216,9 @@ export function BasicInfoCard({ profile }: { profile: Profile }) {
                   value={form.bio}
                   onChange={(e) => setForm({ ...form, bio: e.target.value })}
                 />
+                <span className="block text-xs text-muted-foreground">
+                  Texto completo, exibido apenas na sua página pública.
+                </span>
               </label>
               <DialogFooter className="md:col-span-2">
                 <button
@@ -224,6 +241,12 @@ export function BasicInfoCard({ profile }: { profile: Profile }) {
             <dd className="mt-1 text-sm font-semibold text-foreground">{value}</dd>
           </div>
         ))}
+        <div className="sm:col-span-2">
+          <dt className={labelCls}>Descrição curta (card)</dt>
+          <dd className="mt-1 text-sm leading-relaxed text-foreground/80">
+            {profile.tagline || "Sem descrição curta cadastrada."}
+          </dd>
+        </div>
         <div className="sm:col-span-2">
           <dt className={labelCls}>Bio</dt>
           <dd className="mt-1 text-sm leading-relaxed text-foreground/80">
