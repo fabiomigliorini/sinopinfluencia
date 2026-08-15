@@ -9,6 +9,7 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
+import { Menu, ChevronDown, X } from "lucide-react";
 
 import appCss from "../styles.css?url";
 import brandMark from "@/assets/sinop-influencia-mark.png.asset.json";
@@ -18,6 +19,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { getMyHeaderProfile } from "@/lib/account.functions";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 
 function useSession() {
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
@@ -166,11 +174,13 @@ function Header() {
     enabled: signedIn === true,
     staleTime: 5 * 60 * 1000,
   });
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur-md">
       <div className="mx-auto flex max-w-[1180px] items-center justify-between px-6 py-3.5 lg:px-7">
         <BrandLogo />
+
         <nav className="hidden items-center gap-8 md:flex">
           <Link to="/diretorio" search={{}} className="text-[14.5px] font-semibold text-foreground/80 transition hover:text-foreground">
             Encontrar criadores
@@ -181,40 +191,135 @@ function Header() {
           <Link to="/" hash="classificacao" className="text-[14.5px] font-semibold text-foreground/80 transition hover:text-foreground">
             Classificação
           </Link>
-          <Link
-            to={signedIn ? "/dashboard" : "/auth"}
-            className="text-[14.5px] font-semibold text-foreground/80 transition hover:text-foreground"
-          >
-            Sou influenciador
-          </Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger className="flex items-center gap-1 text-[14.5px] font-semibold text-foreground/80 outline-none transition hover:text-foreground">
+              Sou influenciador
+              <ChevronDown className="h-4 w-4" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="min-w-[14rem]">
+              <DropdownMenuItem asChild>
+                <Link to={signedIn ? "/dashboard" : "/auth"} className="cursor-pointer">
+                  Cadastre seu perfil
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/academia" className="cursor-pointer">
+                  Academia Sinop Influencia
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/codigo-de-conduta" className="cursor-pointer">
+                  Código de conduta
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </nav>
-        {signedIn ? (
-          <Link
-            to="/dashboard"
-            className="group relative flex items-center justify-center overflow-hidden rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90"
-            aria-label={headerProfile ? `Minha conta — ${headerProfile.display_name ?? ""}` : "Minha conta"}
-            title="Minha conta"
-          >
-            {headerProfile?.avatar_url ? (
-              <img
-                src={headerProfile.avatar_url}
-                alt={headerProfile.display_name ?? ""}
-                className="h-10 w-10 rounded-full object-cover"
-              />
-            ) : (
-              <span className="flex h-10 w-10 items-center justify-center text-sm font-bold">
-                {initials(headerProfile?.display_name)}
-              </span>
-            )}
-          </Link>
-        ) : (
-          <Link
-            to="/auth"
-            className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90"
-          >
-            Entrar
-          </Link>
-        )}
+
+        <div className="flex items-center gap-3">
+          {signedIn ? (
+            <Link
+              to="/dashboard"
+              className="group relative flex items-center justify-center overflow-hidden rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90"
+              aria-label={headerProfile ? `Minha conta — ${headerProfile.display_name ?? ""}` : "Minha conta"}
+              title="Minha conta"
+            >
+              {headerProfile?.avatar_url ? (
+                <img
+                  src={headerProfile.avatar_url}
+                  alt={headerProfile.display_name ?? ""}
+                  className="h-10 w-10 rounded-full object-cover"
+                />
+              ) : (
+                <span className="flex h-10 w-10 items-center justify-center text-sm font-bold">
+                  {initials(headerProfile?.display_name)}
+                </span>
+              )}
+            </Link>
+          ) : (
+            <Link
+              to="/auth"
+              className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90"
+            >
+              Entrar
+            </Link>
+          )}
+
+          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+            <SheetTrigger asChild>
+              <button
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-foreground transition hover:border-primary hover:text-primary md:hidden"
+                aria-label="Abrir menu"
+              >
+                <Menu className="h-5 w-5" />
+              </button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-[300px] border-l-0 bg-[#0D4424] p-0 text-white">
+              <div className="flex h-full flex-col">
+                <div className="flex items-center justify-between border-b border-white/10 px-6 py-4">
+                  <span className="text-sm font-bold uppercase tracking-widest text-[#FFEB00]">Menu</span>
+                  <SheetClose asChild>
+                    <button className="inline-flex h-8 w-8 items-center justify-center rounded-full text-white/70 transition hover:bg-white/10 hover:text-white">
+                      <X className="h-5 w-5" />
+                    </button>
+                  </SheetClose>
+                </div>
+                <div className="flex-1 space-y-1 px-4 py-6">
+                  <Link
+                    to="/diretorio"
+                    search={{}}
+                    onClick={() => setMobileOpen(false)}
+                    className="block rounded-xl px-4 py-3 text-[15px] font-semibold text-white/90 transition hover:bg-white/10 hover:text-white"
+                  >
+                    Encontrar criadores
+                  </Link>
+                  <Link
+                    to="/"
+                    hash="como-funciona"
+                    onClick={() => setMobileOpen(false)}
+                    className="block rounded-xl px-4 py-3 text-[15px] font-semibold text-white/90 transition hover:bg-white/10 hover:text-white"
+                  >
+                    Como funciona
+                  </Link>
+                  <Link
+                    to="/"
+                    hash="classificacao"
+                    onClick={() => setMobileOpen(false)}
+                    className="block rounded-xl px-4 py-3 text-[15px] font-semibold text-white/90 transition hover:bg-white/10 hover:text-white"
+                  >
+                    Classificação
+                  </Link>
+                  <div className="pt-4">
+                    <div className="px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#FFEB00]">
+                      Para criadores
+                    </div>
+                    <Link
+                      to={signedIn ? "/dashboard" : "/auth"}
+                      onClick={() => setMobileOpen(false)}
+                      className="block rounded-xl px-4 py-3 text-[15px] font-semibold text-white/90 transition hover:bg-white/10 hover:text-white"
+                    >
+                      Cadastre seu perfil
+                    </Link>
+                    <Link
+                      to="/academia"
+                      onClick={() => setMobileOpen(false)}
+                      className="block rounded-xl px-4 py-3 text-[15px] font-semibold text-white/90 transition hover:bg-white/10 hover:text-white"
+                    >
+                      Academia Sinop Influencia
+                    </Link>
+                    <Link
+                      to="/codigo-de-conduta"
+                      onClick={() => setMobileOpen(false)}
+                      className="block rounded-xl px-4 py-3 text-[15px] font-semibold text-white/90 transition hover:bg-white/10 hover:text-white"
+                    >
+                      Código de conduta
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
     </header>
   );
@@ -260,8 +365,8 @@ function Footer() {
             <h5 className="mb-3.5 text-xs font-bold uppercase tracking-widest text-white">Para criadores</h5>
             <ul className="space-y-2 text-[13.5px] text-[#B9D8C1]">
               <li><Link to="/auth" className="transition hover:text-white">Cadastre seu perfil</Link></li>
-              <li><span className="transition hover:text-white cursor-pointer">Academia Sinop Influencia</span></li>
-              <li><span className="transition hover:text-white cursor-pointer">Código de conduta</span></li>
+              <li><Link to="/academia" className="transition hover:text-white">Academia Sinop Influencia</Link></li>
+              <li><Link to="/codigo-de-conduta" className="transition hover:text-white">Código de conduta</Link></li>
             </ul>
           </div>
         </div>

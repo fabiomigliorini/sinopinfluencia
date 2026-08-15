@@ -12,7 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SlugRouteImport } from './routes/$slug'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AcademiaRouteImport } from './routes/academia'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as CodigoDeCondutaRouteImport } from './routes/codigo-de-conduta'
 import { Route as DiretorioRouteImport } from './routes/diretorio'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as CriadorSlugRouteImport } from './routes/criador.$slug'
@@ -37,9 +39,19 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AcademiaRoute = AcademiaRouteImport.update({
+  id: '/academia',
+  path: '/academia',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CodigoDeCondutaRoute = CodigoDeCondutaRouteImport.update({
+  id: '/codigo-de-conduta',
+  path: '/codigo-de-conduta',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DiretorioRoute = DiretorioRouteImport.update({
@@ -93,7 +105,9 @@ const ApiPublicImgSplatRoute = ApiPublicImgSplatRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$slug': typeof SlugRoute
+  '/academia': typeof AcademiaRoute
   '/auth': typeof AuthRoute
+  '/codigo-de-conduta': typeof CodigoDeCondutaRoute
   '/diretorio': typeof DiretorioRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/criador/$slug': typeof CriadorSlugRoute
@@ -107,7 +121,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$slug': typeof SlugRoute
+  '/academia': typeof AcademiaRoute
   '/auth': typeof AuthRoute
+  '/codigo-de-conduta': typeof CodigoDeCondutaRoute
   '/diretorio': typeof DiretorioRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/criador/$slug': typeof CriadorSlugRoute
@@ -123,7 +139,9 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/$slug': typeof SlugRoute
+  '/academia': typeof AcademiaRoute
   '/auth': typeof AuthRoute
+  '/codigo-de-conduta': typeof CodigoDeCondutaRoute
   '/diretorio': typeof DiretorioRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/criador/$slug': typeof CriadorSlugRoute
@@ -139,7 +157,9 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/$slug'
+    | '/academia'
     | '/auth'
+    | '/codigo-de-conduta'
     | '/diretorio'
     | '/dashboard'
     | '/criador/$slug'
@@ -153,7 +173,9 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/$slug'
+    | '/academia'
     | '/auth'
+    | '/codigo-de-conduta'
     | '/diretorio'
     | '/dashboard'
     | '/criador/$slug'
@@ -168,7 +190,9 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/$slug'
+    | '/academia'
     | '/auth'
+    | '/codigo-de-conduta'
     | '/diretorio'
     | '/_authenticated/dashboard'
     | '/criador/$slug'
@@ -184,7 +208,9 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   SlugRoute: typeof SlugRoute
+  AcademiaRoute: typeof AcademiaRoute
   AuthRoute: typeof AuthRoute
+  CodigoDeCondutaRoute: typeof CodigoDeCondutaRoute
   DiretorioRoute: typeof DiretorioRoute
   CriadorSlugRoute: typeof CriadorSlugRoute
   PerfilSlugRoute: typeof PerfilSlugRoute
@@ -216,11 +242,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/academia': {
+      id: '/academia'
+      path: '/academia'
+      fullPath: '/academia'
+      preLoaderRoute: typeof AcademiaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/codigo-de-conduta': {
+      id: '/codigo-de-conduta'
+      path: '/codigo-de-conduta'
+      fullPath: '/codigo-de-conduta'
+      preLoaderRoute: typeof CodigoDeCondutaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/diretorio': {
@@ -308,7 +348,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   SlugRoute: SlugRoute,
+  AcademiaRoute: AcademiaRoute,
   AuthRoute: AuthRoute,
+  CodigoDeCondutaRoute: CodigoDeCondutaRoute,
   DiretorioRoute: DiretorioRoute,
   CriadorSlugRoute: CriadorSlugRoute,
   PerfilSlugRoute: PerfilSlugRoute,
