@@ -72,6 +72,9 @@ export function NichesCard({ niche }: { niche: string | null }) {
           <DialogContent className="sm:max-w-[460px]">
             <DialogHeader>
               <DialogTitle>Adicionar nicho</DialogTitle>
+              <p className="text-sm text-muted-foreground">
+                As opções abaixo são apenas sugestões. Você pode digitar qualquer nicho que achar mais adequado ao seu perfil.
+              </p>
             </DialogHeader>
             <form
               className="space-y-3"
