@@ -630,7 +630,9 @@ export async function syncSocialAccount(accountRowId: string) {
         profile_url: metrics.profileUrl,
         is_declared: false,
         ...(avatarUrl ? { avatar_url: avatarUrl } : {}),
-        ...(metrics.displayName ? { display_name: metrics.displayName } : {}),
+        ...(cleanDisplayName(metrics.displayName)
+          ? { display_name: cleanDisplayName(metrics.displayName) }
+          : {}),
       })
       .eq("id", account.id);
 
