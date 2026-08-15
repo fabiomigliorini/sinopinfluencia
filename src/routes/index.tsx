@@ -76,6 +76,16 @@ function HeroSearch() {
               <TrustChip>Contato direto, sem intermediação</TrustChip>
               <TrustChip>Métricas verificadas</TrustChip>
             </div>
+            <div className="mt-7">
+              <Link
+                to="/diretorio"
+                search={{}}
+                className="inline-flex items-center gap-2 rounded-full bg-[#FFEB00] px-7 py-3.5 text-sm font-bold text-[#0D4424] transition hover:brightness-95"
+              >
+                Ver todos os criadores
+              </Link>
+            </div>
+
           </div>
 
           <div className="hidden justify-center md:flex">
