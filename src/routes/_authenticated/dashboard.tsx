@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { useState } from "react";
 import {
   getMyProfile,
   submitMyProfile,
@@ -16,6 +17,7 @@ import { FormatsCard } from "@/components/account/FormatsCard";
 import { BrandsCard } from "@/components/account/BrandsCard";
 import { NichesCard } from "@/components/account/NichesCard";
 import { PortfolioCard } from "@/components/account/PortfolioCard";
+import { ConsentDialog } from "@/components/ConsentDialog";
 
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -69,6 +71,7 @@ function DashboardPage() {
   const fetchRole = useServerFn(getMyRole);
   const submit = useServerFn(submitMyProfile);
   const saveAvatar = useServerFn(setMyAvatar);
+  const [consentOpen, setConsentOpen] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey: ["my-profile"],
@@ -80,6 +83,7 @@ function DashboardPage() {
     mutationFn: () => submit(),
     onSuccess: () => {
       toast.success("Perfil enviado para curadoria!");
+      setConsentOpen(false);
       queryClient.invalidateQueries({ queryKey: ["my-profile"] });
     },
     onError: (error: Error) => toast.error(error.message),
@@ -206,7 +210,7 @@ function DashboardPage() {
           </div>
           {hasPendingChanges && (
             <button
-              onClick={() => submitMutation.mutate()}
+              onClick={() => setConsentOpen(true)}
               disabled={submitMutation.isPending}
               className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
             >
@@ -253,7 +257,7 @@ function DashboardPage() {
             <div className="mt-6 flex flex-wrap gap-2">
               {hasPendingChanges && (
                 <button
-                  onClick={() => submitMutation.mutate()}
+                  onClick={() => setConsentOpen(true)}
                   disabled={submitMutation.isPending}
                   className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
                 >
@@ -316,6 +320,12 @@ function DashboardPage() {
         </div>
       )}
 
+      <ConsentDialog
+        open={consentOpen}
+        onOpenChange={setConsentOpen}
+        onConfirm={() => submitMutation.mutate()}
+        isPending={submitMutation.isPending}
+      />
     </div>
   );
 }
