@@ -38,19 +38,28 @@ const BROWSER_UA =
 const CRAWLER_UA =
   "facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)";
 
-async function getText(url: string, headers: Record<string, string> = {}) {
+async function getText(
+  url: string,
+  headers: Record<string, string> = {},
+  options: { exactHeaders?: boolean } = {},
+) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 12_000);
   try {
     const response = await fetch(url, {
       signal: controller.signal,
-      headers: {
-        "User-Agent": BROWSER_UA,
-        "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
-        Accept: "text/html,application/json;q=0.9,*/*;q=0.8",
-        ...headers,
-      },
+      // Facebook falls back to the login shell (no og: tags) when extra headers
+      // are present, so some callers need the user agent to be the only header.
+      headers: options.exactHeaders
+        ? headers
+        : {
+            "User-Agent": BROWSER_UA,
+            "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
+            Accept: "text/html,application/json;q=0.9,*/*;q=0.8",
+            ...headers,
+          },
     });
+
     const body = await response.text();
     if (!response.ok) {
       if (response.status === 429 || response.status === 403) {
