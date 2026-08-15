@@ -96,20 +96,8 @@ function CarouselCard({
           <TierBadge tier={profile.tier} light />
         </div>
 
-        {/* Bottom: categories + name */}
+        {/* Bottom: name */}
         <div className="absolute inset-x-0 bottom-0 p-4">
-          {niches.length > 0 ? (
-            <div className="mb-2 flex flex-wrap gap-1.5">
-              {niches.slice(0, 2).map((n) => (
-                <span
-                  key={n}
-                  className="rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-[9.5px] font-bold uppercase tracking-widest text-white backdrop-blur-xl"
-                >
-                  {n}
-                </span>
-              ))}
-            </div>
-          ) : null}
           <h3 className="truncate text-lg font-extrabold leading-tight tracking-tight text-white">
             {profile.display_name}
           </h3>
