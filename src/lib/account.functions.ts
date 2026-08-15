@@ -45,6 +45,21 @@ const profileInput = z.object({
 
 export type ProfileInput = z.infer<typeof profileInput>;
 
+export const getMyHeaderProfile = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+    const { data: profile, error } = await supabase
+      .from("profiles")
+      .select("slug, display_name, avatar_url")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    if (error) throw new Error(error.message);
+    if (!profile) return null;
+    return profile;
+  });
+
 export const getMyProfile = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
