@@ -2,8 +2,9 @@ import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { metadataQueryOptions, profilesQueryOptions } from "@/lib/profile-queries";
-import { buildFormatsMap, buildMetricsMap } from "@/lib/directory-maps";
-import { ProfileCard, TierBadge } from "@/components/ProfileCard";
+import { buildMetricsMap } from "@/lib/directory-maps";
+import { TierBadge } from "@/components/ProfileCard";
+import { CreatorCarousel } from "@/components/CreatorCarousel";
 import type { Database } from "@/integrations/supabase/types";
 
 type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
@@ -34,8 +35,6 @@ function HomePage() {
   const [query, setQuery] = useState("");
   const [niche, setNiche] = useState("");
   const [network, setNetwork] = useState("");
-
-  const featured = profiles.slice(0, 6);
 
   const niches = Array.from(
     new Set(
@@ -68,12 +67,7 @@ function HomePage() {
         networks={networks}
       />
       <HowItWorks />
-      <FeaturedDirectory
-        profiles={featured}
-        query={query}
-        niche={niche}
-        network={network}
-      />
+      <FeaturedDirectory profiles={profiles} />
     </>
   );
 }
@@ -265,32 +259,9 @@ function StepCard({
   );
 }
 
-function FeaturedDirectory({
-  profiles,
-  query,
-  niche,
-  network,
-}: {
-  profiles: ProfileRow[];
-  query: string;
-  niche: string;
-  network: string;
-}) {
+function FeaturedDirectory({ profiles }: { profiles: ProfileRow[] }) {
   const { data: metadata } = useSuspenseQuery(metadataQueryOptions);
   const metricsMap = buildMetricsMap(metadata?.metrics ?? []);
-  const formatsMap = buildFormatsMap(metadata?.formats ?? []);
-
-
-  const filtered = profiles.filter((p) => {
-    const matchesQuery =
-      !query ||
-      p.display_name.toLowerCase().includes(query.toLowerCase()) ||
-      (p.niche ?? "").toLowerCase().includes(query.toLowerCase());
-    const matchesNiche =
-      !niche || (p.niche ?? "").toLowerCase().includes(niche.toLowerCase());
-    const matchesNetwork = !network || p.main_network === network;
-    return matchesQuery && matchesNiche && matchesNetwork;
-  });
 
   return (
     <section id="diretorio" className="pb-20 pt-4">
@@ -301,25 +272,14 @@ function FeaturedDirectory({
         </div>
 
         <TiersLegend />
+      </div>
 
-        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((profile, index) => (
-            <ProfileCard
-              key={profile.id}
-              profile={profile}
-              metrics={metricsMap[profile.id] ?? []}
-              formats={formatsMap[profile.id] ?? []}
+      <div className="mt-8">
+        <CreatorCarousel profiles={profiles} metricsMap={metricsMap} />
+      </div>
 
-              index={index}
-            />
-          ))}
-        </div>
+      <div className="mx-auto max-w-[1180px] px-6 lg:px-7">
 
-        {filtered.length === 0 && (
-          <div className="mt-10 rounded-2xl border border-border bg-card p-10 text-center">
-            <p className="text-muted-foreground">Nenhum criador encontrado com os filtros selecionados.</p>
-          </div>
-        )}
 
         <div className="mt-10 text-center">
           <Link
