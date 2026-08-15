@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import type { Database } from "@/integrations/supabase/types";
 import type { DirectoryMetric } from "@/lib/directory-maps";
+import { TierBadge } from "./ProfileCard";
+
 
 type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
 
@@ -83,33 +85,38 @@ function CarouselCard({
 
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--brand-dark)] via-[var(--brand-dark)]/25 to-transparent" />
 
-        {niches.length > 0 ? (
-          <div className="absolute left-3.5 top-3.5 flex max-w-[85%] flex-wrap gap-1.5">
-            {niches.slice(0, 2).map((n) => (
-              <span
-                key={n}
-                className="rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-[9.5px] font-bold uppercase tracking-widest text-white backdrop-blur-xl"
-              >
-                {n}
-              </span>
-            ))}
+        {/* Top-left: total followers */}
+        {followers > 0 ? (
+          <div className="absolute left-3.5 top-3.5 rounded-xl border border-white/15 bg-white/10 px-2.5 py-1.5 backdrop-blur-xl">
+            <p className="text-sm font-black leading-none text-white">{compact(followers)}</p>
+            <p className="text-[8.5px] font-bold uppercase tracking-widest text-white/60">
+              Seguidores
+            </p>
           </div>
         ) : null}
 
-        <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4">
-          <div className="min-w-0">
-            <h3 className="truncate text-lg font-extrabold leading-tight tracking-tight text-white">
-              {profile.display_name}
-            </h3>
-          </div>
-          {followers > 0 ? (
-            <div className="shrink-0 rounded-xl border border-white/15 bg-white/10 px-2.5 py-1.5 text-right backdrop-blur-xl">
-              <p className="text-sm font-black leading-none text-white">{compact(followers)}</p>
-              <p className="text-[8.5px] font-bold uppercase tracking-widest text-white/60">
-                Seguidores
-              </p>
+        {/* Top-right: tier badge */}
+        <div className="absolute right-3.5 top-3.5">
+          <TierBadge tier={profile.tier} light />
+        </div>
+
+        {/* Bottom: categories + name */}
+        <div className="absolute inset-x-0 bottom-0 p-4">
+          {niches.length > 0 ? (
+            <div className="mb-2 flex flex-wrap gap-1.5">
+              {niches.slice(0, 2).map((n) => (
+                <span
+                  key={n}
+                  className="rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-[9.5px] font-bold uppercase tracking-widest text-white backdrop-blur-xl"
+                >
+                  {n}
+                </span>
+              ))}
             </div>
           ) : null}
+          <h3 className="truncate text-lg font-extrabold leading-tight tracking-tight text-white">
+            {profile.display_name}
+          </h3>
         </div>
       </div>
     </Link>
