@@ -5,6 +5,7 @@ import { metadataQueryOptions, profilesQueryOptions } from "@/lib/profile-querie
 import { buildMetricsMap } from "@/lib/directory-maps";
 import { TierBadge } from "@/components/ProfileCard";
 import { CreatorCarousel } from "@/components/CreatorCarousel";
+import { tierRank, type Tier } from "@/lib/tiers";
 import type { Database } from "@/integrations/supabase/types";
 
 type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
