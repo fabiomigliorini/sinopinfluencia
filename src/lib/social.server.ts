@@ -452,12 +452,6 @@ export async function collectPublicMetrics(
   }
 }
 
-export function formatFollowers(followers: number | null) {
-  if (followers === null) return null;
-  if (followers >= 1_000_000) return `${(followers / 1_000_000).toFixed(1).replace(".", ",")}M`;
-  if (followers >= 1_000) return `${(followers / 1_000).toFixed(1).replace(".", ",")}K`;
-  return String(followers);
-}
 
 /**
  * Copies the public profile picture into our own storage, because the networks
