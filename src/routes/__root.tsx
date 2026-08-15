@@ -325,30 +325,6 @@ function Header() {
   );
 }
 
-function MobileNavLink({
-  children,
-  to,
-  hash,
-  onClick,
-}: {
-  children: React.ReactNode;
-  to: string;
-  hash?: string;
-  onClick: () => void;
-}) {
-  return (
-    <Link
-      to={to as any}
-      hash={hash}
-      search={to === "/diretorio" ? ({}) as any : undefined}
-      onClick={onClick}
-      className="block rounded-xl px-4 py-3 text-[15px] font-semibold text-white/90 transition hover:bg-white/10 hover:text-white"
-    >
-      {children}
-    </Link>
-  );
-}
-
 function initials(name?: string | null) {
   if (!name) return "?";
   return name
