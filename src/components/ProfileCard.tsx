@@ -80,7 +80,7 @@ function NetworkIconButton({ network }: { network: NetworkId }) {
   const { Icon } = meta;
 
   return (
-    <span className="grid h-10 w-10 place-items-center rounded-2xl border border-white/10 bg-white/5 text-white transition-all duration-300 group-hover/card-hover:bg-white group-hover/card-hover:text-[var(--brand-dark)]">
+    <span className="grid h-10 w-10 place-items-center rounded-2xl border border-white/10 bg-white/5 text-white transition-all duration-300 group-hover:bg-white group-hover:text-[var(--brand-dark)]">
       <Icon className="h-4 w-4" />
     </span>
   );
