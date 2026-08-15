@@ -265,28 +265,55 @@ function Header() {
                   </SheetClose>
                 </div>
                 <div className="flex-1 space-y-1 px-4 py-6">
-                  <MobileNavLink to="/diretorio" search={{}} onClick={() => setMobileOpen(false)}>
+                  <Link
+                    to="/diretorio"
+                    search={{}}
+                    onClick={() => setMobileOpen(false)}
+                    className="block rounded-xl px-4 py-3 text-[15px] font-semibold text-white/90 transition hover:bg-white/10 hover:text-white"
+                  >
                     Encontrar criadores
-                  </MobileNavLink>
-                  <MobileNavLink to="/" hash="como-funciona" onClick={() => setMobileOpen(false)}>
+                  </Link>
+                  <Link
+                    to="/"
+                    hash="como-funciona"
+                    onClick={() => setMobileOpen(false)}
+                    className="block rounded-xl px-4 py-3 text-[15px] font-semibold text-white/90 transition hover:bg-white/10 hover:text-white"
+                  >
                     Como funciona
-                  </MobileNavLink>
-                  <MobileNavLink to="/" hash="classificacao" onClick={() => setMobileOpen(false)}>
+                  </Link>
+                  <Link
+                    to="/"
+                    hash="classificacao"
+                    onClick={() => setMobileOpen(false)}
+                    className="block rounded-xl px-4 py-3 text-[15px] font-semibold text-white/90 transition hover:bg-white/10 hover:text-white"
+                  >
                     Classificação
-                  </MobileNavLink>
+                  </Link>
                   <div className="pt-4">
                     <div className="px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#FFEB00]">
                       Para criadores
                     </div>
-                    <MobileNavLink to={signedIn ? "/dashboard" : "/auth"} onClick={() => setMobileOpen(false)}>
+                    <Link
+                      to={signedIn ? "/dashboard" : "/auth"}
+                      onClick={() => setMobileOpen(false)}
+                      className="block rounded-xl px-4 py-3 text-[15px] font-semibold text-white/90 transition hover:bg-white/10 hover:text-white"
+                    >
                       Cadastre seu perfil
-                    </MobileNavLink>
-                    <MobileNavLink to="/academia" onClick={() => setMobileOpen(false)}>
+                    </Link>
+                    <Link
+                      to="/academia"
+                      onClick={() => setMobileOpen(false)}
+                      className="block rounded-xl px-4 py-3 text-[15px] font-semibold text-white/90 transition hover:bg-white/10 hover:text-white"
+                    >
                       Academia Sinop Influencia
-                    </MobileNavLink>
-                    <MobileNavLink to="/codigo-de-conduta" onClick={() => setMobileOpen(false)}>
+                    </Link>
+                    <Link
+                      to="/codigo-de-conduta"
+                      onClick={() => setMobileOpen(false)}
+                      className="block rounded-xl px-4 py-3 text-[15px] font-semibold text-white/90 transition hover:bg-white/10 hover:text-white"
+                    >
                       Código de conduta
-                    </MobileNavLink>
+                    </Link>
                   </div>
                 </div>
               </div>
