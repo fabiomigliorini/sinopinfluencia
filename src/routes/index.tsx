@@ -220,39 +220,58 @@ function SectionDivider() {
 }
 
 function CreatorOnboarding() {
+  const steps: { number: number; title: string; description: string; icon: LucideIcon }[] = [
+    {
+      number: 1,
+      title: "Cadastre seu perfil",
+      description: "Crie sua conta, preencha suas informações básicas e escreva uma bio que mostre quem você é.",
+      icon: UserPlus,
+    },
+    {
+      number: 2,
+      title: "Conecte suas redes",
+      description: "Vincule Instagram, TikTok, YouTube e outras redes. Suas métricas são atualizadas automaticamente.",
+      icon: Share2,
+    },
+    {
+      number: 3,
+      title: "Seja descoberto por marcas",
+      description: "Após aprovação da curadoria da ACES, seu perfil entra na vitrine e fica disponível para parcerias.",
+      icon: Award,
+    },
+  ];
+
   return (
-    <section id="para-criadores" className="bg-[#F6FBF8] py-16 md:py-20 dark:bg-[#0d2616]">
-      <div className="mx-auto max-w-[1180px] px-6 lg:px-7">
+    <section
+      id="para-criadores"
+      className="relative overflow-hidden py-16 md:py-20"
+      style={{
+        background: "radial-gradient(circle at 15% 50%, #14622f 0%, #0D4424 60%)",
+      }}
+    >
+      <div className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-[#FFEB00]/10 blur-3xl" />
+      <div className="absolute -bottom-16 -left-16 h-64 w-64 rounded-full bg-[#FFEB00]/10 blur-3xl" />
+      <div className="relative mx-auto max-w-[1180px] px-6 lg:px-7">
         <div className="mx-auto max-w-xl text-center">
-          <div className="text-xs font-bold uppercase tracking-[2.5px] text-primary">Para influenciadores e criadores de conteúdo</div>
-          <h2 className="mt-3 text-2xl font-extrabold tracking-tight md:text-[30px]">
+          <div className="text-xs font-bold uppercase tracking-[2.5px] text-[#FFEB00]">
+            Para influenciadores e criadores de conteúdo
+          </div>
+          <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-white md:text-[30px]">
             Três passos para fazer parte da vitrine
           </h2>
-          <p className="mt-3 text-[15.5px] text-muted-foreground">
+          <p className="mt-3 text-[15.5px] text-[#CFE8D6]">
             Entre para o diretório oficial de criadores de Sinop e seja encontrado por marcas e empresas associadas.
           </p>
         </div>
         <div className="mt-12 grid gap-6 md:grid-cols-3">
-          <StepCard
-            number={1}
-            title="Cadastre seu perfil"
-            description="Crie sua conta, preencha suas informações básicas e escreva uma bio que mostre quem você é."
-          />
-          <StepCard
-            number={2}
-            title="Conecte suas redes"
-            description="Vincule Instagram, TikTok, YouTube e outras redes. Suas métricas são atualizadas automaticamente."
-          />
-          <StepCard
-            number={3}
-            title="Seja descoberto por marcas"
-            description="Após aprovação da curadoria da ACES, seu perfil entra na vitrine e fica disponível para parcerias."
-          />
+          {steps.map((step) => (
+            <StepCard key={step.number} variant="brand" {...step} />
+          ))}
         </div>
         <div className="mt-10 text-center">
           <Link
             to="/auth"
-            className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
+            className="inline-flex items-center gap-2 rounded-full bg-[#FFEB00] px-7 py-3.5 text-sm font-bold text-[#0D4424] transition hover:brightness-95"
           >
             Quero fazer parte
           </Link>
