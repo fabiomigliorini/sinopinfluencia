@@ -132,7 +132,7 @@ export function ProfileView({
                 ? socialAccounts.map((account) => (
                     <SocialCard key={account.id} account={account} />
                   ))
-                : metrics.map((metric) => (
+                : visibleMetrics.map((metric) => (
                     <MetricCard
                       key={metric.id}
                       network={metric.network}
@@ -142,7 +142,7 @@ export function ProfileView({
                       verifiedAt={metric.verified_at ?? null}
                     />
                   ))}
-              {socialAccounts.length === 0 && metrics.length === 0 && (
+              {socialAccounts.length === 0 && visibleMetrics.length === 0 && (
                 <p className="col-span-full text-sm text-muted-foreground">
                   Nenhuma métrica pública disponível.
                 </p>
