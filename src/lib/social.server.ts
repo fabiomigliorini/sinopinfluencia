@@ -267,7 +267,7 @@ export async function fetchInstagramPublic(handle: string): Promise<PublicMetric
         unescaped
           .match(/"profile_pic_url(?:_hd)?"\s*:\s*"([^"]+)"/)?.[1]
           ?.replace(/\\u002F/gi, "/")
-          .replace(/\\\//g, "/") ?? null;
+          .replace(/\\+/g, "") ?? null;
       return {
         handle,
         displayName: embedName,
