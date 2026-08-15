@@ -38,6 +38,16 @@ const BROWSER_UA =
 const CRAWLER_UA =
   "facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)";
 
+/**
+ * Scraped names sometimes carry leftover JSON from the surrounding payload
+ * (e.g. `MG Papelaria","verified":false`). Cut at the first quote/brace.
+ */
+export function cleanDisplayName(value?: string | null): string | null {
+  if (!value) return null;
+  const cut = value.split(/["'{}\\]|,\s*"/)[0]?.replace(/\s+/g, " ").trim() ?? "";
+  return cut.length >= 2 ? cut.slice(0, 80) : null;
+}
+
 async function getText(
   url: string,
   headers: Record<string, string> = {},
@@ -243,12 +253,25 @@ export async function fetchInstagramPublic(handle: string): Promise<PublicMetric
       const posts =
         firstNumber(/\\?"posts_count\\?"\s*:\s*(\d+)/, embedHtml) ??
         firstNumber(/\\?"edge_owner_to_timeline_media\\?"\s*:\s*\{\\?"count\\?"\s*:\s*(\d+)/, embedHtml);
+      // The embed payload double-escapes its JSON strings, so unescape before
+      // pulling the profile header name/avatar out of it.
+      const unescaped = embedHtml.replace(/\\{1,2}"/g, '"').replace(/\\u0026/g, "&");
+      const embedName =
+        cleanDisplayName(unescaped.match(/"full_name"\s*:\s*"([^"]*)"/)?.[1]) ??
+        cleanDisplayName(
+          decodeEntities(
+            embedHtml.match(/property="og:title" content="([^"]+)"/)?.[1] ?? "",
+          ).replace(/\s*[•|]\s*Instagram.*$/i, ""),
+        );
+      const embedAvatar =
+        unescaped
+          .match(/"profile_pic_url(?:_hd)?"\s*:\s*"([^"]+)"/)?.[1]
+          ?.replace(/\\u002F/gi, "/")
+          .replace(/\\+/g, "") ?? null;
       return {
         handle,
-        // Keep the previously saved name/avatar. The embed HTML double-escapes
-        // these strings and their format changes independently of the counters.
-        displayName: null,
-        avatarUrl: null,
+        displayName: embedName,
+        avatarUrl: embedAvatar,
         profileUrl,
         followers,
         following: null,
@@ -257,6 +280,7 @@ export async function fetchInstagramPublic(handle: string): Promise<PublicMetric
         views: null,
         raw: { source: "instagram_embed" },
       };
+
     }
   } catch {
     /* continue with crawler preview and search snippet fallbacks */
@@ -606,7 +630,9 @@ export async function syncSocialAccount(accountRowId: string) {
         profile_url: metrics.profileUrl,
         is_declared: false,
         ...(avatarUrl ? { avatar_url: avatarUrl } : {}),
-        ...(metrics.displayName ? { display_name: metrics.displayName } : {}),
+        ...(cleanDisplayName(metrics.displayName)
+          ? { display_name: cleanDisplayName(metrics.displayName) }
+          : {}),
       })
       .eq("id", account.id);
 
