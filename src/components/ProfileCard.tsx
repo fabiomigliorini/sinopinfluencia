@@ -131,7 +131,7 @@ export function ProfileCard({
               src={profile.avatar_url}
               alt={profile.display_name}
               loading="lazy"
-              className="h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
+              className="h-full w-full object-cover object-[center_top] transition-transform duration-700 group-hover:scale-110"
             />
         ) : (
           <div
