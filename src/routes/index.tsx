@@ -213,7 +213,7 @@ function TiersLegend() {
   ];
 
   return (
-    <section className="bg-[#0D4424] py-14 md:py-20">
+    <section id="classificacao" className="bg-[#0D4424] py-14 md:py-20">
       <div className="mx-auto max-w-[1180px] px-6 lg:px-7">
         <div className="mx-auto max-w-2xl text-center">
           <div className="text-xs font-bold uppercase tracking-[2.5px] text-[#FFEB00]">Níveis de certificação</div>

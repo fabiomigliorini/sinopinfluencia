@@ -168,8 +168,8 @@ function Header() {
           <Link to="/" hash="como-funciona" className="text-[14.5px] font-semibold text-foreground/80 transition hover:text-foreground">
             Como funciona
           </Link>
-          <Link to="/" hash="diretorio" className="text-[14.5px] font-semibold text-foreground/80 transition hover:text-foreground">
-            Categorias
+          <Link to="/" hash="classificacao" className="text-[14.5px] font-semibold text-foreground/80 transition hover:text-foreground">
+            Classificação
           </Link>
           <Link
             to={signedIn ? "/dashboard" : "/auth"}
@@ -221,7 +221,7 @@ function Footer() {
             <ul className="space-y-2 text-[13.5px] text-[#B9D8C1]">
               <li><Link to="/diretorio" search={{}} className="transition hover:text-white">Buscar criadores</Link></li>
               <li><Link to="/" hash="como-funciona" className="transition hover:text-white">Como funciona</Link></li>
-              <li><Link to="/" hash="diretorio" className="transition hover:text-white">Categorias e critérios</Link></li>
+              <li><Link to="/" hash="classificacao" className="transition hover:text-white">Classificação e critérios</Link></li>
             </ul>
           </div>
           <div>
