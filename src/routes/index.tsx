@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Search, Eye, MessageCircle, UserPlus, Share2, Award, Sparkles } from "lucide-react";
+import { Search, Eye, MessageCircle, UserPlus, Share2, Award, Target, Handshake, Megaphone } from "lucide-react";
 import { metadataQueryOptions, profilesQueryOptions } from "@/lib/profile-queries";
 import { buildMetricsMap } from "@/lib/directory-maps";
 import { TierBadge } from "@/components/ProfileCard";
@@ -8,9 +8,6 @@ import { CreatorCarousel } from "@/components/CreatorCarousel";
 import { tierRank, type Tier } from "@/lib/tiers";
 import type { Database } from "@/integrations/supabase/types";
 import brandLogoAlt from "@/assets/brand/logo-alt-11-quadrado.png.asset.json";
-import iconAlcance from "@/assets/icons/ALCANCE.png.asset.json";
-import iconConfianca from "@/assets/icons/CONFIANÇA.png.asset.json";
-import iconConteudo from "@/assets/icons/CONTEUDO.png.asset.json";
 
 
 import type { LucideIcon } from "lucide-react";
@@ -54,7 +51,6 @@ function HomePage() {
       <HeroSearch />
       <WhyLocal />
       <HowItWorks />
-      <SectionDivider />
       <CreatorOnboarding />
       <TiersLegend />
       <FeaturedDirectory profiles={profiles} />
@@ -130,20 +126,50 @@ function TrustChip({ children }: { children: React.ReactNode }) {
   );
 }
 
+type SectionHeadingProps = {
+  kicker: string;
+  title: string;
+  description?: string;
+  tone?: "light" | "dark";
+};
+
+function SectionHeading({ kicker, title, description, tone = "light" }: SectionHeadingProps) {
+  const dark = tone === "dark";
+  return (
+    <div className="mx-auto max-w-2xl text-center">
+      <div
+        className={`text-xs font-bold uppercase tracking-[2.5px] ${dark ? "text-[#FFEB00]" : "text-primary"}`}
+      >
+        {kicker}
+      </div>
+      <h2
+        className={`mt-3 text-2xl font-extrabold tracking-tight md:text-[30px] ${dark ? "text-white" : "text-foreground"}`}
+      >
+        {title}
+      </h2>
+      {description ? (
+        <p className={`mt-4 text-[15.5px] leading-relaxed ${dark ? "text-[#CFE8D6]" : "text-muted-foreground"}`}>
+          {description}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
 function WhyLocal() {
-  const cards = [
+  const cards: { icon: LucideIcon; title: string; description: string }[] = [
     {
-      icon: iconAlcance.url,
+      icon: Target,
       title: "Alcance qualificado",
       description: "Audiência real em Sinop e região, não seguidores genéricos.",
     },
     {
-      icon: iconConfianca.url,
+      icon: Handshake,
       title: "Confiança construída",
       description: "A recomendação de quem o seu futuro cliente já acompanha.",
     },
     {
-      icon: iconConteudo.url,
+      icon: Megaphone,
       title: "Conteúdo que vende",
       description: "Criadores que sabem transformar atenção em cliente na porta da loja.",
     },
@@ -152,32 +178,23 @@ function WhyLocal() {
   return (
     <section id="por-que-local" className="py-16 md:py-20">
       <div className="mx-auto max-w-[1180px] px-6 lg:px-7">
-        <div className="mx-auto max-w-2xl text-center">
-          <div className="text-xs font-bold uppercase tracking-[2.5px] text-primary">O poder do influenciador local</div>
-          <h2 className="mt-3 text-2xl font-extrabold tracking-tight md:text-[30px]">
-            Por que contratar um influenciador local
-          </h2>
-          <p className="mt-4 text-[15.5px] leading-relaxed text-muted-foreground">
-            O consumidor de Sinop confia em quem ele já segue nas redes sociais: o colega, o vizinho, a pessoa que
-            circula nas ruas de Sinop e mostra o dia a dia da cidade. É essa confiança que o seu cliente compra.
-          </p>
-        </div>
+        <SectionHeading
+          kicker="O poder do influenciador local"
+          title="Por que contratar um influenciador local"
+          description="O consumidor de Sinop confia em quem ele já segue nas redes sociais: o colega, o vizinho, a pessoa que circula nas ruas de Sinop e mostra o dia a dia da cidade. É essa confiança que o seu cliente compra."
+        />
 
         <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {cards.map((card) => (
+          {cards.map(({ icon: Icon, title, description }) => (
             <div
-              key={card.title}
+              key={title}
               className="rounded-[20px] border border-border bg-card p-7 text-center transition hover:border-primary/20 hover:shadow-sm"
             >
-              <img
-                src={card.icon}
-                alt=""
-                aria-hidden="true"
-                loading="lazy"
-                className="mx-auto h-24 w-24 object-contain mix-blend-multiply"
-              />
-              <h3 className="mt-4 text-lg font-bold text-foreground">{card.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{card.description}</p>
+              <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <Icon className="h-9 w-9" strokeWidth={1.8} />
+              </div>
+              <h3 className="mt-4 text-lg font-bold text-foreground">{title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{description}</p>
             </div>
           ))}
         </div>
@@ -185,6 +202,7 @@ function WhyLocal() {
     </section>
   );
 }
+
 
 function HowItWorks() {
   const steps: { number: number; title: string; description: string; icon: LucideIcon }[] = [
@@ -210,17 +228,16 @@ function HowItWorks() {
   ];
 
   return (
-    <section id="como-funciona" className="py-16 md:py-20">
-      <div className="mx-auto max-w-[1180px] px-6 lg:px-7">
-        <div className="mx-auto max-w-xl text-center">
-          <div className="text-xs font-bold uppercase tracking-[2.5px] text-primary">Para empresas associadas</div>
-          <h2 className="mt-3 text-2xl font-extrabold tracking-tight md:text-[30px]">
-            Três passos até a parceria certa
-          </h2>
-          <p className="mt-3 text-[15.5px] text-muted-foreground">
-            A Vitrine existe para aproximar o comércio local de quem já fala com o público de Sinop.
-          </p>
-        </div>
+    <section id="como-funciona" className="relative overflow-hidden bg-[#0D4424] py-16 md:py-20">
+      <div className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-[#FFEB00]/10 blur-3xl" />
+      <div className="absolute -bottom-16 -left-16 h-64 w-64 rounded-full bg-[#FFEB00]/10 blur-3xl" />
+      <div className="relative mx-auto max-w-[1180px] px-6 lg:px-7">
+        <SectionHeading
+          tone="dark"
+          kicker="Para empresas associadas"
+          title="Três passos até a parceria certa"
+          description="A Vitrine existe para aproximar o comércio local de quem já fala com o público de Sinop."
+        />
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {steps.map((step) => (
             <StepCard key={step.number} {...step} />
@@ -253,23 +270,6 @@ function StepCard({ number, title, description, icon: Icon }: StepCardProps) {
   );
 }
 
-function SectionDivider() {
-  return (
-    <div className="relative h-24 overflow-hidden bg-[#0D4424]">
-      <div className="absolute inset-0 opacity-30">
-        <div className="absolute -left-20 top-0 h-40 w-40 rounded-full bg-[#FFEB00] blur-3xl" />
-        <div className="absolute -right-20 bottom-0 h-40 w-40 rounded-full bg-[#FFEB00] blur-3xl" />
-      </div>
-      <div className="relative flex h-full items-center justify-center gap-3">
-        <div className="h-px w-20 bg-gradient-to-r from-transparent to-[#FFEB00]/60" />
-        <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#FFEB00]/30 bg-[#FFEB00]/10">
-          <Sparkles className="h-5 w-5 text-[#FFEB00]" />
-        </div>
-        <div className="h-px w-20 bg-gradient-to-l from-transparent to-[#FFEB00]/60" />
-      </div>
-    </div>
-  );
-}
 
 function CreatorOnboarding() {
   const steps: { number: number; title: string; description: string; icon: LucideIcon }[] = [
@@ -294,27 +294,13 @@ function CreatorOnboarding() {
   ];
 
   return (
-    <section
-      id="para-criadores"
-      className="relative overflow-hidden py-16 md:py-20"
-      style={{
-        background: "radial-gradient(circle at 15% 50%, #14622f 0%, #0D4424 60%)",
-      }}
-    >
-      <div className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-[#FFEB00]/10 blur-3xl" />
-      <div className="absolute -bottom-16 -left-16 h-64 w-64 rounded-full bg-[#FFEB00]/10 blur-3xl" />
-      <div className="relative mx-auto max-w-[1180px] px-6 lg:px-7">
-        <div className="mx-auto max-w-xl text-center">
-          <div className="text-xs font-bold uppercase tracking-[2.5px] text-[#FFEB00]">
-            Para influenciadores e criadores de conteúdo
-          </div>
-          <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-white md:text-[30px]">
-            Três passos para fazer parte da vitrine
-          </h2>
-          <p className="mt-3 text-[15.5px] text-[#CFE8D6]">
-            Entre para a vitrine oficial de criadores de Sinop e seja encontrado por marcas e empresas associadas.
-          </p>
-        </div>
+    <section id="para-criadores" className="py-16 md:py-20">
+      <div className="mx-auto max-w-[1180px] px-6 lg:px-7">
+        <SectionHeading
+          kicker="Para influenciadores e criadores de conteúdo"
+          title="Três passos para fazer parte da vitrine"
+          description="Entre para a vitrine oficial de criadores de Sinop e seja encontrado por marcas e empresas associadas."
+        />
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {steps.map((step) => (
             <StepCard key={step.number} {...step} />
@@ -323,7 +309,7 @@ function CreatorOnboarding() {
         <div className="mt-10 text-center">
           <Link
             to="/auth"
-            className="inline-flex items-center gap-2 rounded-full bg-[#FFEB00] px-7 py-3.5 text-sm font-bold text-[#0D4424] transition hover:brightness-95"
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-bold text-primary-foreground transition hover:brightness-110"
           >
             Quero fazer parte
           </Link>
@@ -338,14 +324,11 @@ function FeaturedDirectory({ profiles }: { profiles: ProfileRow[] }) {
   const metricsMap = buildMetricsMap(metadata?.metrics ?? []);
 
   return (
-    <section id="vitrine" className="pb-20 pt-4">
+    <section id="vitrine" className="py-16 md:py-20">
       <div className="mx-auto max-w-[1180px] px-6 lg:px-7">
-        <div className="max-w-xl text-center sm:text-left">
-          <div className="text-xs font-bold uppercase tracking-[2.5px] text-primary">Vitrine digital</div>
-          <h2 className="mt-3 text-2xl font-extrabold tracking-tight md:text-[30px]">ENCONTRE O CRIADOR CERTO PARA A SUA MARCA</h2>
-        </div>
-
+        <SectionHeading kicker="Vitrine digital" title="Encontre o criador certo para a sua marca" />
       </div>
+
 
       <div className="mt-8">
         <CreatorCarousel profiles={profiles} metricsMap={metricsMap} />
@@ -397,16 +380,13 @@ function TiersLegend() {
   return (
     <section id="classificacao" className="bg-[#0D4424] py-14 md:py-20">
       <div className="mx-auto max-w-[1180px] px-6 lg:px-7">
-        <div className="mx-auto max-w-2xl text-center">
-          <div className="text-xs font-bold uppercase tracking-[2.5px] text-[#FFEB00]">Níveis de certificação</div>
-          <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-white md:text-[30px]">
-            Classificação com critérios da ACES
-          </h2>
-          <p className="mt-3 text-[15.5px] text-[#CFE8D6]">
-            Cada perfil é avaliado pela nossa curadoria com base em alcance, engajamento, histórico de parcerias e
-            relevância no nicho. As estrelas indicam o nível de maturidade do criador.
-          </p>
-        </div>
+        <SectionHeading
+          tone="dark"
+          kicker="Níveis de certificação"
+          title="Classificação com critérios da ACES"
+          description="Cada perfil é avaliado pela nossa curadoria com base em alcance, engajamento, histórico de parcerias e relevância no nicho. As estrelas indicam o nível de maturidade do criador."
+        />
+
 
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {tiers.map(({ tier, label, description }) => (
