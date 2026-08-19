@@ -182,7 +182,11 @@ export function ProfileView({
           <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {socialAccounts.length > 0 ? (
               socialAccounts.map((account) => (
-                <SocialCard key={account.id} account={account} />
+                <SocialCard
+                  key={account.id}
+                  account={account}
+                  isPrimary={account.network === profile.main_network}
+                />
               ))
             ) : (
               <p className="col-span-full text-sm text-muted-foreground">
@@ -328,7 +332,13 @@ function WorkCard({ work }: { work: Tables["profile_works"]["Row"] }) {
   );
 }
 
-function SocialCard({ account }: { account: PublicSocialAccount }) {
+function SocialCard({
+  account,
+  isPrimary = false,
+}: {
+  account: PublicSocialAccount;
+  isPrimary?: boolean;
+}) {
   const snap = account.latest;
   const isDeclared = account.is_declared;
 
@@ -362,6 +372,7 @@ function SocialCard({ account }: { account: PublicSocialAccount }) {
           )}
           <NetworkBadge
             network={account.network}
+            highlight={isPrimary}
             className="absolute -bottom-1 -right-1 h-5 w-5 ring-2 ring-[var(--brand-dark)]"
             iconClassName="h-2.5 w-2.5"
           />

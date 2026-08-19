@@ -63,10 +63,18 @@ export const getFilteredProfiles = createServerFn({ method: "GET" })
       builder = builder.ilike("niche", `%${data.niche}%`);
     }
     if (data.network) {
-      builder = builder.eq(
-        "main_network",
-        data.network as Database["public"]["Enums"]["social_network"],
+      const { data: accounts } = await supabase
+        .from("social_accounts")
+        .select("profile_id")
+        .eq(
+          "network",
+          data.network as Database["public"]["Enums"]["social_network"],
+        );
+      const ids = Array.from(
+        new Set((accounts ?? []).map((a) => a.profile_id)),
       );
+      if (ids.length === 0) return [];
+      builder = builder.in("id", ids);
     }
     if (data.tier) {
       builder = builder.eq(
@@ -78,7 +86,14 @@ export const getFilteredProfiles = createServerFn({ method: "GET" })
     const { data: profiles, error } = await builder;
 
     if (error) throw new Error(error.message);
-    return sortByTier(profiles ?? []);
+    const sorted = sortByTier(profiles ?? []);
+
+    if (data.network) {
+      const isMain = (p: (typeof sorted)[number]) =>
+        p.main_network === data.network ? 0 : 1;
+      return [...sorted].sort((a, b) => isMain(a) - isMain(b));
+    }
+    return sorted;
   });
 
 export const listDirectoryMetadata = createServerFn({ method: "GET" }).handler(
