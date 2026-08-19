@@ -126,20 +126,50 @@ function TrustChip({ children }: { children: React.ReactNode }) {
   );
 }
 
+type SectionHeadingProps = {
+  kicker: string;
+  title: string;
+  description?: string;
+  tone?: "light" | "dark";
+};
+
+function SectionHeading({ kicker, title, description, tone = "light" }: SectionHeadingProps) {
+  const dark = tone === "dark";
+  return (
+    <div className="mx-auto max-w-2xl text-center">
+      <div
+        className={`text-xs font-bold uppercase tracking-[2.5px] ${dark ? "text-[#FFEB00]" : "text-primary"}`}
+      >
+        {kicker}
+      </div>
+      <h2
+        className={`mt-3 text-2xl font-extrabold tracking-tight md:text-[30px] ${dark ? "text-white" : "text-foreground"}`}
+      >
+        {title}
+      </h2>
+      {description ? (
+        <p className={`mt-4 text-[15.5px] leading-relaxed ${dark ? "text-[#CFE8D6]" : "text-muted-foreground"}`}>
+          {description}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
 function WhyLocal() {
-  const cards = [
+  const cards: { icon: LucideIcon; title: string; description: string }[] = [
     {
-      icon: iconAlcance.url,
+      icon: Target,
       title: "Alcance qualificado",
       description: "Audiência real em Sinop e região, não seguidores genéricos.",
     },
     {
-      icon: iconConfianca.url,
+      icon: Handshake,
       title: "Confiança construída",
       description: "A recomendação de quem o seu futuro cliente já acompanha.",
     },
     {
-      icon: iconConteudo.url,
+      icon: Megaphone,
       title: "Conteúdo que vende",
       description: "Criadores que sabem transformar atenção em cliente na porta da loja.",
     },
@@ -148,32 +178,23 @@ function WhyLocal() {
   return (
     <section id="por-que-local" className="py-16 md:py-20">
       <div className="mx-auto max-w-[1180px] px-6 lg:px-7">
-        <div className="mx-auto max-w-2xl text-center">
-          <div className="text-xs font-bold uppercase tracking-[2.5px] text-primary">O poder do influenciador local</div>
-          <h2 className="mt-3 text-2xl font-extrabold tracking-tight md:text-[30px]">
-            Por que contratar um influenciador local
-          </h2>
-          <p className="mt-4 text-[15.5px] leading-relaxed text-muted-foreground">
-            O consumidor de Sinop confia em quem ele já segue nas redes sociais: o colega, o vizinho, a pessoa que
-            circula nas ruas de Sinop e mostra o dia a dia da cidade. É essa confiança que o seu cliente compra.
-          </p>
-        </div>
+        <SectionHeading
+          kicker="O poder do influenciador local"
+          title="Por que contratar um influenciador local"
+          description="O consumidor de Sinop confia em quem ele já segue nas redes sociais: o colega, o vizinho, a pessoa que circula nas ruas de Sinop e mostra o dia a dia da cidade. É essa confiança que o seu cliente compra."
+        />
 
         <div className="mt-12 grid gap-6 md:grid-cols-3">
-          {cards.map((card) => (
+          {cards.map(({ icon: Icon, title, description }) => (
             <div
-              key={card.title}
+              key={title}
               className="rounded-[20px] border border-border bg-card p-7 text-center transition hover:border-primary/20 hover:shadow-sm"
             >
-              <img
-                src={card.icon}
-                alt=""
-                aria-hidden="true"
-                loading="lazy"
-                className="mx-auto h-24 w-24 object-contain mix-blend-multiply"
-              />
-              <h3 className="mt-4 text-lg font-bold text-foreground">{card.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{card.description}</p>
+              <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <Icon className="h-9 w-9" strokeWidth={1.8} />
+              </div>
+              <h3 className="mt-4 text-lg font-bold text-foreground">{title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{description}</p>
             </div>
           ))}
         </div>
@@ -181,6 +202,7 @@ function WhyLocal() {
     </section>
   );
 }
+
 
 function HowItWorks() {
   const steps: { number: number; title: string; description: string; icon: LucideIcon }[] = [
