@@ -101,7 +101,7 @@ function HeroSearch() {
               <img
                 src={brandLogoAlt.url}
                 alt="Logo Sinop Influencia"
-                className="relative h-auto max-h-[95%] w-auto max-w-[95%] object-contain"
+                className="relative h-full w-full object-contain p-2"
                 loading="lazy"
               />
             </div>

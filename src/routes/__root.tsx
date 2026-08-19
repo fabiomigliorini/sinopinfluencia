@@ -151,7 +151,7 @@ function BrandLogo() {
         <img
           src={brandMark.url}
           alt="Sinop Influencia"
-          className="h-10 w-10 object-contain"
+          className="h-[42px] w-[42px] object-contain"
         />
       </div>
       <div className="leading-tight">
