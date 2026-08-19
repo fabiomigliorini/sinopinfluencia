@@ -109,17 +109,21 @@ export function NetworkBadge({
   network,
   className = "h-9 w-9",
   iconClassName = "h-4 w-4",
+  highlight = false,
 }: {
   network: string;
   className?: string;
   iconClassName?: string;
+  highlight?: boolean;
 }) {
   const meta = NETWORK_META[network as NetworkId] ?? NETWORK_META.instagram;
   const { Icon } = meta;
   return (
     <span
-      className={`inline-flex items-center justify-center rounded-full text-white ${className}`}
-      style={{ backgroundColor: meta.color }}
+      className={`inline-flex items-center justify-center rounded-full ${
+        highlight ? "text-[#1a1a1a]" : "text-white"
+      } ${className}`}
+      style={{ backgroundColor: highlight ? "#FFEB00" : meta.color }}
       aria-hidden="true"
     >
       <Icon className={iconClassName} />
