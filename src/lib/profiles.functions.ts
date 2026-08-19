@@ -114,15 +114,8 @@ export const listDirectoryMetadata = createServerFn({ method: "GET" }).handler(
         followers: latest?.followers ?? null,
       };
     });
-    const niches = Array.from(
-      new Set(
-        (profiles ?? []).flatMap((p) =>
-          (p.niche ?? "")
-            .split(",")
-            .map((item) => item.trim())
-            .filter(Boolean),
-        ),
-      ),
+    const niches = dedupeNiches(
+      (profiles ?? []).flatMap((p) => (p.niche ?? "").split(",")),
     ).sort((a, b) => a.localeCompare(b, "pt-BR"));
     return {
       niches,

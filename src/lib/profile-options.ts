@@ -93,8 +93,7 @@ export const dedupeNiches = (niches: string[]) => {
   return Array.from(seen.values());
 };
 
-export const joinNiches = (niches: string[]) =>
-  Array.from(new Set(niches.map((n) => n.trim()).filter(Boolean))).join(", ");
+export const joinNiches = (niches: string[]) => dedupeNiches(niches).join(", ");
 
 /** Turns any text into a URL friendly slug: "Fábio Migliorini" -> "fabio-migliorini". */
 export function normalizeSlug(value: string) {
