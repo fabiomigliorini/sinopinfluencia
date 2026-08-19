@@ -147,11 +147,13 @@ function RootShell({ children }: { children: ReactNode }) {
 function BrandLogo() {
   return (
     <Link to="/" className="flex items-center gap-3">
-      <img
-        src={brandMark.url}
-        alt="Sinop Influencia"
-        className="h-11 w-11 rounded-xl object-cover"
-      />
+      <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-[#0D4424]">
+        <img
+          src={brandMark.url}
+          alt="Sinop Influencia"
+          className="h-7 w-7 object-contain"
+        />
+      </div>
       <div className="leading-tight">
         <b className="block text-[17px] font-extrabold tracking-wide text-foreground">
           SINOP <span className="text-primary">INFLUENCIA</span>
