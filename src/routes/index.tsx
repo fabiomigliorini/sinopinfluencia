@@ -7,6 +7,8 @@ import { TierBadge } from "@/components/ProfileCard";
 import { CreatorCarousel } from "@/components/CreatorCarousel";
 import { tierRank, type Tier } from "@/lib/tiers";
 import type { Database } from "@/integrations/supabase/types";
+import brandIconWhite from "@/assets/brand/icone-branco.png.asset.json";
+
 
 import type { LucideIcon } from "lucide-react";
 
