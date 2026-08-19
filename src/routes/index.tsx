@@ -412,16 +412,16 @@ function TiersLegend() {
           {tiers.map(({ tier, label, description }) => (
             <div
               key={tier}
-              className="rounded-[22px] border border-white/10 bg-white/[0.06] p-6 backdrop-blur-sm transition hover:border-[#FFEB00]/30 hover:bg-white/[0.09]"
+              className="rounded-[20px] border border-border bg-card p-7 text-center transition hover:border-primary/20 hover:shadow-sm"
             >
-              <div className="flex items-center justify-between gap-3">
-                <TierBadge tier={tier} light />
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#FFEB00]">
+              <div className="mx-auto mb-4 flex flex-col items-center gap-2">
+                <TierBadge tier={tier} />
+                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                   {tierRank(tier)} {tierRank(tier) === 1 ? "estrela" : "estrelas"}
                 </span>
               </div>
-              <h3 className="mt-4 text-lg font-bold text-white">{label}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-[#CFE8D6]">{description}</p>
+              <h3 className="text-lg font-bold text-foreground">{label}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{description}</p>
             </div>
           ))}
         </div>
