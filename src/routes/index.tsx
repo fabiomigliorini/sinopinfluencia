@@ -8,6 +8,9 @@ import { CreatorCarousel } from "@/components/CreatorCarousel";
 import { tierRank, type Tier } from "@/lib/tiers";
 import type { Database } from "@/integrations/supabase/types";
 import brandLogoAlt from "@/assets/brand/logo-alt-11-quadrado.png.asset.json";
+import iconAlcance from "@/assets/icons/ALCANCE.png.asset.json";
+import iconConfianca from "@/assets/icons/CONFIANÇA.png.asset.json";
+import iconConteudo from "@/assets/icons/CONTEUDO.png.asset.json";
 
 
 import type { LucideIcon } from "lucide-react";
@@ -49,6 +52,7 @@ function HomePage() {
   return (
     <>
       <HeroSearch />
+      <WhyLocal />
       <HowItWorks />
       <SectionDivider />
       <CreatorOnboarding />
@@ -70,17 +74,20 @@ function HeroSearch() {
       <div className="relative mx-auto max-w-[1180px] px-6 lg:px-7">
         <div className="grid items-center gap-12 md:grid-cols-[1.1fr_0.9fr]">
           <div>
-            <div className="text-xs font-bold uppercase tracking-[2.5px] text-[#FFEB00]">Vitrine oficial da ACES</div>
+            <div className="text-xs font-bold uppercase tracking-[2.5px] text-[#FFEB00]">
+              Vitrine oficial dos influenciadores digitais de Sinop
+            </div>
             <h1 className="mt-4 text-3xl font-extrabold leading-tight tracking-tight text-white md:text-[44px]">
-              A criatividade de Sinop, <em className="not-italic text-[#FFEB00]">pronta para o seu negócio.</em>
+              Tenha as maiores personalidades da internet em Sinop{" "}
+              <em className="not-italic text-[#FFEB00]">trabalhando para fortalecer a sua marca.</em>
             </h1>
             <p className="lead mt-4 max-w-lg text-base text-[#CFE8D6] md:text-lg">
-              Encontre criadores de conteúdo certificados pela ACES, filtrados por especialidade e categoria, e fale
-              direto com quem vai divulgar sua marca.
+              Transforme o seu negócio com ajuda dos criadores de conteúdo certificados pela ACES. Filtre por
+              especialidade, analise o perfil completo e fale direto com quem vai promover a sua marca.
             </p>
             <div className="mt-6 flex flex-wrap gap-2.5">
               <TrustChip>Perfis com curadoria da ACES</TrustChip>
-              <TrustChip>Contato direto, sem intermediação</TrustChip>
+              <TrustChip>Contato direto, sem taxa, sem intermediário</TrustChip>
               <TrustChip>Métricas verificadas</TrustChip>
             </div>
             <div className="mt-7">
@@ -89,7 +96,7 @@ function HeroSearch() {
                 search={{}}
                 className="inline-flex items-center gap-2 rounded-full bg-[#FFEB00] px-7 py-3.5 text-sm font-bold text-[#0D4424] transition hover:brightness-95"
               >
-                Ver todos os criadores
+                Buscar criador para minha empresa
               </Link>
             </div>
 
@@ -123,25 +130,81 @@ function TrustChip({ children }: { children: React.ReactNode }) {
   );
 }
 
+function WhyLocal() {
+  const cards = [
+    {
+      icon: iconAlcance.url,
+      title: "Alcance qualificado",
+      description: "Audiência real em Sinop e região, não seguidores genéricos.",
+    },
+    {
+      icon: iconConfianca.url,
+      title: "Confiança construída",
+      description: "A recomendação de quem o seu futuro cliente já acompanha.",
+    },
+    {
+      icon: iconConteudo.url,
+      title: "Conteúdo que vende",
+      description: "Criadores que sabem transformar atenção em cliente na porta da loja.",
+    },
+  ];
+
+  return (
+    <section id="por-que-local" className="py-16 md:py-20">
+      <div className="mx-auto max-w-[1180px] px-6 lg:px-7">
+        <div className="mx-auto max-w-2xl text-center">
+          <div className="text-xs font-bold uppercase tracking-[2.5px] text-primary">O poder do influenciador local</div>
+          <h2 className="mt-3 text-2xl font-extrabold tracking-tight md:text-[30px]">
+            Por que contratar um influenciador local
+          </h2>
+          <p className="mt-4 text-[15.5px] leading-relaxed text-muted-foreground">
+            O consumidor de Sinop confia em quem ele já segue nas redes sociais: o colega, o vizinho, a pessoa que
+            circula nas ruas de Sinop e mostra o dia a dia da cidade. É essa confiança que o seu cliente compra.
+          </p>
+        </div>
+
+        <div className="mt-12 grid gap-6 md:grid-cols-3">
+          {cards.map((card) => (
+            <div
+              key={card.title}
+              className="rounded-[20px] border border-border bg-card p-7 text-center transition hover:border-primary/20 hover:shadow-sm"
+            >
+              <img
+                src={card.icon}
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                className="mx-auto h-24 w-24 object-contain mix-blend-multiply"
+              />
+              <h3 className="mt-4 text-lg font-bold text-foreground">{card.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{card.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function HowItWorks() {
   const steps: { number: number; title: string; description: string; icon: LucideIcon }[] = [
     {
       number: 1,
-      title: "Filtre por nicho e categoria",
-      description:
-        "Busque por especialidade, gastronomia, moda, agro, humor, e pelo nível de maturidade do criador.",
+      title: "Filtre pelo que você precisa",
+      description: "Nicho, categoria e rede social. Em segundos você já vê quem serve pra sua marca.",
       icon: Search,
     },
     {
       number: 2,
-      title: "Veja o perfil completo",
-      description: "Métricas, formatos de trabalho, portfólio de campanhas já realizadas e com quem já atuou.",
+      title: "Compare com dados reais",
+      description:
+        "Métricas verificadas, portfólio de campanhas já realizadas e com quais marcas o influenciador já trabalhou.",
       icon: Eye,
     },
     {
       number: 3,
-      title: "Fale direto com o criador",
-      description: "Sem intermediários. O contrato e a negociação são combinados diretamente entre as partes.",
+      title: "Feche direto com o criador",
+      description: "Sem intermediários, sem taxa. Você negocia e contrata como preferir.",
       icon: MessageCircle,
     },
   ];
