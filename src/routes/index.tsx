@@ -380,16 +380,13 @@ function TiersLegend() {
   return (
     <section id="classificacao" className="bg-[#0D4424] py-14 md:py-20">
       <div className="mx-auto max-w-[1180px] px-6 lg:px-7">
-        <div className="mx-auto max-w-2xl text-center">
-          <div className="text-xs font-bold uppercase tracking-[2.5px] text-[#FFEB00]">Níveis de certificação</div>
-          <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-white md:text-[30px]">
-            Classificação com critérios da ACES
-          </h2>
-          <p className="mt-3 text-[15.5px] text-[#CFE8D6]">
-            Cada perfil é avaliado pela nossa curadoria com base em alcance, engajamento, histórico de parcerias e
-            relevância no nicho. As estrelas indicam o nível de maturidade do criador.
-          </p>
-        </div>
+        <SectionHeading
+          tone="dark"
+          kicker="Níveis de certificação"
+          title="Classificação com critérios da ACES"
+          description="Cada perfil é avaliado pela nossa curadoria com base em alcance, engajamento, histórico de parcerias e relevância no nicho. As estrelas indicam o nível de maturidade do criador."
+        />
+
 
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {tiers.map(({ tier, label, description }) => (
