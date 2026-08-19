@@ -236,33 +236,19 @@ type StepCardProps = {
   title: string;
   description: string;
   icon: LucideIcon;
-  variant?: "light" | "brand";
 };
 
-function StepCard({ number, title, description, icon: Icon, variant = "light" }: StepCardProps) {
-  const isBrand = variant === "brand";
+function StepCard({ number, title, description, icon: Icon }: StepCardProps) {
   return (
-    <div
-      className={`rounded-[20px] border p-7 transition ${
-        isBrand
-          ? "border-white/10 bg-white/[0.06] text-white backdrop-blur-sm hover:border-[#FFEB00]/30 hover:bg-white/[0.09]"
-          : "border-border bg-card hover:border-primary/20 hover:shadow-sm"
-      }`}
-    >
-      <div
-        className={`mb-4 flex h-10 w-10 items-center justify-center rounded-[11px] ${
-          isBrand ? "bg-[#FFEB00] text-[#0D4424]" : "bg-[#0D4424] text-[#FFEB00]"
-        }`}
-      >
-        <Icon className="h-5 w-5" strokeWidth={2.5} />
+    <div className="rounded-[20px] border border-border bg-card p-7 text-center transition hover:border-primary/20 hover:shadow-sm">
+      <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-primary">
+        <Icon className="h-9 w-9" strokeWidth={1.8} />
       </div>
-      <div className={`text-xs font-extrabold ${isBrand ? "text-[#FFEB00]/80" : "text-muted-foreground"}`}>
+      <div className="text-xs font-extrabold uppercase tracking-[2px] text-muted-foreground">
         Passo {number}
       </div>
-      <h3 className={`mt-1 text-lg font-bold ${isBrand ? "text-white" : "text-foreground"}`}>{title}</h3>
-      <p className={`mt-2 text-sm leading-relaxed ${isBrand ? "text-[#CFE8D6]" : "text-muted-foreground"}`}>
-        {description}
-      </p>
+      <h3 className="mt-2 text-lg font-bold text-foreground">{title}</h3>
+      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{description}</p>
     </div>
   );
 }
