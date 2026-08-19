@@ -72,7 +72,7 @@ export function ProfileView({
             search={{}}
             className="inline-flex text-sm font-bold text-primary hover:underline"
           >
-            ← Voltar ao diretório
+            ← Voltar à vitrine
           </Link>
         )}
 

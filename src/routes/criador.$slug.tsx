@@ -96,7 +96,7 @@ function ProfileUnavailable() {
           to="/vitrine"
           className="rounded-md bg-primary px-4 py-2 text-primary-foreground"
         >
-          Ver diretório
+          Ver vitrine
         </Link>
         <Link
           to="/dashboard"
