@@ -372,6 +372,7 @@ function SocialCard({
           )}
           <NetworkBadge
             network={account.network}
+            highlight={isPrimary}
             className="absolute -bottom-1 -right-1 h-5 w-5 ring-2 ring-[var(--brand-dark)]"
             iconClassName="h-2.5 w-2.5"
           />
