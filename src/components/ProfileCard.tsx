@@ -209,7 +209,6 @@ export function ProfileCard({
               <NetworkIconButton
                 key={network}
                 network={network}
-                primary={network === profile.main_network}
               />
             ))}
           </div>
