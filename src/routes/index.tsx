@@ -74,17 +74,20 @@ function HeroSearch() {
       <div className="relative mx-auto max-w-[1180px] px-6 lg:px-7">
         <div className="grid items-center gap-12 md:grid-cols-[1.1fr_0.9fr]">
           <div>
-            <div className="text-xs font-bold uppercase tracking-[2.5px] text-[#FFEB00]">Vitrine oficial da ACES</div>
+            <div className="text-xs font-bold uppercase tracking-[2.5px] text-[#FFEB00]">
+              Vitrine oficial dos influenciadores digitais de Sinop
+            </div>
             <h1 className="mt-4 text-3xl font-extrabold leading-tight tracking-tight text-white md:text-[44px]">
-              A criatividade de Sinop, <em className="not-italic text-[#FFEB00]">pronta para o seu negócio.</em>
+              Tenha as maiores personalidades da internet em Sinop{" "}
+              <em className="not-italic text-[#FFEB00]">trabalhando para fortalecer a sua marca.</em>
             </h1>
             <p className="lead mt-4 max-w-lg text-base text-[#CFE8D6] md:text-lg">
-              Encontre criadores de conteúdo certificados pela ACES, filtrados por especialidade e categoria, e fale
-              direto com quem vai divulgar sua marca.
+              Transforme o seu negócio com ajuda dos criadores de conteúdo certificados pela ACES. Filtre por
+              especialidade, analise o perfil completo e fale direto com quem vai promover a sua marca.
             </p>
             <div className="mt-6 flex flex-wrap gap-2.5">
               <TrustChip>Perfis com curadoria da ACES</TrustChip>
-              <TrustChip>Contato direto, sem intermediação</TrustChip>
+              <TrustChip>Contato direto, sem taxa, sem intermediário</TrustChip>
               <TrustChip>Métricas verificadas</TrustChip>
             </div>
             <div className="mt-7">
@@ -93,7 +96,7 @@ function HeroSearch() {
                 search={{}}
                 className="inline-flex items-center gap-2 rounded-full bg-[#FFEB00] px-7 py-3.5 text-sm font-bold text-[#0D4424] transition hover:brightness-95"
               >
-                Ver todos os criadores
+                Buscar criador para minha empresa
               </Link>
             </div>
 
