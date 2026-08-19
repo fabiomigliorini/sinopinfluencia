@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Search, Eye, MessageCircle, UserPlus, Share2, Award, Target, Handshake, Megaphone } from "lucide-react";
+import { Search, Eye, MessageCircle, UserPlus, Share2, Award, Users, ShieldCheck, Megaphone } from "lucide-react";
 import { metadataQueryOptions, profilesQueryOptions } from "@/lib/profile-queries";
 import { buildMetricsMap } from "@/lib/directory-maps";
 import { TierBadge } from "@/components/ProfileCard";
@@ -159,12 +159,12 @@ function SectionHeading({ kicker, title, description, tone = "light" }: SectionH
 function WhyLocal() {
   const cards: { icon: LucideIcon; title: string; description: string }[] = [
     {
-      icon: Target,
+      icon: Users,
       title: "Alcance qualificado",
       description: "Audiência real em Sinop e região, não seguidores genéricos.",
     },
     {
-      icon: Handshake,
+      icon: ShieldCheck,
       title: "Confiança construída",
       description: "A recomendação de quem o seu futuro cliente já acompanha.",
     },
