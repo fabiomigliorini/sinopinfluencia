@@ -289,9 +289,9 @@ export function SocialAccountCards() {
             <DialogTitle>Informar números manualmente</DialogTitle>
             <DialogDescription>
               {manualFor
-                ? `${networkLabel(manualFor.network)} · @${manualFor.handle}`
-                : ""}{" "}
-             , os valores informados aparecem no perfil como declarados pelo criador.
+                ? `${networkLabel(manualFor.network)} · @${manualFor.handle}. `
+                : ""}
+              Os valores informados aparecem no perfil como declarados pelo criador.
             </DialogDescription>
           </DialogHeader>
 
