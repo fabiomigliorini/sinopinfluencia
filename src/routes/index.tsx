@@ -51,7 +51,7 @@ function HomePage() {
       <HeroSearch />
       <WhyLocal />
       <HowItWorks />
-      <SectionDivider />
+      <CreatorOnboarding />
       <CreatorOnboarding />
       <TiersLegend />
       <FeaturedDirectory profiles={profiles} />
