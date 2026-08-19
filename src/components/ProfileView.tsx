@@ -102,6 +102,17 @@ export function ProfileView({
                     {compact(totalFollowers)} seguidores
                   </span>
                 ) : null}
+                {profile.main_network ? (
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FFEB00] px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-widest text-[#1a1a1a]">
+                    <NetworkBadge
+                      network={profile.main_network}
+                      highlight
+                      className="h-4 w-4"
+                      iconClassName="h-2 w-2"
+                    />
+                    Rede principal: {networkLabel(profile.main_network)}
+                  </span>
+                ) : null}
               </div>
 
               <h1 className="mt-4 text-3xl font-black leading-tight tracking-tight text-white md:text-5xl">
@@ -355,7 +366,7 @@ function SocialCard({
   if (stats.length === 0 && !account.handle) return null;
 
   const content = (
-    <div className="relative p-5">
+    <>
       <div className="flex items-center gap-3">
         <div className="relative">
           {account.avatar_url ? (
@@ -363,66 +374,72 @@ function SocialCard({
               src={account.avatar_url}
               alt={account.handle ?? networkLabel(account.network)}
               loading="lazy"
-              className="h-12 w-12 rounded-2xl border border-white/20 object-cover"
+              className="h-11 w-11 rounded-full object-cover"
             />
           ) : (
-            <div className="grid h-12 w-12 place-items-center rounded-2xl border border-white/20 bg-white/10 text-sm font-bold text-white">
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-secondary text-sm font-bold text-primary">
               {(account.handle ?? networkLabel(account.network))[0]?.toUpperCase()}
             </div>
           )}
           <NetworkBadge
             network={account.network}
             highlight={isPrimary}
-            className="absolute -bottom-1 -right-1 h-5 w-5 ring-2 ring-[var(--brand-dark)]"
+            className="absolute -bottom-1 -right-1 h-5 w-5 ring-2 ring-card"
             iconClassName="h-2.5 w-2.5"
           />
         </div>
         <div className="min-w-0">
-          <p className="truncate text-sm font-bold text-white">
+          <p className="truncate text-sm font-bold text-foreground">
             {account.handle ? `@${account.handle}` : networkLabel(account.network)}
           </p>
-          <p className="text-[10px] font-bold uppercase tracking-widest text-white/50">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             {networkLabel(account.network)}
           </p>
         </div>
       </div>
 
       {stats.length > 0 ? (
-        <div className="mt-5 grid grid-cols-2 gap-4">
+        <div className="mt-4 grid grid-cols-2 gap-3">
           {stats.map((stat) => (
             <div key={stat.label}>
-              <p className="text-xl font-black leading-none text-white">{stat.value}</p>
-              <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-white/50">
-                {stat.label}
-              </p>
+              <p className="text-lg font-extrabold leading-tight text-foreground">{stat.value}</p>
+              <p className="text-[11px] font-semibold text-muted-foreground">{stat.label}</p>
             </div>
           ))}
         </div>
       ) : null}
 
-      <div className="mt-5 flex flex-wrap items-center gap-2">
-        <span className="rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-[9.5px] font-bold uppercase tracking-widest text-white/80">
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        <span
+          className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+            isDeclared ? "bg-secondary text-muted-foreground" : "bg-primary/10 text-primary"
+          }`}
+        >
           {isDeclared ? "Declarado pelo criador" : "Dados públicos"}
         </span>
         {!isDeclared && account.last_synced_at ? (
-          <span className="text-[10px] font-semibold text-white/45">
-            {new Date(account.last_synced_at).toLocaleDateString("pt-BR")}
+          <span className="text-[11px] text-muted-foreground">
+            Atualizado em {new Date(account.last_synced_at).toLocaleDateString("pt-BR")}
           </span>
         ) : null}
       </div>
-    </div>
+    </>
   );
 
-  const base = `group ${glassCard} transition-all duration-500`;
+  const cardClass = "flex flex-col rounded-[20px] border border-border bg-card p-5 transition";
+  const hoverClass =
+    "hover:-translate-y-1 hover:border-[#cfe4d3] hover:shadow-[0_22px_40px_-22px_rgba(13,68,36,0.35)]";
 
-  if (!account.profile_url) return <div className={base}>{content}</div>;
+  if (!account.profile_url) {
+    return <div className={cardClass}>{content}</div>;
+  }
 
   return (
     <a
       href={account.profile_url}
       target="_blank"
       rel="noreferrer noopener"
-      className={`${base} hover:-translate-y-2 hover:shadow-[0_32px_64px_-24px_rgba(0,0,0,0.35)]`}
+      className={`group ${cardClass} ${hoverClass}`}
     >
       {content}
     </a>
