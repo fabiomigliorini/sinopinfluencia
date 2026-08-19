@@ -53,7 +53,7 @@ function HomePage() {
       <HowItWorks />
       <CreatorOnboarding />
       <TiersLegend />
-      <TiersLegend />
+      <FeaturedDirectory profiles={profiles} />
       <FeaturedDirectory profiles={profiles} />
     </>
   );
