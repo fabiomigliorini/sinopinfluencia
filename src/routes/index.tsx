@@ -8,6 +8,9 @@ import { CreatorCarousel } from "@/components/CreatorCarousel";
 import { tierRank, type Tier } from "@/lib/tiers";
 import type { Database } from "@/integrations/supabase/types";
 import brandLogoAlt from "@/assets/brand/logo-alt-11-quadrado.png.asset.json";
+import iconAlcance from "@/assets/icons/ALCANCE.png.asset.json";
+import iconConfianca from "@/assets/icons/CONFIANÇA.png.asset.json";
+import iconConteudo from "@/assets/icons/CONTEUDO.png.asset.json";
 
 
 import type { LucideIcon } from "lucide-react";
