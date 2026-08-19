@@ -3,6 +3,8 @@ import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import { sortByTier } from "@/lib/tiers";
 import { loadPublicSocialAccounts } from "@/lib/social-public";
+import { dedupeNiches } from "@/lib/profile-options";
+
 
 
 function createServerSupabaseClient() {
@@ -114,15 +116,8 @@ export const listDirectoryMetadata = createServerFn({ method: "GET" }).handler(
         followers: latest?.followers ?? null,
       };
     });
-    const niches = Array.from(
-      new Set(
-        (profiles ?? []).flatMap((p) =>
-          (p.niche ?? "")
-            .split(",")
-            .map((item) => item.trim())
-            .filter(Boolean),
-        ),
-      ),
+    const niches = dedupeNiches(
+      (profiles ?? []).flatMap((p) => (p.niche ?? "").split(",")),
     ).sort((a, b) => a.localeCompare(b, "pt-BR"));
     return {
       niches,

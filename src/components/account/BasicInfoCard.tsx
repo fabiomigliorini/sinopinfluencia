@@ -208,18 +208,20 @@ export function BasicInfoCard({ profile }: { profile: Profile }) {
                 </span>
               </label>
               <label className="space-y-1.5 md:col-span-2">
-                <span className={labelCls}>Bio</span>
+                <span className={labelCls}>Sobre</span>
                 <textarea
                   className={`${fieldCls} min-h-[120px] resize-y`}
-                  maxLength={1200}
+                  maxLength={500}
                   placeholder="Conte como você trabalha, seu público e o que entrega para as marcas."
                   value={form.bio}
                   onChange={(e) => setForm({ ...form, bio: e.target.value })}
                 />
                 <span className="block text-xs text-muted-foreground">
-                  Texto completo, exibido apenas na sua página pública.
+                  Texto exibido na sua página pública. Até 500 caracteres (
+                  {form.bio.length}/500).
                 </span>
               </label>
+
               <DialogFooter className="md:col-span-2">
                 <button
                   type="submit"
