@@ -7,7 +7,7 @@ import { TierBadge } from "@/components/ProfileCard";
 import { CreatorCarousel } from "@/components/CreatorCarousel";
 import { tierRank, type Tier } from "@/lib/tiers";
 import type { Database } from "@/integrations/supabase/types";
-import brandLogoAlt from "@/assets/brand/logo-alt-11.png.asset.json";
+import brandLogoAlt from "@/assets/brand/logo-alt-11-quadrado.png.asset.json";
 
 
 import type { LucideIcon } from "lucide-react";
