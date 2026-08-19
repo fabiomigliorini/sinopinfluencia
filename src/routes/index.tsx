@@ -52,7 +52,7 @@ function HomePage() {
       <WhyLocal />
       <HowItWorks />
       <CreatorOnboarding />
-      <CreatorOnboarding />
+      <TiersLegend />
       <TiersLegend />
       <FeaturedDirectory profiles={profiles} />
     </>
