@@ -92,7 +92,7 @@ function HeroSearch() {
             </div>
             <div className="mt-7">
               <Link
-                to="/diretorio"
+                to="/vitrine"
                 search={{}}
                 className="inline-flex items-center gap-2 rounded-full bg-[#FFEB00] px-7 py-3.5 text-sm font-bold text-[#0D4424] transition hover:brightness-95"
               >
@@ -368,7 +368,7 @@ function FeaturedDirectory({ profiles }: { profiles: ProfileRow[] }) {
       <div className="mx-auto max-w-[1180px] px-6 lg:px-7">
         <div className="mt-10 text-center">
           <Link
-            to="/diretorio"
+            to="/vitrine"
             search={{}}
             className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-6 py-3 text-sm font-bold text-foreground transition hover:border-primary hover:text-primary"
           >

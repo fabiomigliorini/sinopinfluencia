@@ -68,7 +68,7 @@ export function ProfileView({
       <div className="mx-auto max-w-[1180px] px-6 lg:px-7">
         {backLink ?? (
           <Link
-            to="/diretorio"
+            to="/vitrine"
             search={{}}
             className="inline-flex text-sm font-bold text-primary hover:underline"
           >
