@@ -223,7 +223,7 @@ function HowItWorks() {
         </div>
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {steps.map((step) => (
-            <StepCard key={step.number} variant="light" {...step} />
+            <StepCard key={step.number} {...step} />
           ))}
         </div>
       </div>
@@ -236,33 +236,19 @@ type StepCardProps = {
   title: string;
   description: string;
   icon: LucideIcon;
-  variant?: "light" | "brand";
 };
 
-function StepCard({ number, title, description, icon: Icon, variant = "light" }: StepCardProps) {
-  const isBrand = variant === "brand";
+function StepCard({ number, title, description, icon: Icon }: StepCardProps) {
   return (
-    <div
-      className={`rounded-[20px] border p-7 transition ${
-        isBrand
-          ? "border-white/10 bg-white/[0.06] text-white backdrop-blur-sm hover:border-[#FFEB00]/30 hover:bg-white/[0.09]"
-          : "border-border bg-card hover:border-primary/20 hover:shadow-sm"
-      }`}
-    >
-      <div
-        className={`mb-4 flex h-10 w-10 items-center justify-center rounded-[11px] ${
-          isBrand ? "bg-[#FFEB00] text-[#0D4424]" : "bg-[#0D4424] text-[#FFEB00]"
-        }`}
-      >
-        <Icon className="h-5 w-5" strokeWidth={2.5} />
+    <div className="rounded-[20px] border border-border bg-card p-7 text-center transition hover:border-primary/20 hover:shadow-sm">
+      <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-primary">
+        <Icon className="h-9 w-9" strokeWidth={1.8} />
       </div>
-      <div className={`text-xs font-extrabold ${isBrand ? "text-[#FFEB00]/80" : "text-muted-foreground"}`}>
+      <div className="text-xs font-extrabold uppercase tracking-[2px] text-muted-foreground">
         Passo {number}
       </div>
-      <h3 className={`mt-1 text-lg font-bold ${isBrand ? "text-white" : "text-foreground"}`}>{title}</h3>
-      <p className={`mt-2 text-sm leading-relaxed ${isBrand ? "text-[#CFE8D6]" : "text-muted-foreground"}`}>
-        {description}
-      </p>
+      <h3 className="mt-2 text-lg font-bold text-foreground">{title}</h3>
+      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{description}</p>
     </div>
   );
 }
@@ -331,7 +317,7 @@ function CreatorOnboarding() {
         </div>
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {steps.map((step) => (
-            <StepCard key={step.number} variant="brand" {...step} />
+            <StepCard key={step.number} {...step} />
           ))}
         </div>
         <div className="mt-10 text-center">
@@ -426,16 +412,16 @@ function TiersLegend() {
           {tiers.map(({ tier, label, description }) => (
             <div
               key={tier}
-              className="rounded-[22px] border border-white/10 bg-white/[0.06] p-6 backdrop-blur-sm transition hover:border-[#FFEB00]/30 hover:bg-white/[0.09]"
+              className="rounded-[20px] border border-border bg-card p-7 text-center transition hover:border-primary/20 hover:shadow-sm"
             >
-              <div className="flex items-center justify-between gap-3">
-                <TierBadge tier={tier} light />
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#FFEB00]">
+              <div className="mx-auto mb-4 flex flex-col items-center gap-2">
+                <TierBadge tier={tier} />
+                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                   {tierRank(tier)} {tierRank(tier) === 1 ? "estrela" : "estrelas"}
                 </span>
               </div>
-              <h3 className="mt-4 text-lg font-bold text-white">{label}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-[#CFE8D6]">{description}</p>
+              <h3 className="text-lg font-bold text-foreground">{label}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{description}</p>
             </div>
           ))}
         </div>
