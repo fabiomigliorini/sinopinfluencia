@@ -120,7 +120,11 @@ export function ProfileCard({
     .filter((n) => NETWORK_META[n]);
 
   const orderedNetworks = NETWORK_ORDER.filter((n) => networksWithHandles.includes(n));
-  const availableNetworks = orderedNetworks.length > 0 ? orderedNetworks : networksWithHandles;
+  const baseNetworks = orderedNetworks.length > 0 ? orderedNetworks : networksWithHandles;
+  const availableNetworks = [...new Set(baseNetworks)].sort(
+    (a, b) =>
+      (a === profile.main_network ? 0 : 1) - (b === profile.main_network ? 0 : 1),
+  );
 
   const totalFollowers = metrics.reduce((sum, m) => {
     const n = Number(m.followers ?? 0);
