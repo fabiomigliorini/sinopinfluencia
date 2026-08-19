@@ -326,7 +326,7 @@ function CreatorOnboarding() {
             Três passos para fazer parte da vitrine
           </h2>
           <p className="mt-3 text-[15.5px] text-[#CFE8D6]">
-            Entre para o diretório oficial de criadores de Sinop e seja encontrado por marcas e empresas associadas.
+            Entre para a vitrine oficial de criadores de Sinop e seja encontrado por marcas e empresas associadas.
           </p>
         </div>
         <div className="mt-12 grid gap-6 md:grid-cols-3">
@@ -352,7 +352,7 @@ function FeaturedDirectory({ profiles }: { profiles: ProfileRow[] }) {
   const metricsMap = buildMetricsMap(metadata?.metrics ?? []);
 
   return (
-    <section id="diretorio" className="pb-20 pt-4">
+    <section id="vitrine" className="pb-20 pt-4">
       <div className="mx-auto max-w-[1180px] px-6 lg:px-7">
         <div className="max-w-xl text-center sm:text-left">
           <div className="text-xs font-bold uppercase tracking-[2.5px] text-primary">Vitrine digital</div>

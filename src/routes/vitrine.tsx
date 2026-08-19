@@ -26,7 +26,7 @@ export const Route = createFileRoute("/vitrine")({
   },
   head: () => ({
     meta: [
-      { title: "Diretório de criadores, Sinop Influencia" },
+      { title: "Vitrine digital de criadores, Sinop Influencia" },
       {
         name: "description",
         content:
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/vitrine")({
       },
       {
         property: "og:title",
-        content: "Diretório de criadores, Sinop Influencia",
+        content: "Vitrine digital de criadores, Sinop Influencia",
       },
       {
         property: "og:description",
