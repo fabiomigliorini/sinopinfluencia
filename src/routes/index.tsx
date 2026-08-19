@@ -324,14 +324,11 @@ function FeaturedDirectory({ profiles }: { profiles: ProfileRow[] }) {
   const metricsMap = buildMetricsMap(metadata?.metrics ?? []);
 
   return (
-    <section id="vitrine" className="pb-20 pt-4">
+    <section id="vitrine" className="py-16 md:py-20">
       <div className="mx-auto max-w-[1180px] px-6 lg:px-7">
-        <div className="max-w-xl text-center sm:text-left">
-          <div className="text-xs font-bold uppercase tracking-[2.5px] text-primary">Vitrine digital</div>
-          <h2 className="mt-3 text-2xl font-extrabold tracking-tight md:text-[30px]">ENCONTRE O CRIADOR CERTO PARA A SUA MARCA</h2>
-        </div>
-
+        <SectionHeading kicker="Vitrine digital" title="Encontre o criador certo para a sua marca" />
       </div>
+
 
       <div className="mt-8">
         <CreatorCarousel profiles={profiles} metricsMap={metricsMap} />
