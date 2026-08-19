@@ -208,7 +208,11 @@ export function ProfileCard({
         {availableNetworks.length > 0 ? (
           <div className="mt-4 flex flex-wrap gap-2">
             {availableNetworks.slice(0, 4).map((network) => (
-              <NetworkIconButton key={network} network={network} />
+              <NetworkIconButton
+                key={network}
+                network={network}
+                primary={network === profile.main_network}
+              />
             ))}
           </div>
         ) : null}
