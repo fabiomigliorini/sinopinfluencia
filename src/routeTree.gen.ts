@@ -15,7 +15,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AcademiaRouteImport } from './routes/academia'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CodigoDeCondutaRouteImport } from './routes/codigo-de-conduta'
-import { Route as DiretorioRouteImport } from './routes/diretorio'
+import { Route as VitrineRouteImport } from './routes/vitrine'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as CriadorSlugRouteImport } from './routes/criador.$slug'
 import { Route as PerfilSlugRouteImport } from './routes/perfil.$slug'
@@ -54,9 +54,9 @@ const CodigoDeCondutaRoute = CodigoDeCondutaRouteImport.update({
   path: '/codigo-de-conduta',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DiretorioRoute = DiretorioRouteImport.update({
-  id: '/diretorio',
-  path: '/diretorio',
+const VitrineRoute = VitrineRouteImport.update({
+  id: '/vitrine',
+  path: '/vitrine',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
@@ -108,7 +108,7 @@ export interface FileRoutesByFullPath {
   '/academia': typeof AcademiaRoute
   '/auth': typeof AuthRoute
   '/codigo-de-conduta': typeof CodigoDeCondutaRoute
-  '/diretorio': typeof DiretorioRoute
+  '/vitrine': typeof VitrineRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/criador/$slug': typeof CriadorSlugRoute
   '/perfil/$slug': typeof PerfilSlugRoute
@@ -124,7 +124,7 @@ export interface FileRoutesByTo {
   '/academia': typeof AcademiaRoute
   '/auth': typeof AuthRoute
   '/codigo-de-conduta': typeof CodigoDeCondutaRoute
-  '/diretorio': typeof DiretorioRoute
+  '/vitrine': typeof VitrineRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/criador/$slug': typeof CriadorSlugRoute
   '/perfil/$slug': typeof PerfilSlugRoute
@@ -142,7 +142,7 @@ export interface FileRoutesById {
   '/academia': typeof AcademiaRoute
   '/auth': typeof AuthRoute
   '/codigo-de-conduta': typeof CodigoDeCondutaRoute
-  '/diretorio': typeof DiretorioRoute
+  '/vitrine': typeof VitrineRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/criador/$slug': typeof CriadorSlugRoute
   '/perfil/$slug': typeof PerfilSlugRoute
@@ -160,7 +160,7 @@ export interface FileRouteTypes {
     | '/academia'
     | '/auth'
     | '/codigo-de-conduta'
-    | '/diretorio'
+    | '/vitrine'
     | '/dashboard'
     | '/criador/$slug'
     | '/perfil/$slug'
@@ -176,7 +176,7 @@ export interface FileRouteTypes {
     | '/academia'
     | '/auth'
     | '/codigo-de-conduta'
-    | '/diretorio'
+    | '/vitrine'
     | '/dashboard'
     | '/criador/$slug'
     | '/perfil/$slug'
@@ -193,7 +193,7 @@ export interface FileRouteTypes {
     | '/academia'
     | '/auth'
     | '/codigo-de-conduta'
-    | '/diretorio'
+    | '/vitrine'
     | '/_authenticated/dashboard'
     | '/criador/$slug'
     | '/perfil/$slug'
@@ -211,7 +211,7 @@ export interface RootRouteChildren {
   AcademiaRoute: typeof AcademiaRoute
   AuthRoute: typeof AuthRoute
   CodigoDeCondutaRoute: typeof CodigoDeCondutaRoute
-  DiretorioRoute: typeof DiretorioRoute
+  VitrineRoute: typeof VitrineRoute
   CriadorSlugRoute: typeof CriadorSlugRoute
   PerfilSlugRoute: typeof PerfilSlugRoute
   ApiPublicSitemapDotxmlRoute: typeof ApiPublicSitemapDotxmlRoute
@@ -263,11 +263,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CodigoDeCondutaRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/diretorio': {
-      id: '/diretorio'
-      path: '/diretorio'
-      fullPath: '/diretorio'
-      preLoaderRoute: typeof DiretorioRouteImport
+    '/vitrine': {
+      id: '/vitrine'
+      path: '/vitrine'
+      fullPath: '/vitrine'
+      preLoaderRoute: typeof VitrineRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/dashboard': {
@@ -351,7 +351,7 @@ const rootRouteChildren: RootRouteChildren = {
   AcademiaRoute: AcademiaRoute,
   AuthRoute: AuthRoute,
   CodigoDeCondutaRoute: CodigoDeCondutaRoute,
-  DiretorioRoute: DiretorioRoute,
+  VitrineRoute: VitrineRoute,
   CriadorSlugRoute: CriadorSlugRoute,
   PerfilSlugRoute: PerfilSlugRoute,
   ApiPublicSitemapDotxmlRoute: ApiPublicSitemapDotxmlRoute,

@@ -19,7 +19,7 @@ const searchSchema = z.object({
   tier: z.string().optional(),
 });
 
-export const Route = createFileRoute("/diretorio")({
+export const Route = createFileRoute("/vitrine")({
   validateSearch: (search) => searchSchema.parse(search),
   loader: ({ context }) => {
     context.queryClient.ensureQueryData(metadataQueryOptions);
