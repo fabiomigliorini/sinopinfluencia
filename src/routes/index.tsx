@@ -92,7 +92,7 @@ function HeroSearch() {
             </div>
             <div className="mt-7">
               <Link
-                to="/diretorio"
+                to="/vitrine"
                 search={{}}
                 className="inline-flex items-center gap-2 rounded-full bg-[#FFEB00] px-7 py-3.5 text-sm font-bold text-[#0D4424] transition hover:brightness-95"
               >
@@ -326,7 +326,7 @@ function CreatorOnboarding() {
             Três passos para fazer parte da vitrine
           </h2>
           <p className="mt-3 text-[15.5px] text-[#CFE8D6]">
-            Entre para o diretório oficial de criadores de Sinop e seja encontrado por marcas e empresas associadas.
+            Entre para a vitrine oficial de criadores de Sinop e seja encontrado por marcas e empresas associadas.
           </p>
         </div>
         <div className="mt-12 grid gap-6 md:grid-cols-3">
@@ -352,11 +352,11 @@ function FeaturedDirectory({ profiles }: { profiles: ProfileRow[] }) {
   const metricsMap = buildMetricsMap(metadata?.metrics ?? []);
 
   return (
-    <section id="diretorio" className="pb-20 pt-4">
+    <section id="vitrine" className="pb-20 pt-4">
       <div className="mx-auto max-w-[1180px] px-6 lg:px-7">
         <div className="max-w-xl text-center sm:text-left">
-          <div className="text-xs font-bold uppercase tracking-[2.5px] text-primary">Diretório</div>
-          <h2 className="mt-3 text-2xl font-extrabold tracking-tight md:text-[30px]">Criadores certificados</h2>
+          <div className="text-xs font-bold uppercase tracking-[2.5px] text-primary">Vitrine digital</div>
+          <h2 className="mt-3 text-2xl font-extrabold tracking-tight md:text-[30px]">ENCONTRE O CRIADOR CERTO PARA A SUA MARCA</h2>
         </div>
 
       </div>
@@ -368,7 +368,7 @@ function FeaturedDirectory({ profiles }: { profiles: ProfileRow[] }) {
       <div className="mx-auto max-w-[1180px] px-6 lg:px-7">
         <div className="mt-10 text-center">
           <Link
-            to="/diretorio"
+            to="/vitrine"
             search={{}}
             className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-6 py-3 text-sm font-bold text-foreground transition hover:border-primary hover:text-primary"
           >

@@ -19,14 +19,14 @@ const searchSchema = z.object({
   tier: z.string().optional(),
 });
 
-export const Route = createFileRoute("/diretorio")({
+export const Route = createFileRoute("/vitrine")({
   validateSearch: (search) => searchSchema.parse(search),
   loader: ({ context }) => {
     context.queryClient.ensureQueryData(metadataQueryOptions);
   },
   head: () => ({
     meta: [
-      { title: "Diretório de criadores, Sinop Influencia" },
+      { title: "Vitrine digital de criadores, Sinop Influencia" },
       {
         name: "description",
         content:
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/diretorio")({
       },
       {
         property: "og:title",
-        content: "Diretório de criadores, Sinop Influencia",
+        content: "Vitrine digital de criadores, Sinop Influencia",
       },
       {
         property: "og:description",
@@ -87,10 +87,10 @@ function DirectoryPage() {
         <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <div>
             <div className="text-xs font-bold uppercase tracking-[2.5px] text-primary">
-              Diretório
+              Vitrine digital
             </div>
             <h1 className="mt-2 text-2xl font-extrabold tracking-tight md:text-3xl">
-              Criadores certificados
+              ENCONTRE O CRIADOR CERTO PARA A SUA MARCA
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
               {metadata?.count ?? 0} perfis verificados pela ACES

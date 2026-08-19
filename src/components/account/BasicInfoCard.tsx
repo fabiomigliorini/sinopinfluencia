@@ -203,7 +203,7 @@ export function BasicInfoCard({ profile }: { profile: Profile }) {
                   onChange={(e) => setForm({ ...form, tagline: e.target.value })}
                 />
                 <span className="block text-xs text-muted-foreground">
-                  Aparece nos cards do diretório e da home. Até 160 caracteres (
+                  Aparece nos cards da vitrine e da home. Até 160 caracteres (
                   {form.tagline.length}/160).
                 </span>
               </label>

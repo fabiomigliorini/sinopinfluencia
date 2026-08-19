@@ -185,7 +185,7 @@ function Header() {
         <BrandLogo />
 
         <nav className="hidden items-center gap-8 md:flex">
-          <Link to="/diretorio" search={{}} className="text-[14.5px] font-semibold text-foreground/80 transition hover:text-foreground">
+          <Link to="/vitrine" search={{}} className="text-[14.5px] font-semibold text-foreground/80 transition hover:text-foreground">
             Encontrar criadores
           </Link>
           <Link to="/" hash="como-funciona" className="text-[14.5px] font-semibold text-foreground/80 transition hover:text-foreground">
@@ -269,7 +269,7 @@ function Header() {
                 </div>
                 <div className="flex-1 space-y-1 px-4 py-6">
                   <Link
-                    to="/diretorio"
+                    to="/vitrine"
                     search={{}}
                     onClick={() => setMobileOpen(false)}
                     className="block rounded-xl px-4 py-3 text-[15px] font-semibold text-white/90 transition hover:bg-white/10 hover:text-white"
@@ -359,7 +359,7 @@ function Footer() {
           <div>
             <h5 className="mb-3.5 text-xs font-bold uppercase tracking-widest text-white">Para empresas</h5>
             <ul className="space-y-2 text-[13.5px] text-[#B9D8C1]">
-              <li><Link to="/diretorio" search={{}} className="transition hover:text-white">Buscar criadores</Link></li>
+              <li><Link to="/vitrine" search={{}} className="transition hover:text-white">Buscar criadores</Link></li>
               <li><Link to="/" hash="como-funciona" className="transition hover:text-white">Como funciona</Link></li>
               <li><Link to="/" hash="classificacao" className="transition hover:text-white">Classificação e critérios</Link></li>
             </ul>
