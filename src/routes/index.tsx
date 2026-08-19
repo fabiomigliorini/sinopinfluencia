@@ -54,7 +54,6 @@ function HomePage() {
       <CreatorOnboarding />
       <TiersLegend />
       <FeaturedDirectory profiles={profiles} />
-      <FeaturedDirectory profiles={profiles} />
     </>
   );
 }
