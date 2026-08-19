@@ -270,23 +270,6 @@ function StepCard({ number, title, description, icon: Icon }: StepCardProps) {
   );
 }
 
-function SectionDivider() {
-  return (
-    <div className="relative h-24 overflow-hidden bg-[#0D4424]">
-      <div className="absolute inset-0 opacity-30">
-        <div className="absolute -left-20 top-0 h-40 w-40 rounded-full bg-[#FFEB00] blur-3xl" />
-        <div className="absolute -right-20 bottom-0 h-40 w-40 rounded-full bg-[#FFEB00] blur-3xl" />
-      </div>
-      <div className="relative flex h-full items-center justify-center gap-3">
-        <div className="h-px w-20 bg-gradient-to-r from-transparent to-[#FFEB00]/60" />
-        <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#FFEB00]/30 bg-[#FFEB00]/10">
-          <Sparkles className="h-5 w-5 text-[#FFEB00]" />
-        </div>
-        <div className="h-px w-20 bg-gradient-to-l from-transparent to-[#FFEB00]/60" />
-      </div>
-    </div>
-  );
-}
 
 function CreatorOnboarding() {
   const steps: { number: number; title: string; description: string; icon: LucideIcon }[] = [
