@@ -182,7 +182,11 @@ export function ProfileView({
           <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {socialAccounts.length > 0 ? (
               socialAccounts.map((account) => (
-                <SocialCard key={account.id} account={account} />
+                <SocialCard
+                  key={account.id}
+                  account={account}
+                  isPrimary={account.network === profile.main_network}
+                />
               ))
             ) : (
               <p className="col-span-full text-sm text-muted-foreground">
