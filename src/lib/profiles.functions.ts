@@ -3,6 +3,8 @@ import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import { sortByTier } from "@/lib/tiers";
 import { loadPublicSocialAccounts } from "@/lib/social-public";
+import { dedupeNiches } from "@/lib/profile-options";
+
 
 
 function createServerSupabaseClient() {
