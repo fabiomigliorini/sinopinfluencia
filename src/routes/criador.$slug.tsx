@@ -93,7 +93,7 @@ function ProfileUnavailable() {
       </p>
       <div className="flex gap-3">
         <Link
-          to="/diretorio"
+          to="/vitrine"
           className="rounded-md bg-primary px-4 py-2 text-primary-foreground"
         >
           Ver diretório
