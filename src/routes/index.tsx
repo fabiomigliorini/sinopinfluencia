@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Search, Eye, MessageCircle, UserPlus, Share2, Award, Sparkles } from "lucide-react";
+import { Search, Eye, MessageCircle, UserPlus, Share2, Award, Target, Handshake, Megaphone } from "lucide-react";
 import { metadataQueryOptions, profilesQueryOptions } from "@/lib/profile-queries";
 import { buildMetricsMap } from "@/lib/directory-maps";
 import { TierBadge } from "@/components/ProfileCard";
@@ -8,9 +8,6 @@ import { CreatorCarousel } from "@/components/CreatorCarousel";
 import { tierRank, type Tier } from "@/lib/tiers";
 import type { Database } from "@/integrations/supabase/types";
 import brandLogoAlt from "@/assets/brand/logo-alt-11-quadrado.png.asset.json";
-import iconAlcance from "@/assets/icons/ALCANCE.png.asset.json";
-import iconConfianca from "@/assets/icons/CONFIANÇA.png.asset.json";
-import iconConteudo from "@/assets/icons/CONTEUDO.png.asset.json";
 
 
 import type { LucideIcon } from "lucide-react";
