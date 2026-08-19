@@ -223,7 +223,7 @@ function HowItWorks() {
         </div>
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {steps.map((step) => (
-            <StepCard key={step.number} variant="light" {...step} />
+            <StepCard key={step.number} {...step} />
           ))}
         </div>
       </div>
@@ -317,7 +317,7 @@ function CreatorOnboarding() {
         </div>
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {steps.map((step) => (
-            <StepCard key={step.number} variant="brand" {...step} />
+            <StepCard key={step.number} {...step} />
           ))}
         </div>
         <div className="mt-10 text-center">
