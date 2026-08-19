@@ -294,27 +294,13 @@ function CreatorOnboarding() {
   ];
 
   return (
-    <section
-      id="para-criadores"
-      className="relative overflow-hidden py-16 md:py-20"
-      style={{
-        background: "radial-gradient(circle at 15% 50%, #14622f 0%, #0D4424 60%)",
-      }}
-    >
-      <div className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-[#FFEB00]/10 blur-3xl" />
-      <div className="absolute -bottom-16 -left-16 h-64 w-64 rounded-full bg-[#FFEB00]/10 blur-3xl" />
-      <div className="relative mx-auto max-w-[1180px] px-6 lg:px-7">
-        <div className="mx-auto max-w-xl text-center">
-          <div className="text-xs font-bold uppercase tracking-[2.5px] text-[#FFEB00]">
-            Para influenciadores e criadores de conteúdo
-          </div>
-          <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-white md:text-[30px]">
-            Três passos para fazer parte da vitrine
-          </h2>
-          <p className="mt-3 text-[15.5px] text-[#CFE8D6]">
-            Entre para a vitrine oficial de criadores de Sinop e seja encontrado por marcas e empresas associadas.
-          </p>
-        </div>
+    <section id="para-criadores" className="py-16 md:py-20">
+      <div className="mx-auto max-w-[1180px] px-6 lg:px-7">
+        <SectionHeading
+          kicker="Para influenciadores e criadores de conteúdo"
+          title="Três passos para fazer parte da vitrine"
+          description="Entre para a vitrine oficial de criadores de Sinop e seja encontrado por marcas e empresas associadas."
+        />
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {steps.map((step) => (
             <StepCard key={step.number} {...step} />
@@ -323,7 +309,7 @@ function CreatorOnboarding() {
         <div className="mt-10 text-center">
           <Link
             to="/auth"
-            className="inline-flex items-center gap-2 rounded-full bg-[#FFEB00] px-7 py-3.5 text-sm font-bold text-[#0D4424] transition hover:brightness-95"
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-bold text-primary-foreground transition hover:brightness-110"
           >
             Quero fazer parte
           </Link>
