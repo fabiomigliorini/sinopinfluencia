@@ -96,16 +96,17 @@ function HeroSearch() {
           </div>
 
           <div className="hidden justify-center md:flex">
-            <div className="relative flex h-72 w-72 items-center justify-center rounded-full border border-white/10 bg-white/5">
-              <div className="absolute inset-7 rounded-full border border-dashed border-[#FFEB00]/35" />
+            <div className="relative flex items-center justify-center">
+              <div className="absolute h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(255,235,0,0.14),transparent_68%)]" />
               <img
                 src={brandLogoAlt.url}
                 alt="Logo Sinop Influencia"
-                className="relative h-full w-full object-cover"
+                className="relative h-64 w-auto max-w-full object-contain drop-shadow-[0_18px_40px_rgba(0,0,0,0.35)]"
                 loading="lazy"
               />
             </div>
           </div>
+
 
         </div>
       </div>
