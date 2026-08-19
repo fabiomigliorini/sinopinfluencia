@@ -77,22 +77,16 @@ function formatNumber(value: string | number | null | undefined): string {
 
 function NetworkIconButton({
   network,
-  primary = false,
 }: {
   network: NetworkId;
-  primary?: boolean;
 }) {
   const meta = NETWORK_META[network] ?? NETWORK_META.instagram;
   const { Icon } = meta;
 
   return (
     <span
-      title={primary ? `${meta.label} (rede principal)` : meta.label}
-      className={
-        primary
-          ? "grid h-10 w-10 place-items-center rounded-2xl border border-[#FFEB00]/50 bg-[#FFEB00]/15 text-[#FFEB00] transition-all duration-300 group-hover:bg-[#FFEB00] group-hover:text-[var(--brand-dark)]"
-          : "grid h-10 w-10 place-items-center rounded-2xl border border-white/10 bg-white/5 text-white transition-all duration-300 group-hover:bg-white group-hover:text-[var(--brand-dark)]"
-      }
+      title={meta.label}
+      className="grid h-10 w-10 place-items-center rounded-2xl border border-white/10 bg-white/5 text-white transition-all duration-300 group-hover:bg-white group-hover:text-[var(--brand-dark)]"
     >
       <Icon className="h-4 w-4" />
     </span>

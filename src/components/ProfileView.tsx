@@ -106,7 +106,6 @@ export function ProfileView({
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FFEB00] px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-widest text-[#1a1a1a]">
                     <NetworkBadge
                       network={profile.main_network}
-                      highlight
                       className="h-4 w-4"
                       iconClassName="h-2 w-2"
                     />
@@ -383,7 +382,6 @@ function SocialCard({
           )}
           <NetworkBadge
             network={account.network}
-            highlight={isPrimary}
             className="absolute -bottom-1 -right-1 h-5 w-5 ring-2 ring-card"
             iconClassName="h-2.5 w-2.5"
           />
