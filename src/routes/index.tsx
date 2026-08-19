@@ -7,7 +7,7 @@ import { TierBadge } from "@/components/ProfileCard";
 import { CreatorCarousel } from "@/components/CreatorCarousel";
 import { tierRank, type Tier } from "@/lib/tiers";
 import type { Database } from "@/integrations/supabase/types";
-import brandLogoAlt from "@/assets/brand/logo-alt-11.png.asset.json";
+import brandLogoAlt from "@/assets/brand/logo-alt-11-quadrado.png.asset.json";
 
 
 import type { LucideIcon } from "lucide-react";
@@ -101,7 +101,7 @@ function HeroSearch() {
               <img
                 src={brandLogoAlt.url}
                 alt="Logo Sinop Influencia"
-                className="relative h-auto max-h-[90%] w-auto max-w-[90%] object-contain"
+                className="relative h-full w-full object-cover"
                 loading="lazy"
               />
             </div>

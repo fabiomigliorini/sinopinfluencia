@@ -12,7 +12,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Menu, ChevronDown, X } from "lucide-react";
 
 import appCss from "../styles.css?url";
-import brandMark from "@/assets/brand/icone-verde-2.png.asset.json";
+import brandMark from "@/assets/brand/icone-verde-2-quadrado.png.asset.json";
 import brandLockup from "@/assets/sinop-influencia-logo.png.asset.json";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -151,7 +151,7 @@ function BrandLogo() {
         <img
           src={brandMark.url}
           alt="Sinop Influencia"
-          className="h-9 w-9 object-contain"
+          className="h-full w-full object-cover"
         />
       </div>
       <div className="leading-tight">
