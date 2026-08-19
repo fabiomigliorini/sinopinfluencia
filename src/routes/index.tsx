@@ -228,17 +228,16 @@ function HowItWorks() {
   ];
 
   return (
-    <section id="como-funciona" className="py-16 md:py-20">
-      <div className="mx-auto max-w-[1180px] px-6 lg:px-7">
-        <div className="mx-auto max-w-xl text-center">
-          <div className="text-xs font-bold uppercase tracking-[2.5px] text-primary">Para empresas associadas</div>
-          <h2 className="mt-3 text-2xl font-extrabold tracking-tight md:text-[30px]">
-            Três passos até a parceria certa
-          </h2>
-          <p className="mt-3 text-[15.5px] text-muted-foreground">
-            A Vitrine existe para aproximar o comércio local de quem já fala com o público de Sinop.
-          </p>
-        </div>
+    <section id="como-funciona" className="relative overflow-hidden bg-[#0D4424] py-16 md:py-20">
+      <div className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-[#FFEB00]/10 blur-3xl" />
+      <div className="absolute -bottom-16 -left-16 h-64 w-64 rounded-full bg-[#FFEB00]/10 blur-3xl" />
+      <div className="relative mx-auto max-w-[1180px] px-6 lg:px-7">
+        <SectionHeading
+          tone="dark"
+          kicker="Para empresas associadas"
+          title="Três passos até a parceria certa"
+          description="A Vitrine existe para aproximar o comércio local de quem já fala com o público de Sinop."
+        />
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {steps.map((step) => (
             <StepCard key={step.number} {...step} />
