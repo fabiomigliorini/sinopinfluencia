@@ -24,13 +24,13 @@ export const Route = createFileRoute("/criador/$slug")({
     if (!loaderData) {
       return {
         meta: [
-          { title: "Perfil indisponível — Sinop Influencia" },
+          { title: "Perfil indisponível, Sinop Influencia" },
           { name: "robots", content: "noindex" },
         ],
       };
     }
     const { profile } = loaderData;
-    const title = `${profile.display_name} — Criador de conteúdo em ${profile.city ?? "Sinop, MT"}`;
+    const title = `${profile.display_name}, Criador de conteúdo em ${profile.city ?? "Sinop, MT"}`;
     const description =
       profile.tagline ??
       profile.bio ??

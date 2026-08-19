@@ -5,13 +5,13 @@ export const Route = createFileRoute("/codigo-de-conduta")({
   component: CodigoDeCondutaPage,
   head: () => ({
     meta: [
-      { title: "Código de Conduta — Sinop Influencia" },
+      { title: "Código de Conduta, Sinop Influencia" },
       {
         name: "description",
         content:
           "Princípios de ética, transparência e responsabilidade para criadores de conteúdo participantes da vitrine da ACES.",
       },
-      { property: "og:title", content: "Código de Conduta — Sinop Influencia" },
+      { property: "og:title", content: "Código de Conduta, Sinop Influencia" },
       {
         property: "og:description",
         content:

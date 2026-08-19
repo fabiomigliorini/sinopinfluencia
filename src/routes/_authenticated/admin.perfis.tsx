@@ -37,13 +37,13 @@ export const Route = createFileRoute("/_authenticated/admin/perfis")({
   component: AdminProfilesPage,
   head: () => ({
     meta: [
-      { title: "Curadoria de perfis — Sinop Influencia" },
+      { title: "Curadoria de perfis, Sinop Influencia" },
       {
         name: "description",
         content:
           "Painel da ACES para aprovar, rejeitar e revisar perfis de criadores da vitrine Sinop Influencia.",
       },
-      { property: "og:title", content: "Curadoria de perfis — Sinop Influencia" },
+      { property: "og:title", content: "Curadoria de perfis, Sinop Influencia" },
       {
         property: "og:description",
         content: "Painel interno de curadoria de criadores da vitrine Sinop Influencia.",

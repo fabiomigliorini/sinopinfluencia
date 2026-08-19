@@ -37,8 +37,8 @@ export function ConsentDialog({ open, onOpenChange, onConfirm, isPending }: Cons
         <div className="space-y-4 text-sm leading-relaxed text-foreground/90">
           <p>
             Ao enviar meu cadastro, autorizo a <strong>{PROJECT_NAME}</strong>, CNPJ <strong>{CNPJ_PLACEHOLDER}</strong>
-            , a tratar os dados que forneci — nome, foto, biografia, especialidades, portfólio, links e métricas
-            públicas das minhas redes sociais — com a finalidade de compor um catálogo de influenciadores destinado à
+            , a tratar os dados que forneci, nome, foto, biografia, especialidades, portfólio, links e métricas
+            públicas das minhas redes sociais, com a finalidade de compor um catálogo de influenciadores destinado à
             consulta por empresas interessadas em contratar serviços de divulgação.
           </p>
 

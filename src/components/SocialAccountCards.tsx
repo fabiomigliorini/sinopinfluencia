@@ -141,7 +141,7 @@ export function SocialAccountCards() {
         <div>
           <h2 className="text-lg font-bold">Perfis em redes sociais</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            Vincule quantos perfis quiser — inclusive mais de um na mesma rede. Os números públicos
+            Vincule quantos perfis quiser, inclusive mais de um na mesma rede. Os números públicos
             são atualizados automaticamente todos os dias.
           </p>
         </div>
@@ -291,7 +291,7 @@ export function SocialAccountCards() {
               {manualFor
                 ? `${networkLabel(manualFor.network)} · @${manualFor.handle}`
                 : ""}{" "}
-              — os valores informados aparecem no perfil como declarados pelo criador.
+             , os valores informados aparecem no perfil como declarados pelo criador.
             </DialogDescription>
           </DialogHeader>
 

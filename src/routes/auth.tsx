@@ -12,13 +12,13 @@ const authSchema = z.object({
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Entrar ou cadastrar — Sinop Influencia" },
+      { title: "Entrar ou cadastrar, Sinop Influencia" },
       {
         name: "description",
         content:
           "Acesse sua conta na Vitrine Sinop Influencia ou crie seu perfil de criador de conteúdo.",
       },
-      { property: "og:title", content: "Entrar ou cadastrar — Sinop Influencia" },
+      { property: "og:title", content: "Entrar ou cadastrar, Sinop Influencia" },
       {
         property: "og:description",
         content:

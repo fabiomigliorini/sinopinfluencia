@@ -104,10 +104,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Sinop Influencia — Vitrine oficial de criadores de conteúdo" },
+      { title: "Sinop Influencia, Vitrine oficial de criadores de conteúdo" },
       { name: "description", content: "Encontre criadores de conteúdo certificados pela ACES em Sinop. Perfis verificados, métricas e contato direto com influenciadores locais." },
       { name: "author", content: "Sinop Influencia · ACES" },
-      { property: "og:title", content: "Sinop Influencia — Vitrine oficial de criadores de conteúdo" },
+      { property: "og:title", content: "Sinop Influencia, Vitrine oficial de criadores de conteúdo" },
       { property: "og:description", content: "Encontre criadores de conteúdo certificados pela ACES em Sinop. Perfis verificados, métricas e contato direto com influenciadores locais." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -221,7 +221,7 @@ function Header() {
             <Link
               to="/dashboard"
               className="group relative flex items-center justify-center overflow-hidden rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/25 transition hover:-translate-y-0.5 hover:bg-primary/90"
-              aria-label={headerProfile ? `Minha conta — ${headerProfile.display_name ?? ""}` : "Minha conta"}
+              aria-label={headerProfile ? `Minha conta, ${headerProfile.display_name ?? ""}` : "Minha conta"}
               title="Minha conta"
             >
               {headerProfile?.avatar_url ? (
@@ -344,13 +344,13 @@ function Footer() {
             <Link to="/" className="inline-block">
               <img
                 src={brandLockup.url}
-                alt="Sinop Influencia — um programa ACES"
+                alt="Sinop Influencia, um programa ACES"
                 className="h-14 w-auto"
               />
             </Link>
 
             <p className="mt-4 max-w-[280px] text-[13.5px] leading-relaxed text-[#A9C9B2]">
-              Um programa da ACES — Associação Comercial e Empresarial de Sinop — para qualificar o ambiente digital em favor do comércio local.
+              Um programa da ACES, Associação Comercial e Empresarial de Sinop, para qualificar o ambiente digital em favor do comércio local.
             </p>
           </div>
           <div>
@@ -371,7 +371,7 @@ function Footer() {
           </div>
         </div>
         <div className="flex flex-wrap items-center justify-between gap-3 pt-5 text-xs text-[#8FB89A]">
-          <span>© Sinop Influencia — um programa ACES.</span>
+          <span>© Sinop Influencia, um programa ACES.</span>
           <span>Vitrine oficial de criadores de conteúdo de Sinop.</span>
         </div>
       </div>
