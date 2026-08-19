@@ -102,6 +102,17 @@ export function ProfileView({
                     {compact(totalFollowers)} seguidores
                   </span>
                 ) : null}
+                {profile.main_network ? (
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FFEB00] px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-widest text-[#1a1a1a]">
+                    <NetworkBadge
+                      network={profile.main_network}
+                      highlight
+                      className="h-4 w-4"
+                      iconClassName="h-2 w-2"
+                    />
+                    Rede principal: {networkLabel(profile.main_network)}
+                  </span>
+                ) : null}
               </div>
 
               <h1 className="mt-4 text-3xl font-black leading-tight tracking-tight text-white md:text-5xl">
