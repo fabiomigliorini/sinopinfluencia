@@ -5,13 +5,13 @@ export const Route = createFileRoute("/academia")({
   component: AcademiaPage,
   head: () => ({
     meta: [
-      { title: "Academia Sinop Influencia — Capacitação para criadores" },
+      { title: "Academia Sinop Influencia, Capacitação para criadores" },
       {
         name: "description",
         content:
           "Conteúdo, dicas e recursos para criadores de conteúdo de Sinop crescerem com qualidade, ética e resultados.",
       },
-      { property: "og:title", content: "Academia Sinop Influencia — Capacitação para criadores" },
+      { property: "og:title", content: "Academia Sinop Influencia, Capacitação para criadores" },
       {
         property: "og:description",
         content:
@@ -36,7 +36,7 @@ const modules = [
     icon: Heart,
     title: "Construa uma comunidade fiel",
     description:
-      "Aprenda a ouvir, responder e criar proximidade com quem te acompanha — o relacionamento é o maior ativo de um criador.",
+      "Aprenda a ouvir, responder e criar proximidade com quem te acompanha, o relacionamento é o maior ativo de um criador.",
   },
   {
     icon: BarChart3,
@@ -91,7 +91,7 @@ function AcademiaPage() {
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-2xl font-extrabold tracking-tight md:text-[30px]">Módulos de aprendizado</h2>
             <p className="mt-3 text-[15.5px] text-muted-foreground">
-              Dicas e direcionamentos para criadores de todos os níveis — do primeiro post à parceria profissional.
+              Dicas e direcionamentos para criadores de todos os níveis, do primeiro post à parceria profissional.
             </p>
           </div>
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

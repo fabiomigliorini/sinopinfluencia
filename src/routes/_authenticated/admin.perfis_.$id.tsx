@@ -9,13 +9,13 @@ export const Route = createFileRoute("/_authenticated/admin/perfis_/$id")({
   component: AdminProfilePreview,
   head: () => ({
     meta: [
-      { title: "Pré-visualização de perfil — Sinop Influencia" },
+      { title: "Pré-visualização de perfil, Sinop Influencia" },
       {
         name: "description",
         content:
           "Pré-visualização de curadoria de um perfil de criador antes da aprovação na vitrine Sinop Influencia.",
       },
-      { property: "og:title", content: "Pré-visualização de perfil — Sinop Influencia" },
+      { property: "og:title", content: "Pré-visualização de perfil, Sinop Influencia" },
       {
         property: "og:description",
         content: "Painel interno de curadoria da vitrine Sinop Influencia.",

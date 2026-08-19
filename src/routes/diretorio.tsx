@@ -26,7 +26,7 @@ export const Route = createFileRoute("/diretorio")({
   },
   head: () => ({
     meta: [
-      { title: "Diretório de criadores — Sinop Influencia" },
+      { title: "Diretório de criadores, Sinop Influencia" },
       {
         name: "description",
         content:
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/diretorio")({
       },
       {
         property: "og:title",
-        content: "Diretório de criadores — Sinop Influencia",
+        content: "Diretório de criadores, Sinop Influencia",
       },
       {
         property: "og:description",

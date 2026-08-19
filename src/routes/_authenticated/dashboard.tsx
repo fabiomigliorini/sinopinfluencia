@@ -24,13 +24,13 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardPage,
   head: () => ({
     meta: [
-      { title: "Minha conta — Sinop Influencia" },
+      { title: "Minha conta, Sinop Influencia" },
       {
         name: "description",
         content:
           "Acompanhe o status do seu perfil de criador na vitrine oficial Sinop Influencia e envie para curadoria da ACES.",
       },
-      { property: "og:title", content: "Minha conta — Sinop Influencia" },
+      { property: "og:title", content: "Minha conta, Sinop Influencia" },
       {
         property: "og:description",
         content: "Gerencie seu perfil de criador na vitrine oficial Sinop Influencia.",

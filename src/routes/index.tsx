@@ -22,13 +22,13 @@ export const Route = createFileRoute("/")({
 
   head: () => ({
     meta: [
-      { title: "Sinop Influencia — Vitrine oficial de criadores de conteúdo" },
+      { title: "Sinop Influencia, Vitrine oficial de criadores de conteúdo" },
       {
         name: "description",
         content:
           "Encontre criadores de conteúdo certificados pela ACES em Sinop. Perfis verificados, métricas e contato direto com influenciadores locais.",
       },
-      { property: "og:title", content: "Sinop Influencia — Vitrine oficial de criadores de conteúdo" },
+      { property: "og:title", content: "Sinop Influencia, Vitrine oficial de criadores de conteúdo" },
       {
         property: "og:description",
         content:
@@ -73,7 +73,7 @@ function HeroSearch() {
               A criatividade de Sinop, <em className="not-italic text-[#FFEB00]">pronta para o seu negócio.</em>
             </h1>
             <p className="lead mt-4 max-w-lg text-base text-[#CFE8D6] md:text-lg">
-              Encontre criadores de conteúdo certificados pela ACES, filtrados por especialidade e categoria — e fale
+              Encontre criadores de conteúdo certificados pela ACES, filtrados por especialidade e categoria, e fale
               direto com quem vai divulgar sua marca.
             </p>
             <div className="mt-6 flex flex-wrap gap-2.5">
@@ -126,7 +126,7 @@ function HowItWorks() {
       number: 1,
       title: "Filtre por nicho e categoria",
       description:
-        "Busque por especialidade — gastronomia, moda, agro, humor — e pelo nível de maturidade do criador.",
+        "Busque por especialidade, gastronomia, moda, agro, humor, e pelo nível de maturidade do criador.",
       icon: Search,
     },
     {
