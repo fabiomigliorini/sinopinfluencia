@@ -52,6 +52,7 @@ function HomePage() {
   return (
     <>
       <HeroSearch />
+      <WhyLocal />
       <HowItWorks />
       <SectionDivider />
       <CreatorOnboarding />
