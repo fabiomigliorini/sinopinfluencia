@@ -332,7 +332,13 @@ function WorkCard({ work }: { work: Tables["profile_works"]["Row"] }) {
   );
 }
 
-function SocialCard({ account }: { account: PublicSocialAccount }) {
+function SocialCard({
+  account,
+  isPrimary = false,
+}: {
+  account: PublicSocialAccount;
+  isPrimary?: boolean;
+}) {
   const snap = account.latest;
   const isDeclared = account.is_declared;
 
