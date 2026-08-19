@@ -12,7 +12,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Menu, ChevronDown, X } from "lucide-react";
 
 import appCss from "../styles.css?url";
-import brandMark from "@/assets/sinop-influencia-mark.png.asset.json";
+import brandMark from "@/assets/brand/icone-verde-2.png.asset.json";
 import brandLockup from "@/assets/sinop-influencia-logo.png.asset.json";
 
 import { supabase } from "@/integrations/supabase/client";
