@@ -56,6 +56,11 @@ export const NICHE_OPTIONS = [
   "Sustentabilidade",
   "Política",
   "Marketing",
+  "Associativismo",
+  "Institucional",
+  "Entretenimento",
+  "Família",
+  "Lazer",
 ];
 
 /** profiles.niche stores a comma separated list of niches. */
@@ -64,6 +69,29 @@ export const splitNiches = (value?: string | null) =>
     .split(",")
     .map((item) => item.trim())
     .filter(Boolean);
+
+/** Case insensitive dedupe, keeping the first spelling found. */
+export const dedupeNiches = (niches: string[]) => {
+  const seen = new Map<string, string>();
+  for (const raw of niches) {
+    const name = raw.trim();
+    if (!name) continue;
+    const key = name
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
+    const canonical =
+      NICHE_OPTIONS.find(
+        (option) =>
+          option
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase() === key,
+      ) ?? name;
+    if (!seen.has(key)) seen.set(key, canonical);
+  }
+  return Array.from(seen.values());
+};
 
 export const joinNiches = (niches: string[]) =>
   Array.from(new Set(niches.map((n) => n.trim()).filter(Boolean))).join(", ");
