@@ -99,9 +99,9 @@ function HeroSearch() {
             <div className="relative flex h-72 w-72 items-center justify-center rounded-full border border-white/10 bg-white/5">
               <div className="absolute inset-7 rounded-full border border-dashed border-[#FFEB00]/35" />
               <img
-                src={brandIconWhite.url}
-                alt="Símbolo Sinop Influencia"
-                className="relative h-40 w-auto"
+                src={brandLogoVertical.url}
+                alt="Logo Sinop Influencia"
+                className="relative h-48 w-auto"
                 loading="lazy"
               />
             </div>
