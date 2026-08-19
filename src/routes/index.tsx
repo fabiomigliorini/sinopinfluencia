@@ -130,25 +130,81 @@ function TrustChip({ children }: { children: React.ReactNode }) {
   );
 }
 
+function WhyLocal() {
+  const cards = [
+    {
+      icon: iconAlcance.url,
+      title: "Alcance qualificado",
+      description: "Audiência real em Sinop e região, não seguidores genéricos.",
+    },
+    {
+      icon: iconConfianca.url,
+      title: "Confiança construída",
+      description: "A recomendação de quem o seu futuro cliente já acompanha.",
+    },
+    {
+      icon: iconConteudo.url,
+      title: "Conteúdo que vende",
+      description: "Criadores que sabem transformar atenção em cliente na porta da loja.",
+    },
+  ];
+
+  return (
+    <section id="por-que-local" className="py-16 md:py-20">
+      <div className="mx-auto max-w-[1180px] px-6 lg:px-7">
+        <div className="mx-auto max-w-2xl text-center">
+          <div className="text-xs font-bold uppercase tracking-[2.5px] text-primary">O poder do influenciador local</div>
+          <h2 className="mt-3 text-2xl font-extrabold tracking-tight md:text-[30px]">
+            Por que contratar um influenciador local
+          </h2>
+          <p className="mt-4 text-[15.5px] leading-relaxed text-muted-foreground">
+            O consumidor de Sinop confia em quem ele já segue nas redes sociais: o colega, o vizinho, a pessoa que
+            circula nas ruas de Sinop e mostra o dia a dia da cidade. É essa confiança que o seu cliente compra.
+          </p>
+        </div>
+
+        <div className="mt-12 grid gap-6 md:grid-cols-3">
+          {cards.map((card) => (
+            <div
+              key={card.title}
+              className="rounded-[20px] border border-border bg-card p-7 text-center transition hover:border-primary/20 hover:shadow-sm"
+            >
+              <img
+                src={card.icon}
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                className="mx-auto h-24 w-24 object-contain mix-blend-multiply"
+              />
+              <h3 className="mt-4 text-lg font-bold text-foreground">{card.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{card.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function HowItWorks() {
   const steps: { number: number; title: string; description: string; icon: LucideIcon }[] = [
     {
       number: 1,
-      title: "Filtre por nicho e categoria",
-      description:
-        "Busque por especialidade, gastronomia, moda, agro, humor, e pelo nível de maturidade do criador.",
+      title: "Filtre pelo que você precisa",
+      description: "Nicho, categoria e rede social. Em segundos você já vê quem serve pra sua marca.",
       icon: Search,
     },
     {
       number: 2,
-      title: "Veja o perfil completo",
-      description: "Métricas, formatos de trabalho, portfólio de campanhas já realizadas e com quem já atuou.",
+      title: "Compare com dados reais",
+      description:
+        "Métricas verificadas, portfólio de campanhas já realizadas e com quais marcas o influenciador já trabalhou.",
       icon: Eye,
     },
     {
       number: 3,
-      title: "Fale direto com o criador",
-      description: "Sem intermediários. O contrato e a negociação são combinados diretamente entre as partes.",
+      title: "Feche direto com o criador",
+      description: "Sem intermediários, sem taxa. Você negocia e contrata como preferir.",
       icon: MessageCircle,
     },
   ];
