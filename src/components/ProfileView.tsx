@@ -303,7 +303,7 @@ function WorkCard({ work }: { work: Tables["profile_works"]["Row"] }) {
             loading="lazy"
             className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[var(--brand-dark)] via-[var(--brand-dark)]/25 to-transparent" />
+          
         </div>
       ) : null}
       <div
