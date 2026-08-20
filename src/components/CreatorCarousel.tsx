@@ -127,7 +127,7 @@ export function CreatorCarousel({
 
   return (
     <div
-      className="group/marquee relative overflow-hidden"
+      className="group/marquee relative overflow-hidden py-6"
       style={{
         maskImage:
           "linear-gradient(to right, transparent, black 5%, black 95%, transparent)",
