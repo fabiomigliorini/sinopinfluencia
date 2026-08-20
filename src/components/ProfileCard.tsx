@@ -156,7 +156,7 @@ export function ProfileCard({
             {initials(profile.display_name)}
           </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-[var(--brand-dark)]/80 via-transparent to-transparent" />
+        
 
         {/* Top-left total followers */}
         {totalValue ? (
