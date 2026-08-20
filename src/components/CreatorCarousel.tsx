@@ -79,7 +79,7 @@ function CarouselCard({
           </div>
         )}
 
-        <div className="absolute inset-0 bg-gradient-to-t from-[var(--brand-dark)] via-[var(--brand-dark)]/25 to-transparent" />
+        {/* Gradient overlay removed to keep images clean */}
 
         {/* Top-left: total followers */}
         {followers > 0 ? (
