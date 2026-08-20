@@ -90,7 +90,7 @@ function NetworkIconButton({
       title={meta.label}
       className={`grid h-10 w-10 place-items-center rounded-2xl border transition-all duration-300 ${
         highlight
-          ? "border-[#FFEB00]/40 bg-[#FFEB00] text-[#1a1a1a]"
+          ? "border-[#FFEB00]/40 bg-white/5 text-[#FFEB00] hover:bg-[#FFEB00] hover:text-[#1a1a1a]"
           : "border-white/10 bg-white/5 text-white group-hover:bg-white group-hover:text-[var(--brand-dark)]"
       }`}
     >
