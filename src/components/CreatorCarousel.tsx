@@ -98,9 +98,11 @@ function CarouselCard({
 
         {/* Bottom: name */}
         <div className="absolute inset-x-0 bottom-0 p-4">
-          <h3 className="truncate text-lg font-extrabold leading-tight tracking-tight text-white">
-            {profile.display_name}
-          </h3>
+          <div className="inline-block rounded-xl border border-white/15 bg-white/10 px-3 py-2 backdrop-blur-xl">
+            <h3 className="truncate text-lg font-extrabold leading-tight tracking-tight text-white">
+              {profile.display_name}
+            </h3>
+          </div>
         </div>
       </div>
     </Link>
