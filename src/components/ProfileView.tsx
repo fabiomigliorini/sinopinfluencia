@@ -79,8 +79,8 @@ export function ProfileView({
         {/* HERO */}
         <div className={`mt-6 ${glassCard} p-0`}>
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_85%_10%,rgba(255,235,0,0.14),transparent_45%)]" />
-          <div className="relative flex flex-col">
-            <div className="relative aspect-[4/3] w-full overflow-hidden">
+          <div className="relative flex flex-col md:flex-row">
+            <div className="relative aspect-[4/3] w-full overflow-hidden md:aspect-auto md:w-[340px] md:shrink-0 lg:w-[380px]">
               {profile.avatar_url ? (
                 <img
                   src={profile.avatar_url}
@@ -114,7 +114,7 @@ export function ProfileView({
                 ) : null}
               </div>
 
-              <h1 className="mt-4 text-3xl font-black leading-tight tracking-tight text-white md:text-5xl">
+              <h1 className="mt-4 text-3xl font-black leading-tight tracking-tight text-white md:text-4xl lg:text-5xl">
                 {profile.display_name}
               </h1>
 
