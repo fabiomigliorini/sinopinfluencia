@@ -77,8 +77,10 @@ function formatNumber(value: string | number | null | undefined): string {
 
 function NetworkIconButton({
   network,
+  highlight = false,
 }: {
   network: NetworkId;
+  highlight?: boolean;
 }) {
   const meta = NETWORK_META[network] ?? NETWORK_META.instagram;
   const { Icon } = meta;
@@ -86,7 +88,11 @@ function NetworkIconButton({
   return (
     <span
       title={meta.label}
-      className="grid h-10 w-10 place-items-center rounded-2xl border border-white/10 bg-white/5 text-white transition-all duration-300 group-hover:bg-white group-hover:text-[var(--brand-dark)]"
+      className={`grid h-10 w-10 place-items-center rounded-2xl border transition-all duration-300 ${
+        highlight
+          ? "border-[#FFEB00]/40 bg-[#FFEB00] text-[#1a1a1a]"
+          : "border-white/10 bg-white/5 text-white group-hover:bg-white group-hover:text-[var(--brand-dark)]"
+      }`}
     >
       <Icon className="h-4 w-4" />
     </span>
