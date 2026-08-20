@@ -13,7 +13,7 @@ import { Menu, ChevronDown, X } from "lucide-react";
 
 import appCss from "../styles.css?url";
 import brandMark from "@/assets/brand/icone-verde-2-quadrado.png.asset.json";
-import brandLockup from "@/assets/sinop-influencia-logo.png.asset.json";
+import logoHorizontal from "@/assets/brand/logo-horizontal-colorido.png.asset.json";
 
 import { supabase } from "@/integrations/supabase/client";
 import { reportLovableError } from "../lib/lovable-error-reporting";
