@@ -33,7 +33,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           ...staticUrls.map(
             (path) =>
               `<url><loc>${SITE_URL}${path}</loc><changefreq>weekly</changefreq><priority>${
-                path === "" ? "1.0" : "0.8"
+                path === "/" ? "1.0" : "0.8"
               }</priority></url>`,
           ),
           ...(data ?? []).map(
