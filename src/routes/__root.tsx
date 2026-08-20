@@ -104,11 +104,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Sinop Influencia, Vitrine oficial de criadores de conteúdo" },
-      { name: "description", content: "Encontre criadores de conteúdo certificados pela ACES em Sinop. Perfis verificados, métricas e contato direto com influenciadores locais." },
       { name: "author", content: "Sinop Influencia · ACES" },
-      { property: "og:title", content: "Sinop Influencia, Vitrine oficial de criadores de conteúdo" },
-      { property: "og:description", content: "Encontre criadores de conteúdo certificados pela ACES em Sinop. Perfis verificados, métricas e contato direto com influenciadores locais." },
+      { property: "og:site_name", content: "Sinop Influencia" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@SinopInfluencia" },
