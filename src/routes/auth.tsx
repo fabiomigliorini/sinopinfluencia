@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { z } from "zod";
+import { translateAuthError } from "@/lib/auth-errors";
 
 const authSchema = z.object({
   email: z.string().email("Informe um e-mail válido"),
@@ -70,7 +71,7 @@ function AuthPage() {
         navigate({ to: "/dashboard" });
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro inesperado");
+      setError(translateAuthError(err));
     } finally {
       setLoading(false);
     }
@@ -81,7 +82,7 @@ function AuthPage() {
       redirect_uri: window.location.origin,
     });
     if (result.error) {
-      setError(result.error.message);
+      setError(translateAuthError(result.error));
       return;
     }
     if (result.redirected) return;
