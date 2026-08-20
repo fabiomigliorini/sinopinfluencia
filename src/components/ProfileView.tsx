@@ -326,7 +326,7 @@ function WorkCard({ work }: { work: Tables["profile_works"]["Row"] }) {
     </>
   );
 
-  const base = `group ${glassCard} transition-all duration-500`;
+  const base = `group relative z-0 ${glassCard} transition-all duration-500`;
 
   if (!work.link_url) return <div className={base}>{inner}</div>;
 
@@ -335,7 +335,7 @@ function WorkCard({ work }: { work: Tables["profile_works"]["Row"] }) {
       href={work.link_url}
       target="_blank"
       rel="noreferrer noopener"
-      className={`${base} hover:-translate-y-2 hover:shadow-[0_32px_64px_-24px_rgba(0,0,0,0.35)]`}
+      className={`${base} hover:z-10 hover:scale-[1.03] hover:shadow-[0_32px_64px_-24px_rgba(0,0,0,0.35)]`}
     >
       {inner}
     </a>
