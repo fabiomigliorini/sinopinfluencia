@@ -136,16 +136,16 @@ export function ProfileCard({
     <Link
       to="/criador/$slug"
       params={{ slug: profile.slug }}
-      className="group relative z-0 flex flex-col overflow-hidden rounded-[28px] border border-white/20 bg-gradient-to-b from-[var(--brand-green-deep)] to-[var(--brand-dark)] shadow-2xl shadow-black/20 transition-all duration-500 hover:z-10 hover:scale-[1.03] hover:shadow-[0_32px_64px_-24px_rgba(0,0,0,0.35)]"
+      className="group relative z-0 flex h-[520px] flex-col overflow-hidden rounded-[28px] border border-white/20 bg-gradient-to-b from-[var(--brand-green-deep)] to-[var(--brand-dark)] shadow-2xl shadow-black/20 transition-all duration-500 hover:z-10 hover:scale-[1.03] hover:shadow-[0_32px_64px_-24px_rgba(0,0,0,0.35)]"
     >
-      {/* Photo area: taller ratio to avoid cropping faces */}
-      <div className="relative aspect-[2/3] overflow-hidden">
+      {/* Photo area: flex-1 so it never sits under the content overlay */}
+      <div className="relative min-h-0 flex-1 overflow-hidden">
         {profile.avatar_url ? (
             <img
               src={profile.avatar_url}
               alt={profile.display_name}
               loading="lazy"
-              className="h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
+              className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
             />
         ) : (
           <div
@@ -174,8 +174,8 @@ export function ProfileCard({
         </div>
       </div>
 
-      {/* Glassmorphism content overlay at bottom */}
-      <div className="absolute bottom-0 left-0 right-0 border-t border-white/10 bg-[var(--brand-dark)]/60 px-5 pb-5 pt-4 backdrop-blur-2xl">
+      {/* Glassmorphism content at bottom, in flow so it never covers the photo */}
+      <div className="border-t border-white/10 bg-[var(--brand-dark)]/60 px-5 pb-5 pt-4 backdrop-blur-2xl">
         {niches.length > 0 ? (
           <div className="mb-2.5 flex flex-wrap gap-1.5">
             {niches.slice(0, 3).map((n) => (
