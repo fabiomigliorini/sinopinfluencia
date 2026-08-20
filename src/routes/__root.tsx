@@ -341,11 +341,11 @@ function Footer() {
       <div className="mx-auto max-w-[1180px] px-6 pb-6 pt-14 lg:px-7">
         <div className="grid gap-10 border-b border-white/10 pb-10 md:grid-cols-[1.4fr_1fr_1fr]">
           <div>
-            <Link to="/" className="inline-block">
+            <Link to="/" className="inline-block rounded-xl bg-white/95 p-3 shadow-lg shadow-black/10">
               <img
-                src={brandLockup.url}
+                src={logoHorizontal.url}
                 alt="Sinop Influencia, um programa ACES"
-                className="h-14 w-auto"
+                className="h-16 w-auto"
               />
             </Link>
 
