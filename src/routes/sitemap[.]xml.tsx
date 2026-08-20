@@ -28,7 +28,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           .select("slug, updated_at")
           .eq("status", "approved");
 
-        const staticUrls = ["", "/vitrine", "/academia", "/codigo-de-conduta", "/auth"];
+        const staticUrls = ["/", "/vitrine", "/academia", "/codigo-de-conduta", "/auth"];
         const urls = [
           ...staticUrls.map(
             (path) =>
