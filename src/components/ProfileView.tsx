@@ -77,10 +77,10 @@ export function ProfileView({
         )}
 
         {/* HERO */}
-        <div className={`mt-6 ${glassCard} p-6 md:p-10`}>
+        <div className={`mt-6 ${glassCard} p-0`}>
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_85%_10%,rgba(255,235,0,0.14),transparent_45%)]" />
-          <div className="relative flex flex-col gap-8 md:flex-row md:items-center">
-            <div className="h-56 w-56 shrink-0 overflow-hidden rounded-[28px] border border-white/20 bg-white/10 shadow-2xl md:h-72 md:w-72">
+          <div className="relative flex flex-col">
+            <div className="relative aspect-[4/3] w-full overflow-hidden">
               {profile.avatar_url ? (
                 <img
                   src={profile.avatar_url}
