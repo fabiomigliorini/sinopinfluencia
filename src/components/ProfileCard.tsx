@@ -215,6 +215,7 @@ export function ProfileCard({
               <NetworkIconButton
                 key={network}
                 network={network}
+                highlight={network === profile.main_network}
               />
             ))}
           </div>
