@@ -424,9 +424,9 @@ function SocialCard({
     </>
   );
 
-  const cardClass = "flex flex-col rounded-[20px] border border-border bg-card p-5 transition";
+  const cardClass = "group relative z-0 flex flex-col rounded-[20px] border border-border bg-card p-5 transition-all duration-500";
   const hoverClass =
-    "hover:-translate-y-1 hover:border-[#cfe4d3] hover:shadow-[0_22px_40px_-22px_rgba(13,68,36,0.35)]";
+    "hover:z-10 hover:scale-[1.03] hover:border-[#cfe4d3] hover:shadow-[0_22px_40px_-22px_rgba(13,68,36,0.35)]";
 
   if (!account.profile_url) {
     return <div className={cardClass}>{content}</div>;
@@ -437,7 +437,7 @@ function SocialCard({
       href={account.profile_url}
       target="_blank"
       rel="noreferrer noopener"
-      className={`group ${cardClass} ${hoverClass}`}
+      className={`${cardClass} ${hoverClass}`}
     >
       {content}
     </a>
