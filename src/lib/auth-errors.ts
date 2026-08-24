@@ -19,6 +19,11 @@ const RULES: Array<[RegExp, string]> = [
   [/session (not found|missing)|jwt expired/i, "Sua sessão expirou. Entre novamente."],
   [/failed to fetch|network ?error/i, "Falha de conexão. Verifique sua internet e tente novamente."],
   [/weak password/i, "Senha muito fraca. Use uma senha mais forte."],
+  [/passwords? do not match|do not match/i, "As senhas não conferem."],
+  [/email.*required|missing email/i, "Informe seu e-mail."],
+  [/password.*required|missing password/i, "Informe sua senha."],
+  [/auth session missing/i, "Link expirado ou inválido. Solicite um novo."],
+  [/provider is not enabled|unsupported provider/i, "Este método de login não está disponível."],
 ];
 
 /** Traduz mensagens de erro de autenticação para português. */

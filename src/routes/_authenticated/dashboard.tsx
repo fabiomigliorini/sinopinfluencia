@@ -18,6 +18,7 @@ import { BrandsCard } from "@/components/account/BrandsCard";
 import { NichesCard } from "@/components/account/NichesCard";
 import { PortfolioCard } from "@/components/account/PortfolioCard";
 import { ConsentDialog } from "@/components/ConsentDialog";
+import { EmailVerificationBanner } from "@/components/EmailVerificationBanner";
 
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -162,6 +163,7 @@ function DashboardPage() {
 
   return (
     <div className="mx-auto max-w-[1180px] px-6 py-12 lg:px-7">
+      <EmailVerificationBanner />
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight">Minha conta</h1>

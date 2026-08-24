@@ -15,6 +15,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AcademiaRouteImport } from './routes/academia'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CodigoDeCondutaRouteImport } from './routes/codigo-de-conduta'
+import { Route as RedefinirSenhaRouteImport } from './routes/redefinir-senha'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as VitrineRouteImport } from './routes/vitrine'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -53,6 +54,11 @@ const AuthRoute = AuthRouteImport.update({
 const CodigoDeCondutaRoute = CodigoDeCondutaRouteImport.update({
   id: '/codigo-de-conduta',
   path: '/codigo-de-conduta',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RedefinirSenhaRoute = RedefinirSenhaRouteImport.update({
+  id: '/redefinir-senha',
+  path: '/redefinir-senha',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -114,6 +120,7 @@ export interface FileRoutesByFullPath {
   '/academia': typeof AcademiaRoute
   '/auth': typeof AuthRoute
   '/codigo-de-conduta': typeof CodigoDeCondutaRoute
+  '/redefinir-senha': typeof RedefinirSenhaRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vitrine': typeof VitrineRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -131,6 +138,7 @@ export interface FileRoutesByTo {
   '/academia': typeof AcademiaRoute
   '/auth': typeof AuthRoute
   '/codigo-de-conduta': typeof CodigoDeCondutaRoute
+  '/redefinir-senha': typeof RedefinirSenhaRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vitrine': typeof VitrineRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -150,6 +158,7 @@ export interface FileRoutesById {
   '/academia': typeof AcademiaRoute
   '/auth': typeof AuthRoute
   '/codigo-de-conduta': typeof CodigoDeCondutaRoute
+  '/redefinir-senha': typeof RedefinirSenhaRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vitrine': typeof VitrineRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
@@ -169,6 +178,7 @@ export interface FileRouteTypes {
     | '/academia'
     | '/auth'
     | '/codigo-de-conduta'
+    | '/redefinir-senha'
     | '/sitemap.xml'
     | '/vitrine'
     | '/dashboard'
@@ -186,6 +196,7 @@ export interface FileRouteTypes {
     | '/academia'
     | '/auth'
     | '/codigo-de-conduta'
+    | '/redefinir-senha'
     | '/sitemap.xml'
     | '/vitrine'
     | '/dashboard'
@@ -204,6 +215,7 @@ export interface FileRouteTypes {
     | '/academia'
     | '/auth'
     | '/codigo-de-conduta'
+    | '/redefinir-senha'
     | '/sitemap.xml'
     | '/vitrine'
     | '/_authenticated/dashboard'
@@ -223,6 +235,7 @@ export interface RootRouteChildren {
   AcademiaRoute: typeof AcademiaRoute
   AuthRoute: typeof AuthRoute
   CodigoDeCondutaRoute: typeof CodigoDeCondutaRoute
+  RedefinirSenhaRoute: typeof RedefinirSenhaRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   VitrineRoute: typeof VitrineRoute
   CriadorSlugRoute: typeof CriadorSlugRoute
@@ -274,6 +287,13 @@ declare module '@tanstack/react-router' {
       path: '/codigo-de-conduta'
       fullPath: '/codigo-de-conduta'
       preLoaderRoute: typeof CodigoDeCondutaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/redefinir-senha': {
+      id: '/redefinir-senha'
+      path: '/redefinir-senha'
+      fullPath: '/redefinir-senha'
+      preLoaderRoute: typeof RedefinirSenhaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -371,6 +391,7 @@ const rootRouteChildren: RootRouteChildren = {
   AcademiaRoute: AcademiaRoute,
   AuthRoute: AuthRoute,
   CodigoDeCondutaRoute: CodigoDeCondutaRoute,
+  RedefinirSenhaRoute: RedefinirSenhaRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   VitrineRoute: VitrineRoute,
   CriadorSlugRoute: CriadorSlugRoute,
