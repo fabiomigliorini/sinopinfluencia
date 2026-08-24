@@ -167,20 +167,21 @@ export function ProfileCard({
         )}
         
 
-        {/* Top-left total followers */}
+        {/* Bottom-left total followers (avoids covering the face) */}
         {totalValue ? (
-          <div className="absolute left-2 top-2 rounded-xl border border-white/25 bg-[var(--brand-dark)]/70 px-2 py-1 text-left shadow-lg shadow-black/20 backdrop-blur-xl sm:left-4 sm:top-4 sm:rounded-2xl sm:px-3 sm:py-1.5">
-            <p className="text-sm font-black leading-none text-white sm:text-base">{totalValue}</p>
-            <p className="mt-0.5 text-[8px] font-bold uppercase tracking-widest text-white/75 sm:text-[9px]">
+          <div className="absolute bottom-2 left-2 rounded-lg border border-white/25 bg-[var(--brand-dark)]/70 px-2 py-1 text-left shadow-lg shadow-black/20 backdrop-blur-xl sm:bottom-3 sm:left-3 sm:rounded-xl">
+            <p className="text-xs font-black leading-none text-white sm:text-sm">{totalValue}</p>
+            <p className="mt-0.5 text-[7px] font-bold uppercase tracking-widest text-white/75 sm:text-[8px]">
               Seguidores
             </p>
           </div>
         ) : null}
 
-        {/* Top-right tier badge */}
-        <div className="absolute right-2 top-2 sm:right-4 sm:top-4">
+        {/* Bottom-right tier badge */}
+        <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3">
           <TierBadge tier={profile.tier} light compact />
         </div>
+
       </div>
 
       {/* Glassmorphism content at bottom, in flow so it never covers the photo */}
@@ -232,17 +233,22 @@ export function ProfileCard({
 
         {/* Redesigned social icons */}
         {availableNetworks.length > 0 ? (
-          <div className="mt-3 flex flex-wrap gap-1.5 sm:mt-4 sm:gap-2">
-            {availableNetworks.slice(0, 4).map((network, i) => (
-              <span key={network} className={i > 2 ? "hidden sm:inline-flex" : "inline-flex"}>
-                <NetworkIconButton
-                  network={network}
-                  highlight={network === profile.main_network}
-                />
-              </span>
+          <div className="mt-3 flex flex-nowrap items-center gap-1.5 overflow-hidden sm:mt-4 sm:gap-2">
+            {availableNetworks.slice(0, 3).map((network) => (
+              <NetworkIconButton
+                key={network}
+                network={network}
+                highlight={network === profile.main_network}
+              />
             ))}
+            {availableNetworks.length > 3 ? (
+              <span className="text-[10px] font-bold text-white/60 sm:text-xs">
+                +{availableNetworks.length - 3}
+              </span>
+            ) : null}
           </div>
         ) : null}
+
       </div>
     </Link>
   );
