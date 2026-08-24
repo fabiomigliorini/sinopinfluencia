@@ -23,5 +23,5 @@ Hoje os selos usam vidro branco translúcido com texto branco — em fotos de fu
 
 Correção: os selos passam a ter **fundo escuro translúcido** (verde-escuro da marca com desfoque), borda sutil clara e texto branco. Isso garante contraste em qualquer foto, clara ou escura, sem colocar degradê sobre a imagem (que já foi removido a pedido). O selo de estrelas/categoria recebe o mesmo tratamento, mantendo as estrelas amarelas.
 
-Nada muda no perfil do criador, no carrossel da home ou nos filtros. O mesmo tratamento de selo é aplicado ao carrossel da home, onde o problema aparece igual.
+O novo estilo de selo também é aplicado ao carrossel da home, onde o mesmo problema de leitura aparece. Fora isso, nada muda no carrossel, no perfil do criador ou nos filtros.
 
