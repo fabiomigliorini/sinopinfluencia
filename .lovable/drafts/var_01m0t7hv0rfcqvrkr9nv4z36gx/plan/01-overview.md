@@ -18,4 +18,10 @@ Ajustes por tamanho de tela:
 - No desktop: tagline volta a aparecer, limitada a 2 linhas.
 - Selos de seguidores e categoria ficam um pouco menores no mobile para não cobrir a foto.
 
-Nada muda no perfil do criador, no carrossel da home ou nos filtros.
+## Legibilidade dos selos sobre fotos claras
+Hoje os selos usam vidro branco translúcido com texto branco — em fotos de fundo claro (ex.: logo da ACES, foto com parede branca) o número de seguidores praticamente desaparece.
+
+Correção: os selos passam a ter **fundo escuro translúcido** (verde-escuro da marca com desfoque), borda sutil clara e texto branco. Isso garante contraste em qualquer foto, clara ou escura, sem colocar degradê sobre a imagem (que já foi removido a pedido). O selo de estrelas/categoria recebe o mesmo tratamento, mantendo as estrelas amarelas.
+
+Nada muda no perfil do criador, no carrossel da home ou nos filtros. O mesmo tratamento de selo é aplicado ao carrossel da home, onde o problema aparece igual.
+

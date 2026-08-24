@@ -9,5 +9,7 @@
   - nichos: 2 no mobile, 3 no desktop (extras viram `+N`); chips com fonte/padding menores no mobile.
   - selos de seguidores/tier reposicionados com `left-2 top-2 sm:left-4 sm:top-4` e tipografia reduzida no mobile.
   - `NetworkIconButton` ganha props de tamanho: `h-8 w-8` no mobile, `h-10 w-10` a partir de `sm`; máximo de 3 ícones no mobile e 4 no desktop.
+- Contraste dos selos: no `ProfileCard`, o selo de seguidores e o `TierBadge light` trocam `bg-white/10` por um fundo escuro translúcido (`bg-[var(--brand-dark)]/70` + `backdrop-blur-xl` + `border-white/25`) e ganham `drop-shadow` leve no texto. O mesmo ajuste vale para os selos do `CreatorCarousel.tsx`.
 - Hover `scale-[1.03]` e destaque amarelo da rede principal preservados.
 - Sem mudanças em banco, filtros, ordenação ou nas demais páginas.
+
