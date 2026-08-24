@@ -221,9 +221,12 @@ export function ProfileCard({
 
         {/* Short card description (tagline), limited to 2 lines */}
         {profile.tagline ? (
-          <p className="!bio-clamp mt-2 hidden text-sm sm:block font-medium leading-relaxed text-white/80">
-            {profile.tagline}
-          </p>
+          <div className="hidden sm:block">
+            <p className="!bio-clamp mt-2 text-sm font-medium leading-relaxed text-white/80">
+              {profile.tagline}
+            </p>
+          </div>
+
         ) : null}
 
         {/* Redesigned social icons */}
