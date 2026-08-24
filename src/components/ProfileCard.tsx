@@ -219,19 +219,20 @@ export function ProfileCard({
 
         {/* Redesigned social icons */}
         {availableNetworks.length > 0 ? (
-          <div className="mt-3 flex flex-nowrap items-center gap-1.5 overflow-hidden sm:mt-4 sm:gap-2">
-            {availableNetworks.slice(0, 3).map((network) => (
+          <div className="mt-3 flex flex-nowrap items-center gap-1 overflow-hidden sm:mt-4 sm:gap-1.5">
+            {availableNetworks.slice(0, 4).map((network) => (
               <NetworkIconButton
                 key={network}
                 network={network}
                 highlight={network === profile.main_network}
               />
             ))}
-            {availableNetworks.length > 3 ? (
+            {availableNetworks.length > 4 ? (
               <span className="text-[10px] font-bold text-white/60 sm:text-xs">
-                +{availableNetworks.length - 3}
+                +{availableNetworks.length - 4}
               </span>
             ) : null}
+
           </div>
         ) : null}
 
