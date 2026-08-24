@@ -99,7 +99,7 @@ function NetworkIconButton({
       title={meta.label}
       className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg border transition-all duration-300 sm:h-8 sm:w-8 sm:rounded-xl ${
         highlight
-          ? "border-[#FFEB00]/40 bg-white/5 text-[#FFEB00] hover:bg-[#FFEB00] hover:text-[#1a1a1a]"
+          ? "border-[#FFEB00]/40 bg-white/5 text-[#FFEB00] group-hover:bg-[#FFEB00] group-hover:text-[#1a1a1a]"
           : "border-white/10 bg-white/5 text-white group-hover:bg-white group-hover:text-[var(--brand-dark)]"
       }`}
     >
@@ -170,7 +170,7 @@ export function ProfileCard({
         {/* Bottom-left total followers (avoids covering the face) */}
         {totalValue ? (
           <div className="absolute bottom-2 left-2 rounded-lg border border-white/25 bg-[var(--brand-dark)]/70 px-2 py-1 text-left shadow-lg shadow-black/20 backdrop-blur-xl sm:bottom-3 sm:left-3 sm:rounded-xl">
-            <p className="text-xs font-black leading-none text-white sm:text-sm">{totalValue}</p>
+            <p className="text-xs font-black leading-none text-[#FFEB00] sm:text-sm">{totalValue}</p>
             <p className="mt-0.5 text-[7px] font-bold uppercase tracking-widest text-white/75 sm:text-[8px]">
               Seguidores
             </p>
