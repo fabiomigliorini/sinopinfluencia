@@ -34,13 +34,21 @@ function Pin({ filled, className }: { filled: boolean; className?: string }) {
   );
 }
 
-export function TierBadge({ tier, light = false }: { tier: string; light?: boolean }) {
+export function TierBadge({
+  tier,
+  light = false,
+  compact = false,
+}: {
+  tier: string;
+  light?: boolean;
+  compact?: boolean;
+}) {
   const order = tierRank(tier);
   return (
     <div
       className={`flex items-center gap-1.5 rounded-full px-2.5 py-1.5 ${
         light
-          ? "bg-white/10 backdrop-blur-xl border border-white/20"
+          ? "bg-[var(--brand-dark)]/70 backdrop-blur-xl border border-white/25 shadow-lg shadow-black/20"
           : "bg-secondary"
       }`}
     >
@@ -58,7 +66,7 @@ export function TierBadge({ tier, light = false }: { tier: string; light?: boole
       <span
         className={`text-[10.5px] font-bold uppercase tracking-wide ${
           light ? "text-white" : "text-foreground"
-        }`}
+        } ${compact ? "hidden sm:inline" : ""}`}
       >
         {tierLabel(tier)}
       </span>
@@ -88,7 +96,7 @@ function NetworkIconButton({
   return (
     <span
       title={meta.label}
-      className={`grid h-10 w-10 place-items-center rounded-2xl border transition-all duration-300 ${
+      className={`grid h-8 w-8 place-items-center rounded-xl border transition-all duration-300 sm:h-10 sm:w-10 sm:rounded-2xl ${
         highlight
           ? "border-[#FFEB00]/40 bg-white/5 text-[#FFEB00] hover:bg-[#FFEB00] hover:text-[#1a1a1a]"
           : "border-white/10 bg-white/5 text-white group-hover:bg-white group-hover:text-[var(--brand-dark)]"
@@ -136,10 +144,10 @@ export function ProfileCard({
     <Link
       to="/criador/$slug"
       params={{ slug: profile.slug }}
-      className="group relative z-0 flex h-[520px] flex-col overflow-hidden rounded-[28px] border border-white/20 bg-gradient-to-b from-[var(--brand-green-deep)] to-[var(--brand-dark)] shadow-2xl shadow-black/20 transition-all duration-500 hover:z-10 hover:scale-[1.03] hover:shadow-[0_32px_64px_-24px_rgba(0,0,0,0.35)]"
+      className="group relative z-0 flex flex-col overflow-hidden rounded-[20px] sm:rounded-[28px] border border-white/20 bg-gradient-to-b from-[var(--brand-green-deep)] to-[var(--brand-dark)] shadow-2xl shadow-black/20 transition-all duration-500 hover:z-10 hover:scale-[1.03] hover:shadow-[0_32px_64px_-24px_rgba(0,0,0,0.35)]"
     >
       {/* Photo area: flex-1 so it never sits under the content overlay */}
-      <div className="relative min-h-0 flex-1 overflow-hidden">
+      <div className="relative aspect-[3/4] w-full overflow-hidden">
         {profile.avatar_url ? (
             <img
               src={profile.avatar_url}
@@ -160,63 +168,77 @@ export function ProfileCard({
 
         {/* Top-left total followers */}
         {totalValue ? (
-          <div className="absolute left-4 top-4 rounded-2xl border border-white/20 bg-white/10 px-3 py-1.5 text-left backdrop-blur-xl">
-            <p className="text-base font-black leading-none text-white">{totalValue}</p>
-            <p className="mt-0.5 text-[9px] font-bold uppercase tracking-widest text-white/60">
+          <div className="absolute left-2 top-2 rounded-xl border border-white/25 bg-[var(--brand-dark)]/70 px-2 py-1 text-left shadow-lg shadow-black/20 backdrop-blur-xl sm:left-4 sm:top-4 sm:rounded-2xl sm:px-3 sm:py-1.5">
+            <p className="text-sm font-black leading-none text-white sm:text-base">{totalValue}</p>
+            <p className="mt-0.5 text-[8px] font-bold uppercase tracking-widest text-white/75 sm:text-[9px]">
               Seguidores
             </p>
           </div>
         ) : null}
 
         {/* Top-right tier badge */}
-        <div className="absolute top-4 right-4">
-          <TierBadge tier={profile.tier} light />
+        <div className="absolute right-2 top-2 sm:right-4 sm:top-4">
+          <TierBadge tier={profile.tier} light compact />
         </div>
       </div>
 
       {/* Glassmorphism content at bottom, in flow so it never covers the photo */}
-      <div className="border-t border-white/10 bg-[var(--brand-dark)]/60 px-5 pb-5 pt-4 backdrop-blur-2xl">
+      <div className="border-t border-white/10 bg-[var(--brand-dark)]/60 px-3 pb-3 pt-2.5 backdrop-blur-2xl sm:px-5 sm:pb-5 sm:pt-4">
         {niches.length > 0 ? (
-          <div className="mb-2.5 flex flex-wrap gap-1.5">
-            {niches.slice(0, 3).map((n) => (
+          <div className="mb-2 flex flex-wrap gap-1 sm:mb-2.5 sm:gap-1.5">
+            {niches.slice(0, 2).map((n) => (
               <span
                 key={n}
-                className="rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-[9.5px] font-bold uppercase tracking-widest text-white backdrop-blur-xl"
+                className="rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[8.5px] font-bold uppercase tracking-widest text-white backdrop-blur-xl sm:px-2.5 sm:py-1 sm:text-[9.5px]"
               >
                 {n}
               </span>
             ))}
+            {niches[2] ? (
+              <span className="hidden rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-[9.5px] font-bold uppercase tracking-widest text-white backdrop-blur-xl sm:inline">
+                {niches[2]}
+              </span>
+            ) : null}
+            {niches.length > 2 ? (
+              <span className="rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[8.5px] font-bold uppercase tracking-widest text-white backdrop-blur-xl sm:hidden">
+                +{niches.length - 2}
+              </span>
+            ) : null}
             {niches.length > 3 ? (
-              <span className="rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-[9.5px] font-bold uppercase tracking-widest text-white backdrop-blur-xl">
+              <span className="hidden rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-[9.5px] font-bold uppercase tracking-widest text-white backdrop-blur-xl sm:inline">
                 +{niches.length - 3}
               </span>
             ) : null}
           </div>
         ) : null}
 
-        <h3 className="truncate text-xl font-extrabold leading-tight tracking-tight text-white">
+        <h3 className="truncate text-sm font-extrabold sm:text-lg leading-tight tracking-tight text-white">
           {profile.display_name}
         </h3>
         {profile.city ? (
-          <p className="mt-0.5 text-xs font-semibold text-white/70">{profile.city}</p>
+          <p className="mt-0.5 text-[10px] font-semibold text-white/70 sm:text-xs">{profile.city}</p>
         ) : null}
 
         {/* Short card description (tagline), limited to 2 lines */}
         {profile.tagline ? (
-          <p className="!bio-clamp mt-2 text-sm font-medium leading-relaxed text-white/80">
-            {profile.tagline}
-          </p>
+          <div className="hidden sm:block">
+            <p className="!bio-clamp mt-2 text-sm font-medium leading-relaxed text-white/80">
+              {profile.tagline}
+            </p>
+          </div>
+
         ) : null}
 
         {/* Redesigned social icons */}
         {availableNetworks.length > 0 ? (
-          <div className="mt-4 flex flex-wrap gap-2">
-            {availableNetworks.slice(0, 4).map((network) => (
-              <NetworkIconButton
-                key={network}
-                network={network}
-                highlight={network === profile.main_network}
-              />
+          <div className="mt-3 flex flex-wrap gap-1.5 sm:mt-4 sm:gap-2">
+            {availableNetworks.slice(0, 4).map((network, i) => (
+              <span key={network} className={i > 2 ? "hidden sm:inline-flex" : "inline-flex"}>
+                <NetworkIconButton
+                  network={network}
+                  highlight={network === profile.main_network}
+                />
+              </span>
             ))}
           </div>
         ) : null}
