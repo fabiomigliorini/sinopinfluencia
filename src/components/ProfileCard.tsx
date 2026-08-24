@@ -187,32 +187,18 @@ export function ProfileCard({
       {/* Glassmorphism content at bottom, in flow so it never covers the photo */}
       <div className="border-t border-white/10 bg-[var(--brand-dark)]/60 px-3 pb-3 pt-2.5 backdrop-blur-2xl sm:px-5 sm:pb-5 sm:pt-4">
         {niches.length > 0 ? (
-          <div className="mb-2 flex flex-wrap gap-1 sm:mb-2.5 sm:gap-1.5">
-            {niches.slice(0, 2).map((n) => (
-              <span
-                key={n}
-                className="rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[8.5px] font-bold uppercase tracking-widest text-white backdrop-blur-xl sm:px-2.5 sm:py-1 sm:text-[9.5px]"
-              >
-                {n}
-              </span>
-            ))}
-            {niches[2] ? (
-              <span className="hidden rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-[9.5px] font-bold uppercase tracking-widest text-white backdrop-blur-xl sm:inline">
-                {niches[2]}
-              </span>
-            ) : null}
-            {niches.length > 2 ? (
-              <span className="rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[8.5px] font-bold uppercase tracking-widest text-white backdrop-blur-xl sm:hidden">
-                +{niches.length - 2}
-              </span>
-            ) : null}
-            {niches.length > 3 ? (
-              <span className="hidden rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-[9.5px] font-bold uppercase tracking-widest text-white backdrop-blur-xl sm:inline">
-                +{niches.length - 3}
+          <div className="mb-2 flex min-w-0 flex-nowrap items-center gap-1 overflow-hidden sm:mb-2.5 sm:gap-1.5">
+            <span className="max-w-full truncate rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[8.5px] font-bold uppercase tracking-widest text-white backdrop-blur-xl sm:px-2.5 sm:py-1 sm:text-[9.5px]">
+              {niches[0]}
+            </span>
+            {niches.length > 1 ? (
+              <span className="shrink-0 rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[8.5px] font-bold uppercase tracking-widest text-white backdrop-blur-xl sm:px-2.5 sm:py-1 sm:text-[9.5px]">
+                +{niches.length - 1}
               </span>
             ) : null}
           </div>
         ) : null}
+
 
         <h3 className="truncate text-sm font-extrabold sm:text-lg leading-tight tracking-tight text-white">
           {profile.display_name}
