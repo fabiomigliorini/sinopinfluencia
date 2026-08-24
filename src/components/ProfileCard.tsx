@@ -99,7 +99,7 @@ function NetworkIconButton({
       title={meta.label}
       className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg border transition-all duration-300 sm:h-8 sm:w-8 sm:rounded-xl ${
         highlight
-          ? "border-[#FFEB00]/40 bg-white/5 text-[#FFEB00] hover:bg-[#FFEB00] hover:text-[#1a1a1a]"
+          ? "border-[#FFEB00]/40 bg-white/5 text-[#FFEB00] group-hover:bg-[#FFEB00] group-hover:text-[#1a1a1a]"
           : "border-white/10 bg-white/5 text-white group-hover:bg-white group-hover:text-[var(--brand-dark)]"
       }`}
     >
