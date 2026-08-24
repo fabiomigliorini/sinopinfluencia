@@ -97,7 +97,7 @@ function NetworkIconButton({
   return (
     <span
       title={meta.label}
-      className={`grid h-8 w-8 place-items-center rounded-xl border transition-all duration-300 sm:h-10 sm:w-10 sm:rounded-2xl ${
+      className={`grid h-8 w-8 shrink-0 place-items-center rounded-xl border transition-all duration-300 sm:h-9 sm:w-9 sm:rounded-2xl ${
         highlight
           ? "border-[#FFEB00]/40 bg-white/5 text-[#FFEB00] hover:bg-[#FFEB00] hover:text-[#1a1a1a]"
           : "border-white/10 bg-white/5 text-white group-hover:bg-white group-hover:text-[var(--brand-dark)]"
@@ -167,51 +167,38 @@ export function ProfileCard({
         )}
         
 
-        {/* Top-left total followers */}
+        {/* Bottom-left total followers (avoids covering the face) */}
         {totalValue ? (
-          <div className="absolute left-2 top-2 rounded-xl border border-white/25 bg-[var(--brand-dark)]/70 px-2 py-1 text-left shadow-lg shadow-black/20 backdrop-blur-xl sm:left-4 sm:top-4 sm:rounded-2xl sm:px-3 sm:py-1.5">
-            <p className="text-sm font-black leading-none text-white sm:text-base">{totalValue}</p>
-            <p className="mt-0.5 text-[8px] font-bold uppercase tracking-widest text-white/75 sm:text-[9px]">
+          <div className="absolute bottom-2 left-2 rounded-lg border border-white/25 bg-[var(--brand-dark)]/70 px-2 py-1 text-left shadow-lg shadow-black/20 backdrop-blur-xl sm:bottom-3 sm:left-3 sm:rounded-xl">
+            <p className="text-xs font-black leading-none text-white sm:text-sm">{totalValue}</p>
+            <p className="mt-0.5 text-[7px] font-bold uppercase tracking-widest text-white/75 sm:text-[8px]">
               Seguidores
             </p>
           </div>
         ) : null}
 
-        {/* Top-right tier badge */}
-        <div className="absolute right-2 top-2 sm:right-4 sm:top-4">
+        {/* Bottom-right tier badge */}
+        <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3">
           <TierBadge tier={profile.tier} light compact />
         </div>
+
       </div>
 
       {/* Glassmorphism content at bottom, in flow so it never covers the photo */}
       <div className="border-t border-white/10 bg-[var(--brand-dark)]/60 px-3 pb-3 pt-2.5 backdrop-blur-2xl sm:px-5 sm:pb-5 sm:pt-4">
         {niches.length > 0 ? (
-          <div className="mb-2 flex flex-wrap gap-1 sm:mb-2.5 sm:gap-1.5">
-            {niches.slice(0, 2).map((n) => (
-              <span
-                key={n}
-                className="rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[8.5px] font-bold uppercase tracking-widest text-white backdrop-blur-xl sm:px-2.5 sm:py-1 sm:text-[9.5px]"
-              >
-                {n}
-              </span>
-            ))}
-            {niches[2] ? (
-              <span className="hidden rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-[9.5px] font-bold uppercase tracking-widest text-white backdrop-blur-xl sm:inline">
-                {niches[2]}
-              </span>
-            ) : null}
-            {niches.length > 2 ? (
-              <span className="rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[8.5px] font-bold uppercase tracking-widest text-white backdrop-blur-xl sm:hidden">
-                +{niches.length - 2}
-              </span>
-            ) : null}
-            {niches.length > 3 ? (
-              <span className="hidden rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-[9.5px] font-bold uppercase tracking-widest text-white backdrop-blur-xl sm:inline">
-                +{niches.length - 3}
+          <div className="mb-2 flex min-w-0 flex-nowrap items-center gap-1 overflow-hidden sm:mb-2.5 sm:gap-1.5">
+            <span className="max-w-full truncate rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[8.5px] font-bold uppercase tracking-widest text-white backdrop-blur-xl sm:px-2.5 sm:py-1 sm:text-[9.5px]">
+              {niches[0]}
+            </span>
+            {niches.length > 1 ? (
+              <span className="shrink-0 rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[8.5px] font-bold uppercase tracking-widest text-white backdrop-blur-xl sm:px-2.5 sm:py-1 sm:text-[9.5px]">
+                +{niches.length - 1}
               </span>
             ) : null}
           </div>
         ) : null}
+
 
         <h3 className="truncate text-sm font-extrabold sm:text-lg leading-tight tracking-tight text-white">
           {profile.display_name}
@@ -232,17 +219,22 @@ export function ProfileCard({
 
         {/* Redesigned social icons */}
         {availableNetworks.length > 0 ? (
-          <div className="mt-3 flex flex-wrap gap-1.5 sm:mt-4 sm:gap-2">
-            {availableNetworks.slice(0, 4).map((network, i) => (
-              <span key={network} className={i > 2 ? "hidden sm:inline-flex" : "inline-flex"}>
-                <NetworkIconButton
-                  network={network}
-                  highlight={network === profile.main_network}
-                />
-              </span>
+          <div className="mt-3 flex flex-nowrap items-center gap-1.5 overflow-hidden sm:mt-4 sm:gap-2">
+            {availableNetworks.slice(0, 3).map((network) => (
+              <NetworkIconButton
+                key={network}
+                network={network}
+                highlight={network === profile.main_network}
+              />
             ))}
+            {availableNetworks.length > 3 ? (
+              <span className="text-[10px] font-bold text-white/60 sm:text-xs">
+                +{availableNetworks.length - 3}
+              </span>
+            ) : null}
           </div>
         ) : null}
+
       </div>
     </Link>
   );
