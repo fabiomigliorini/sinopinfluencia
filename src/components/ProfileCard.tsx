@@ -34,7 +34,15 @@ function Pin({ filled, className }: { filled: boolean; className?: string }) {
   );
 }
 
-export function TierBadge({ tier, light = false }: { tier: string; light?: boolean }) {
+export function TierBadge({
+  tier,
+  light = false,
+  compact = false,
+}: {
+  tier: string;
+  light?: boolean;
+  compact?: boolean;
+}) {
   const order = tierRank(tier);
   return (
     <div
@@ -58,7 +66,7 @@ export function TierBadge({ tier, light = false }: { tier: string; light?: boole
       <span
         className={`text-[10.5px] font-bold uppercase tracking-wide ${
           light ? "text-white" : "text-foreground"
-        }`}
+        } ${compact ? "hidden sm:inline" : ""}`}
       >
         {tierLabel(tier)}
       </span>
@@ -170,7 +178,7 @@ export function ProfileCard({
 
         {/* Top-right tier badge */}
         <div className="absolute right-2 top-2 sm:right-4 sm:top-4">
-          <TierBadge tier={profile.tier} light />
+          <TierBadge tier={profile.tier} light compact />
         </div>
       </div>
 
