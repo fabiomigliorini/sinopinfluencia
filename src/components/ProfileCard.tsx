@@ -46,7 +46,7 @@ export function TierBadge({
   const order = tierRank(tier);
   return (
     <div
-      className={`flex items-center gap-1.5 rounded-full px-2.5 py-1.5 ${
+      className={`flex flex-col items-start gap-0.5 rounded-xl px-2 py-1 sm:rounded-2xl sm:px-2.5 sm:py-1.5 ${
         light
           ? "bg-[var(--brand-dark)]/70 backdrop-blur-xl border border-white/25 shadow-lg shadow-black/20"
           : "bg-secondary"
@@ -57,21 +57,22 @@ export function TierBadge({
           <Pin
             key={i}
             filled={i < order}
-            className={`h-2.5 w-2 ${
+            className={`h-2.5 w-2 sm:h-3 sm:w-2.5 ${
               i < order ? "text-[#FFEB00]" : "text-white/25"
             }`}
           />
         ))}
       </div>
       <span
-        className={`text-[10.5px] font-bold uppercase tracking-wide ${
-          light ? "text-white" : "text-foreground"
-        } ${compact ? "hidden sm:inline" : ""}`}
+        className={`text-[8px] font-bold uppercase leading-none tracking-widest sm:text-[9px] ${
+          light ? "text-white/75" : "text-foreground"
+        } ${compact ? "" : ""}`}
       >
         {tierLabel(tier)}
       </span>
     </div>
   );
+
 }
 
 function formatNumber(value: string | number | null | undefined): string {
