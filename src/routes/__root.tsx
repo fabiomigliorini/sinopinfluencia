@@ -1,13 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
-import {
-  Outlet,
-  Link,
-  createRootRouteWithContext,
-  useRouter,
-  HeadContent,
-  Scripts,
-} from "@tanstack/react-router";
+import { Outlet, Link, createRootRouteWithContext, useRouter, HeadContent, Scripts } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Menu, ChevronDown, X } from "lucide-react";
 
@@ -45,9 +38,7 @@ function NotFoundComponent() {
       <div className="max-w-md text-center">
         <h1 className="text-7xl font-bold text-foreground">404</h1>
         <h2 className="mt-4 text-xl font-semibold text-foreground">Página não encontrada</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          A página que você procura não existe ou foi movida.
-        </p>
+        <p className="mt-2 text-sm text-muted-foreground">A página que você procura não existe ou foi movida.</p>
         <div className="mt-6">
           <Link
             to="/"
@@ -71,9 +62,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          Esta página não carregou
-        </h1>
+        <h1 className="text-xl font-semibold tracking-tight text-foreground">Esta página não carregou</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           Algo deu errado do nosso lado. Você pode tentar atualizar ou voltar para a home.
         </p>
@@ -145,11 +134,7 @@ function BrandLogo() {
   return (
     <Link to="/" className="flex items-center gap-3">
       <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-[#0D4424]">
-        <img
-          src={brandMark.url}
-          alt="Sinop Influencia"
-          className="h-[30px] w-[30px] object-contain"
-        />
+        <img src={brandMark.url} alt="Sinop Influencia" className="h-[30px] w-[30px] object-contain" />
       </div>
 
       <div className="leading-tight">
@@ -163,7 +148,6 @@ function BrandLogo() {
     </Link>
   );
 }
-
 
 function Header() {
   const signedIn = useSession();
@@ -182,13 +166,25 @@ function Header() {
         <BrandLogo />
 
         <nav className="hidden items-center gap-8 md:flex">
-          <Link to="/vitrine" search={{}} className="text-[14.5px] font-semibold text-foreground/80 transition hover:text-foreground">
+          <Link
+            to="/vitrine"
+            search={{}}
+            className="text-[14.5px] font-semibold text-foreground/80 transition hover:text-foreground"
+          >
             Encontrar criadores
           </Link>
-          <Link to="/" hash="como-funciona" className="text-[14.5px] font-semibold text-foreground/80 transition hover:text-foreground">
+          <Link
+            to="/"
+            hash="como-funciona"
+            className="text-[14.5px] font-semibold text-foreground/80 transition hover:text-foreground"
+          >
             Como funciona
           </Link>
-          <Link to="/" hash="classificacao" className="text-[14.5px] font-semibold text-foreground/80 transition hover:text-foreground">
+          <Link
+            to="/"
+            hash="classificacao"
+            className="text-[14.5px] font-semibold text-foreground/80 transition hover:text-foreground"
+          >
             Classificação
           </Link>
           <DropdownMenu>
@@ -341,32 +337,53 @@ function Footer() {
       <div className="mx-auto max-w-[1180px] px-6 pb-6 pt-14 lg:px-7">
         <div className="grid gap-10 border-b border-white/10 pb-10 md:grid-cols-[1.4fr_1fr_1fr]">
           <div>
-            <Link to="/" className="inline-block rounded-lg bg-white/60 p-2 shadow-lg shadow-black/10">
-              <img
-                src={logoHorizontal.url}
-                alt="Sinop Influencia, um programa ACES"
-                className="h-20 w-auto"
-              />
+            <Link to="/" className="inline-block rounded-lg bg-white/60 p-1 shadow-lg shadow-black/10">
+              <img src={logoHorizontal.url} alt="Sinop Influencia, um programa ACES" className="h-20 w-auto" />
             </Link>
 
             <p className="mt-4 max-w-[280px] text-[13.5px] leading-relaxed text-[#A9C9B2]">
-              Um programa da ACES, Associação Comercial e Empresarial de Sinop, para qualificar o ambiente digital em favor do comércio local.
+              Um programa da ACES, Associação Comercial e Empresarial de Sinop, para qualificar o ambiente digital em
+              favor do comércio local.
             </p>
           </div>
           <div>
             <h5 className="mb-3.5 text-xs font-bold uppercase tracking-widest text-white">Para empresas</h5>
             <ul className="space-y-2 text-[13.5px] text-[#B9D8C1]">
-              <li><Link to="/vitrine" search={{}} className="transition hover:text-white">Buscar criadores</Link></li>
-              <li><Link to="/" hash="como-funciona" className="transition hover:text-white">Como funciona</Link></li>
-              <li><Link to="/" hash="classificacao" className="transition hover:text-white">Classificação e critérios</Link></li>
+              <li>
+                <Link to="/vitrine" search={{}} className="transition hover:text-white">
+                  Buscar criadores
+                </Link>
+              </li>
+              <li>
+                <Link to="/" hash="como-funciona" className="transition hover:text-white">
+                  Como funciona
+                </Link>
+              </li>
+              <li>
+                <Link to="/" hash="classificacao" className="transition hover:text-white">
+                  Classificação e critérios
+                </Link>
+              </li>
             </ul>
           </div>
           <div>
             <h5 className="mb-3.5 text-xs font-bold uppercase tracking-widest text-white">Para criadores</h5>
             <ul className="space-y-2 text-[13.5px] text-[#B9D8C1]">
-              <li><Link to="/auth" className="transition hover:text-white">Cadastre seu perfil</Link></li>
-              <li><Link to="/academia" className="transition hover:text-white">Academia Sinop Influencia</Link></li>
-              <li><Link to="/codigo-de-conduta" className="transition hover:text-white">Código de conduta</Link></li>
+              <li>
+                <Link to="/auth" className="transition hover:text-white">
+                  Cadastre seu perfil
+                </Link>
+              </li>
+              <li>
+                <Link to="/academia" className="transition hover:text-white">
+                  Academia Sinop Influencia
+                </Link>
+              </li>
+              <li>
+                <Link to="/codigo-de-conduta" className="transition hover:text-white">
+                  Código de conduta
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
