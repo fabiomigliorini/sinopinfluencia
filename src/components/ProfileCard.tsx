@@ -57,7 +57,7 @@ export function TierBadge({
           <Pin
             key={i}
             filled={i < order}
-            className={`h-2.5 w-2 sm:h-3 sm:w-2.5 ${i < order ? "text-[#FFEB00]" : "text-white/25"}`}
+            className={`h-2.5 w-2 sm:h-3 sm:w-2.5 ${i < order ? "text-white" : "text-white/25"}`}
           />
         ))}
       </div>
@@ -151,7 +151,7 @@ export function ProfileCard({
         <div className="absolute left-2 right-2 top-2 flex items-start justify-between sm:left-3 sm:right-3 sm:top-3">
           {totalValue ? (
             <div className="rounded-lg border border-white/25 bg-[var(--brand-dark)]/70 px-2 py-1 shadow-lg shadow-black/20 backdrop-blur-xl sm:rounded-xl sm:px-2.5 sm:py-1.5">
-              <p className="text-xs font-black leading-none text-[#FFEB00] sm:text-sm">{totalValue}</p>
+              <p className="text-xs font-semibold leading-none text-white sm:text-sm">{totalValue}</p>
             </div>
           ) : (
             <span />
@@ -163,7 +163,7 @@ export function ProfileCard({
         {/* Floating name at bottom, like carousel */}
         <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4">
           <div className="inline-block rounded-xl border border-white/25 bg-[var(--brand-dark)]/70 px-3 py-2 backdrop-blur-xl">
-            <h3 className="truncate text-sm font-extrabold leading-tight tracking-tight text-white sm:text-lg">
+            <h3 className="truncate text-sm font-medium leading-tight text-white sm:text-base">
               {profile.display_name}
             </h3>
           </div>
