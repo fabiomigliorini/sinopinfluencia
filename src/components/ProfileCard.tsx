@@ -126,7 +126,7 @@ export function ProfileCard({
     <Link
       to="/criador/$slug"
       params={{ slug: profile.slug }}
-      className="group relative z-0 flex flex-col overflow-hidden rounded-[20px] sm:rounded-[28px] border border-white/20 bg-gradient-to-b from-[var(--brand-green-deep)] to-[var(--brand-dark)] shadow-2xl shadow-black/20 transition-all duration-500 hover:z-10 hover:scale-[1.03] hover:shadow-[0_32px_64px_-24px_rgba(0,0,0,0.35)]"
+      className="group relative z-0 flex flex-col overflow-hidden rounded-[20px] sm:rounded-[28px] border border-white/20 bg-gradient-to-b from-[var(--brand-green-deep)] via-[var(--brand-dark)] to-black shadow-2xl shadow-black/20 transition-all duration-500 hover:z-10 hover:scale-[1.03] hover:shadow-[0_32px_64px_-24px_rgba(0,0,0,0.35)]"
     >
       {/* Photo area: flex-1 so it never sits under the content overlay */}
       <div className="relative aspect-[3/4] w-full overflow-hidden">
@@ -170,8 +170,8 @@ export function ProfileCard({
         </div>
       </div>
 
-      {/* Glassmorphism content at bottom, in flow so it never covers the photo */}
-      <div className="border-t border-white/10 bg-[var(--brand-dark)]/60 px-3 pb-3 pt-2.5 backdrop-blur-2xl sm:px-5 sm:pb-5 sm:pt-4">
+      {/* Glassmorphism content at bottom, gradient from brand dark to black */}
+      <div className="border-t border-white/10 bg-gradient-to-b from-[var(--brand-dark)]/70 via-[var(--brand-dark)]/90 to-black/95 px-3 pb-3 pt-2.5 backdrop-blur-2xl sm:px-5 sm:pb-5 sm:pt-4">
         {/* Networks first */}
         {availableNetworks.length > 0 ? (
           <div className="mb-2 flex flex-nowrap items-center gap-1 overflow-hidden sm:mb-2.5 sm:gap-1.5">
