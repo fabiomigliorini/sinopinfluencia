@@ -112,7 +112,7 @@ export function ProfileCard({
 
   const orderedNetworks = NETWORK_ORDER.filter((n) => networksWithHandles.includes(n));
   const baseNetworks = orderedNetworks.length > 0 ? orderedNetworks : networksWithHandles;
-  const availableNetworks = [...new Set(baseNetworks)].sort(
+  const availableNetworks = [...new Set(baseNetworks.filter((n) => n !== profile.main_network))].sort(
     (a, b) => (a === profile.main_network ? 0 : 1) - (b === profile.main_network ? 0 : 1),
   );
 
@@ -147,15 +147,20 @@ export function ProfileCard({
           </div>
         )}
 
-        {/* Bottom-left total followers (avoids covering the face) */}
-        {totalValue ? (
-          <div className="absolute bottom-2 left-2 rounded-lg border border-white/25 bg-[var(--brand-dark)]/70 px-2 py-1 text-left shadow-lg shadow-black/20 backdrop-blur-xl sm:bottom-3 sm:left-3 sm:rounded-xl">
-            <p className="text-xs font-black leading-none text-[#FFEB00] sm:text-sm">{totalValue}</p>
-          </div>
-        ) : null}
+        {/* Top badges: followers, main network, tier */}
+        <div className="absolute left-2 right-2 top-2 flex items-start justify-between sm:left-3 sm:right-3 sm:top-3">
+          {totalValue ? (
+            <div className="rounded-lg border border-white/25 bg-[var(--brand-dark)]/70 px-2 py-1 shadow-lg shadow-black/20 backdrop-blur-xl sm:rounded-xl sm:px-2.5 sm:py-1.5">
+              <p className="text-xs font-black leading-none text-[#FFEB00] sm:text-sm">{totalValue}</p>
+            </div>
+          ) : (
+            <span />
+          )}
 
-        {/* Bottom-right tier badge */}
-        <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3">
+          {profile.main_network && NETWORK_META[profile.main_network as NetworkId] ? (
+            <NetworkIconButton network={profile.main_network as NetworkId} highlight />
+          ) : null}
+
           <TierBadge tier={profile.tier} light compact />
         </div>
 
@@ -184,11 +189,11 @@ export function ProfileCard({
           </div>
         ) : null}
 
-        {/* Redesigned social icons first */}
+        {/* Other networks below */}
         {availableNetworks.length > 0 ? (
           <div className="mb-2.5 flex flex-nowrap items-center gap-1 overflow-hidden sm:mb-3 sm:gap-1.5">
             {availableNetworks.slice(0, 4).map((network) => (
-              <NetworkIconButton key={network} network={network} highlight={network === profile.main_network} />
+              <NetworkIconButton key={network} network={network} />
             ))}
             {availableNetworks.length > 4 ? (
               <span className="text-[10px] font-bold text-white/60 sm:text-xs">+{availableNetworks.length - 4}</span>
