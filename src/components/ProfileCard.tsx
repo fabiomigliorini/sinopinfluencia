@@ -57,7 +57,7 @@ export function TierBadge({
           <Pin
             key={i}
             filled={i < order}
-            className={`h-2.5 w-2 sm:h-3 sm:w-2.5 ${i < order ? "text-[#FFEB00]" : "text-white/25"}`}
+            className={`h-2.5 w-2 sm:h-3 sm:w-2.5 ${i < order ? "text-white" : "text-white/25"}`}
           />
         ))}
       </div>
