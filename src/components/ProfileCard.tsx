@@ -174,7 +174,7 @@ export function ProfileCard({
       </div>
 
       {/* Glassmorphism content at bottom, organic fade into card background */}
-      <div className="relative bg-gradient-to-t from-[#0D4424]/95 via-[#0D4424]/70 to-transparent px-3 pb-3 pt-2.5 backdrop-blur-2xl sm:px-5 sm:pb-5 sm:pt-4">
+      <div className="relative flex-1 bg-[radial-gradient(circle_at_70%_-20%,#14622f_0%,#0D4424_60%)] px-3 pb-3 pt-2.5 sm:px-5 sm:pb-5 sm:pt-4">
         {/* Networks first */}
         {availableNetworks.length > 0 ? (
           <div className="mb-2 flex flex-nowrap items-center gap-1 overflow-hidden sm:mb-2.5 sm:gap-1.5">
