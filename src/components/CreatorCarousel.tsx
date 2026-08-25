@@ -72,11 +72,10 @@ function CarouselCard({ profile, metrics, index }: { profile: ProfileRow; metric
 
         {/* Gradient overlay removed to keep images clean */}
 
-        {/* Top-left: total followers */}
+        {/* Top-left: total followers only */}
         {followers > 0 ? (
           <div className="absolute left-3.5 top-3.5 rounded-xl border border-white/25 bg-[var(--brand-dark)]/70 px-2.5 py-1.5 backdrop-blur-xl">
             <p className="text-sm font-black leading-none text-white">{compact(followers)}</p>
-            <p className="text-[8.5px] font-bold uppercase tracking-widest text-white/60">Seguidores</p>
           </div>
         ) : null}
 

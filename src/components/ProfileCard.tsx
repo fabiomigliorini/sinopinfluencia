@@ -175,29 +175,29 @@ export function ProfileCard({
           </div>
         ) : null}
 
-        <h3 className="truncate text-sm font-extrabold sm:text-lg leading-tight tracking-tight text-white">
-          {profile.display_name}
-        </h3>
-        {profile.city ? (
-          <p className="mt-0.5 text-[10px] font-semibold text-white/70 sm:text-xs">{profile.city}</p>
-        ) : null}
-
-        {/* Short card description (tagline), limited to 2 lines */}
-        {profile.tagline ? (
-          <div className="hidden sm:block">
-            <p className="!bio-clamp mt-2 text-sm font-medium leading-relaxed text-white/80">{profile.tagline}</p>
-          </div>
-        ) : null}
-
-        {/* Redesigned social icons */}
+        {/* Redesigned social icons first */}
         {availableNetworks.length > 0 ? (
-          <div className="mt-3 flex flex-nowrap items-center gap-1 overflow-hidden sm:mt-4 sm:gap-1.5">
+          <div className="mb-2.5 flex flex-nowrap items-center gap-1 overflow-hidden sm:mb-3 sm:gap-1.5">
             {availableNetworks.slice(0, 4).map((network) => (
               <NetworkIconButton key={network} network={network} highlight={network === profile.main_network} />
             ))}
             {availableNetworks.length > 4 ? (
               <span className="text-[10px] font-bold text-white/60 sm:text-xs">+{availableNetworks.length - 4}</span>
             ) : null}
+          </div>
+        ) : null}
+
+        {/* Name styled like carousel badge */}
+        <div className="inline-block rounded-xl border border-white/25 bg-[var(--brand-dark)]/70 px-3 py-2 backdrop-blur-xl">
+          <h3 className="truncate text-sm font-extrabold leading-tight tracking-tight text-white sm:text-lg">
+            {profile.display_name}
+          </h3>
+        </div>
+
+        {/* Short card description (tagline), limited to 2 lines */}
+        {profile.tagline ? (
+          <div className="hidden sm:block">
+            <p className="!bio-clamp mt-2 text-sm font-medium leading-relaxed text-white/80">{profile.tagline}</p>
           </div>
         ) : null}
       </div>
