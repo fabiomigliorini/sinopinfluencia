@@ -80,12 +80,12 @@ function CarouselCard({ profile, metrics, index }: { profile: ProfileRow; metric
         ) : null}
 
         {/* Top-right: tier badge */}
-        <div className="absolute right-3.5 top-3.5">
+        <div className="absolute right-3.5 bottom-3.5">
           <TierBadge tier={profile.tier} light />
         </div>
 
         {/* Bottom: name */}
-        <div className="absolute inset-x-0 top-0 p-4">
+        <div className="absolute inset-x-0 bottom-0 p-4">
           <div className="inline-block rounded-xl border border-white/25 bg-[var(--brand-dark)]/70 px-3 py-2 backdrop-blur-xl">
             <h3 className="truncate text-md font-extrabold leading-tight tracking-tight text-white">
               {profile.display_name}
