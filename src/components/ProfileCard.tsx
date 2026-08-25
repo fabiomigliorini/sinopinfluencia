@@ -57,9 +57,7 @@ export function TierBadge({
           <Pin
             key={i}
             filled={i < order}
-            className={`h-2.5 w-2 sm:h-3 sm:w-2.5 ${
-              i < order ? "text-[#FFEB00]" : "text-white/25"
-            }`}
+            className={`h-2.5 w-2 sm:h-3 sm:w-2.5 ${i < order ? "text-[#FFEB00]" : "text-white/25"}`}
           />
         ))}
       </div>
@@ -72,7 +70,6 @@ export function TierBadge({
       </span>
     </div>
   );
-
 }
 
 function formatNumber(value: string | number | null | undefined): string {
@@ -84,13 +81,7 @@ function formatNumber(value: string | number | null | undefined): string {
   return num.toLocaleString("pt-BR");
 }
 
-function NetworkIconButton({
-  network,
-  highlight = false,
-}: {
-  network: NetworkId;
-  highlight?: boolean;
-}) {
+function NetworkIconButton({ network, highlight = false }: { network: NetworkId; highlight?: boolean }) {
   const meta = NETWORK_META[network] ?? NETWORK_META.instagram;
   const { Icon } = meta;
 
@@ -124,15 +115,12 @@ export function ProfileCard({
     .map((n) => n.trim())
     .filter(Boolean);
 
-  const networksWithHandles = metrics
-    .map((m) => m.network as NetworkId)
-    .filter((n) => NETWORK_META[n]);
+  const networksWithHandles = metrics.map((m) => m.network as NetworkId).filter((n) => NETWORK_META[n]);
 
   const orderedNetworks = NETWORK_ORDER.filter((n) => networksWithHandles.includes(n));
   const baseNetworks = orderedNetworks.length > 0 ? orderedNetworks : networksWithHandles;
   const availableNetworks = [...new Set(baseNetworks)].sort(
-    (a, b) =>
-      (a === profile.main_network ? 0 : 1) - (b === profile.main_network ? 0 : 1),
+    (a, b) => (a === profile.main_network ? 0 : 1) - (b === profile.main_network ? 0 : 1),
   );
 
   const totalFollowers = metrics.reduce((sum, m) => {
@@ -150,12 +138,12 @@ export function ProfileCard({
       {/* Photo area: flex-1 so it never sits under the content overlay */}
       <div className="relative aspect-[3/4] w-full overflow-hidden">
         {profile.avatar_url ? (
-            <img
-              src={profile.avatar_url}
-              alt={profile.display_name}
-              loading="lazy"
-              className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
-            />
+          <img
+            src={profile.avatar_url}
+            alt={profile.display_name}
+            loading="lazy"
+            className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
+          />
         ) : (
           <div
             className={`flex h-full w-full items-center justify-center bg-gradient-to-br text-5xl font-extrabold text-white ${
@@ -165,14 +153,13 @@ export function ProfileCard({
             {initials(profile.display_name)}
           </div>
         )}
-        
 
         {/* Bottom-left total followers (avoids covering the face) */}
         {totalValue ? (
           <div className="absolute bottom-2 left-2 rounded-lg border border-white/25 bg-[var(--brand-dark)]/70 px-2 py-1 text-left shadow-lg shadow-black/20 backdrop-blur-xl sm:bottom-3 sm:left-3 sm:rounded-xl">
             <p className="text-xs font-black leading-none text-[#FFEB00] sm:text-sm">{totalValue}</p>
             <p className="mt-0.5 text-[7px] font-bold uppercase tracking-widest text-white/75 sm:text-[8px]">
-              Seguidores
+              Seguidores2s
             </p>
           </div>
         ) : null}
@@ -181,7 +168,6 @@ export function ProfileCard({
         <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3">
           <TierBadge tier={profile.tier} light compact />
         </div>
-
       </div>
 
       {/* Glassmorphism content at bottom, in flow so it never covers the photo */}
@@ -199,7 +185,6 @@ export function ProfileCard({
           </div>
         ) : null}
 
-
         <h3 className="truncate text-sm font-extrabold sm:text-lg leading-tight tracking-tight text-white">
           {profile.display_name}
         </h3>
@@ -210,32 +195,21 @@ export function ProfileCard({
         {/* Short card description (tagline), limited to 2 lines */}
         {profile.tagline ? (
           <div className="hidden sm:block">
-            <p className="!bio-clamp mt-2 text-sm font-medium leading-relaxed text-white/80">
-              {profile.tagline}
-            </p>
+            <p className="!bio-clamp mt-2 text-sm font-medium leading-relaxed text-white/80">{profile.tagline}</p>
           </div>
-
         ) : null}
 
         {/* Redesigned social icons */}
         {availableNetworks.length > 0 ? (
           <div className="mt-3 flex flex-nowrap items-center gap-1 overflow-hidden sm:mt-4 sm:gap-1.5">
             {availableNetworks.slice(0, 4).map((network) => (
-              <NetworkIconButton
-                key={network}
-                network={network}
-                highlight={network === profile.main_network}
-              />
+              <NetworkIconButton key={network} network={network} highlight={network === profile.main_network} />
             ))}
             {availableNetworks.length > 4 ? (
-              <span className="text-[10px] font-bold text-white/60 sm:text-xs">
-                +{availableNetworks.length - 4}
-              </span>
+              <span className="text-[10px] font-bold text-white/60 sm:text-xs">+{availableNetworks.length - 4}</span>
             ) : null}
-
           </div>
         ) : null}
-
       </div>
     </Link>
   );
