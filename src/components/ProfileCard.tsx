@@ -112,7 +112,7 @@ export function ProfileCard({
 
   const orderedNetworks = NETWORK_ORDER.filter((n) => networksWithHandles.includes(n));
   const baseNetworks = orderedNetworks.length > 0 ? orderedNetworks : networksWithHandles;
-  const availableNetworks = [...new Set(baseNetworks)].sort(
+  const availableNetworks = [...new Set(baseNetworks.filter((n) => n !== profile.main_network))].sort(
     (a, b) => (a === profile.main_network ? 0 : 1) - (b === profile.main_network ? 0 : 1),
   );
 
