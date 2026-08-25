@@ -85,7 +85,7 @@ function CarouselCard({ profile, metrics, index }: { profile: ProfileRow; metric
         </div>
 
         {/* Bottom: name */}
-        <div className="absolute inset-x-0 bottom-0 p-4">
+        <div className="absolute inset-x-0 top-0 p-4">
           <div className="inline-block rounded-xl border border-white/25 bg-[var(--brand-dark)]/70 px-3 py-2 backdrop-blur-xl">
             <h3 className="truncate text-md font-extrabold leading-tight tracking-tight text-white">
               {profile.display_name}
