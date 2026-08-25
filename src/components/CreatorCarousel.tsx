@@ -4,7 +4,6 @@ import type { Database } from "@/integrations/supabase/types";
 import type { DirectoryMetric } from "@/lib/directory-maps";
 import { TierBadge } from "./ProfileCard";
 
-
 type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
 
 const GRADIENTS = [
@@ -44,15 +43,7 @@ function shuffle<T>(items: T[]): T[] {
   return list;
 }
 
-function CarouselCard({
-  profile,
-  metrics,
-  index,
-}: {
-  profile: ProfileRow;
-  metrics: DirectoryMetric[];
-  index: number;
-}) {
+function CarouselCard({ profile, metrics, index }: { profile: ProfileRow; metrics: DirectoryMetric[]; index: number }) {
   const followers = totalFollowers(metrics);
 
   return (
@@ -85,9 +76,6 @@ function CarouselCard({
         {followers > 0 ? (
           <div className="absolute left-3.5 top-3.5 rounded-xl border border-white/25 bg-[var(--brand-dark)]/70 px-2.5 py-1.5 backdrop-blur-xl">
             <p className="text-sm font-black leading-none text-white">{compact(followers)}</p>
-            <p className="text-[8.5px] font-bold uppercase tracking-widest text-white/60">
-              Seguidores
-            </p>
           </div>
         ) : null}
 
@@ -99,7 +87,7 @@ function CarouselCard({
         {/* Bottom: name */}
         <div className="absolute inset-x-0 bottom-0 p-4">
           <div className="inline-block rounded-xl border border-white/25 bg-[var(--brand-dark)]/70 px-3 py-2 backdrop-blur-xl">
-            <h3 className="truncate text-lg font-extrabold leading-tight tracking-tight text-white">
+            <h3 className="truncate text-md font-extrabold leading-tight tracking-tight text-white">
               {profile.display_name}
             </h3>
           </div>
@@ -131,10 +119,8 @@ export function CreatorCarousel({
     <div
       className="group/marquee relative overflow-hidden py-6"
       style={{
-        maskImage:
-          "linear-gradient(to right, transparent, black 5%, black 95%, transparent)",
-        WebkitMaskImage:
-          "linear-gradient(to right, transparent, black 5%, black 95%, transparent)",
+        maskImage: "linear-gradient(to right, transparent, black 5%, black 95%, transparent)",
+        WebkitMaskImage: "linear-gradient(to right, transparent, black 5%, black 95%, transparent)",
       }}
     >
       <div
@@ -142,12 +128,7 @@ export function CreatorCarousel({
         style={{ animation: `marquee-x ${duration}s linear infinite` }}
       >
         {track.map((profile, i) => (
-          <CarouselCard
-            key={`${profile.id}-${i}`}
-            profile={profile}
-            metrics={metricsMap[profile.id] ?? []}
-            index={i}
-          />
+          <CarouselCard key={`${profile.id}-${i}`} profile={profile} metrics={metricsMap[profile.id] ?? []} index={i} />
         ))}
       </div>
     </div>
