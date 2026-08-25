@@ -172,8 +172,21 @@ export function ProfileCard({
 
       {/* Glassmorphism content at bottom, in flow so it never covers the photo */}
       <div className="border-t border-white/10 bg-[var(--brand-dark)]/60 px-3 pb-3 pt-2.5 backdrop-blur-2xl sm:px-5 sm:pb-5 sm:pt-4">
+        {/* Networks first */}
+        {availableNetworks.length > 0 ? (
+          <div className="mb-2 flex flex-nowrap items-center gap-1 overflow-hidden sm:mb-2.5 sm:gap-1.5">
+            {availableNetworks.slice(0, 4).map((network) => (
+              <NetworkIconButton key={network} network={network} highlight={network === profile.main_network} />
+            ))}
+            {availableNetworks.length > 4 ? (
+              <span className="text-[10px] font-bold text-white/60 sm:text-xs">+{availableNetworks.length - 4}</span>
+            ) : null}
+          </div>
+        ) : null}
+
+        {/* Categories second */}
         {niches.length > 0 ? (
-          <div className="mb-2 flex min-w-0 flex-nowrap items-center gap-1 overflow-hidden sm:mb-2.5 sm:gap-1.5">
+          <div className="mb-2.5 flex min-w-0 flex-nowrap items-center gap-1 overflow-hidden sm:mb-3 sm:gap-1.5">
             <span className="max-w-full truncate rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[8.5px] font-bold uppercase tracking-widest text-white backdrop-blur-xl sm:px-2.5 sm:py-1 sm:text-[9.5px]">
               {niches[0]}
             </span>
@@ -185,23 +198,9 @@ export function ProfileCard({
           </div>
         ) : null}
 
-        {/* Networks below */}
-        {availableNetworks.length > 0 ? (
-          <div className="mb-2.5 flex flex-nowrap items-center gap-1 overflow-hidden sm:mb-3 sm:gap-1.5">
-            {availableNetworks.slice(0, 4).map((network) => (
-              <NetworkIconButton key={network} network={network} highlight={network === profile.main_network} />
-            ))}
-            {availableNetworks.length > 4 ? (
-              <span className="text-[10px] font-bold text-white/60 sm:text-xs">+{availableNetworks.length - 4}</span>
-            ) : null}
-          </div>
-        ) : null}
-
-        {/* Short card description (tagline), limited to 2 lines */}
+        {/* Full card description (tagline) */}
         {profile.tagline ? (
-          <div className="hidden sm:block">
-            <p className="!bio-clamp mt-2 text-sm font-medium leading-relaxed text-white/80">{profile.tagline}</p>
-          </div>
+          <p className="text-sm font-medium leading-relaxed text-white/80">{profile.tagline}</p>
         ) : null}
       </div>
     </Link>
