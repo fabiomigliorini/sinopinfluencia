@@ -158,6 +158,15 @@ export function ProfileCard({
         <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3">
           <TierBadge tier={profile.tier} light compact />
         </div>
+
+        {/* Floating name at bottom, like carousel */}
+        <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4">
+          <div className="inline-block rounded-xl border border-white/25 bg-[var(--brand-dark)]/70 px-3 py-2 backdrop-blur-xl">
+            <h3 className="truncate text-sm font-extrabold leading-tight tracking-tight text-white sm:text-lg">
+              {profile.display_name}
+            </h3>
+          </div>
+        </div>
       </div>
 
       {/* Glassmorphism content at bottom, in flow so it never covers the photo */}
@@ -186,13 +195,6 @@ export function ProfileCard({
             ) : null}
           </div>
         ) : null}
-
-        {/* Name styled like carousel badge */}
-        <div className="inline-block rounded-xl border border-white/25 bg-[var(--brand-dark)]/70 px-3 py-2 backdrop-blur-xl">
-          <h3 className="truncate text-sm font-extrabold leading-tight tracking-tight text-white sm:text-lg">
-            {profile.display_name}
-          </h3>
-        </div>
 
         {/* Short card description (tagline), limited to 2 lines */}
         {profile.tagline ? (
