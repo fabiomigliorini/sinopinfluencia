@@ -61,13 +61,6 @@ export function TierBadge({
           />
         ))}
       </div>
-      <span
-        className={`text-[8px] font-bold uppercase leading-none tracking-widest sm:text-[9px] ${
-          light ? "text-white/75" : "text-foreground"
-        } ${compact ? "" : ""}`}
-      >
-        {tierLabel(tier)}
-      </span>
     </div>
   );
 }
