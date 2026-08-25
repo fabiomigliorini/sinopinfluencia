@@ -159,7 +159,7 @@ export function ProfileCard({
           <div className="absolute bottom-2 left-2 rounded-lg border border-white/25 bg-[var(--brand-dark)]/70 px-2 py-1 text-left shadow-lg shadow-black/20 backdrop-blur-xl sm:bottom-3 sm:left-3 sm:rounded-xl">
             <p className="text-xs font-black leading-none text-[#FFEB00] sm:text-sm">{totalValue}</p>
             <p className="mt-0.5 text-[7px] font-bold uppercase tracking-widest text-white/75 sm:text-[8px]">
-              Seguidores2s
+              Seguidores
             </p>
           </div>
         ) : null}
