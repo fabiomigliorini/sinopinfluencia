@@ -189,11 +189,11 @@ export function ProfileCard({
           </div>
         ) : null}
 
-        {/* Redesigned social icons first */}
+        {/* Other networks below */}
         {availableNetworks.length > 0 ? (
           <div className="mb-2.5 flex flex-nowrap items-center gap-1 overflow-hidden sm:mb-3 sm:gap-1.5">
             {availableNetworks.slice(0, 4).map((network) => (
-              <NetworkIconButton key={network} network={network} highlight={network === profile.main_network} />
+              <NetworkIconButton key={network} network={network} />
             ))}
             {availableNetworks.length > 4 ? (
               <span className="text-[10px] font-bold text-white/60 sm:text-xs">+{availableNetworks.length - 4}</span>
