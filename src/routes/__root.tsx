@@ -134,7 +134,7 @@ function BrandLogo() {
   return (
     <Link to="/" className="flex items-center gap-3">
       <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-[#0D4424]">
-        <img src={brandMark.url} alt="Sinop Influencia" className="h-[30px] w-[30px] object-contain" />
+        <img src={brandMark.url} alt="Sinop Influencia" className="h-[22px] w-[22px] object-contain" />
       </div>
 
       <div className="leading-tight">
@@ -339,12 +339,12 @@ function Footer() {
           <div>
             <Link
               to="/"
-              className="inline-flex items-center rounded-2xl bg-white px-5 py-4 shadow-lg shadow-black/20 transition hover:shadow-xl"
+              className="inline-flex items-center rounded-2xl bg-white px-5 py-3.5 shadow-lg shadow-black/20 transition-all duration-300 hover:scale-[1.03] hover:shadow-xl"
             >
               <img
                 src={logoHorizontal.url}
                 alt="Sinop Influencia, um programa ACES"
-                className="h-16 w-auto md:h-20"
+                className="h-14 w-auto md:h-16"
               />
             </Link>
 
