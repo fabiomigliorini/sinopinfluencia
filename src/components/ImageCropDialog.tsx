@@ -178,7 +178,7 @@ export function ImageCropDialog({
             type="button"
             disabled={busy || !area}
             onClick={() => void confirm()}
-            className="rounded-full bg-primary px-5 py-2 text-sm font-bold text-primary-foreground transition hover:opacity-90 disabled:opacity-60"
+            className="rounded-full bg-primary px-5 py-2 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90 disabled:opacity-60 disabled:hover:scale-100"
           >
             {busy ? "Processando..." : "Usar imagem"}
           </button>

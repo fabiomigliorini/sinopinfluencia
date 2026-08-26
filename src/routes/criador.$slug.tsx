@@ -94,13 +94,13 @@ function ProfileUnavailable() {
       <div className="flex gap-3">
         <Link
           to="/vitrine"
-          className="rounded-md bg-primary px-4 py-2 text-primary-foreground"
+          className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90"
         >
           Ver vitrine
         </Link>
         <Link
           to="/dashboard"
-          className="rounded-md border px-4 py-2"
+          className="rounded-full border border-border bg-card px-5 py-2.5 text-sm font-bold text-foreground transition-all duration-300 hover:scale-[1.03] hover:bg-accent"
         >
           Meu painel
         </Link>

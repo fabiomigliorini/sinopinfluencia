@@ -148,7 +148,7 @@ export function SocialAccountCards() {
         <button
           type="button"
           onClick={() => setWizardOpen(true)}
-          className="rounded-full bg-primary px-5 py-2 text-xs font-bold text-primary-foreground transition hover:opacity-90"
+          className="rounded-full bg-primary px-5 py-2 text-xs font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90"
         >
           Vincular nova rede
         </button>
@@ -341,7 +341,7 @@ export function SocialAccountCards() {
                   views: manualForm.views.trim(),
                 })
               }
-              className="rounded-full bg-primary px-5 py-2 text-xs font-bold text-primary-foreground transition hover:opacity-90 disabled:opacity-50"
+              className="rounded-full bg-primary px-5 py-2 text-xs font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90 disabled:opacity-50 disabled:hover:scale-100"
             >
               Salvar
             </button>

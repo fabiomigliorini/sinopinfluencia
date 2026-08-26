@@ -100,7 +100,7 @@ export function ConsentDialog({ open, onOpenChange, onConfirm, isPending }: Cons
               setAgreed(false);
             }}
             disabled={!agreed || isPending}
-            className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
+            className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90 disabled:opacity-60 disabled:hover:scale-100"
           >
             {isPending ? "Publicando..." : "Confirmar e publicar"}
           </button>
