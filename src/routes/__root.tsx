@@ -339,7 +339,7 @@ function Footer() {
           <div>
             <Link
               to="/"
-              className="inline-flex w-full max-w-[280px] items-center rounded-2xl bg-transparent px-1 py-1 transition-all duration-300 hover:scale-[1.03]"
+              className="inline-flex w-full max-w-[280px] items-center rounded-2xl bg-white/80 px-2 py-1.5 shadow-sm shadow-black/10 transition-all duration-300 hover:scale-[1.03] hover:bg-white/90"
             >
               <img
                 src={logoHorizontal.url}
