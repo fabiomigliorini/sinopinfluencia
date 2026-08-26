@@ -3,25 +3,9 @@ import type { Database } from "@/integrations/supabase/types";
 import { tierLabel, tierRank } from "@/lib/tiers";
 import type { DirectoryMetric } from "@/lib/directory-maps";
 import { NETWORK_META, NETWORK_ORDER, type NetworkId } from "@/components/network-icons";
+import { CreatorCardMedia } from "./CreatorCardMedia";
 
 type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
-
-const GRADIENTS = [
-  "from-green-950 to-emerald-900",
-  "from-emerald-950 to-green-900",
-  "from-[#0f3d24] to-[#145c32]",
-  "from-[#143d22] to-[#1a5230]",
-  "from-green-900 to-emerald-950",
-  "from-[#0d3b20] to-[#124f2a]",
-];
-
-function initials(name: string) {
-  return name
-    .split(" ")
-    .slice(0, 2)
-    .map((n) => n[0]?.toUpperCase() ?? "")
-    .join("");
-}
 
 function Pin({ filled, className }: { filled: boolean; className?: string }) {
   return (
@@ -116,12 +100,6 @@ export function ProfileCard({
     (a, b) => (a === profile.main_network ? 0 : 1) - (b === profile.main_network ? 0 : 1),
   );
 
-  const totalFollowers = metrics.reduce((sum, m) => {
-    const n = Number(m.followers ?? 0);
-    return sum + (Number.isNaN(n) ? 0 : n);
-  }, 0);
-  const totalValue = totalFollowers > 0 ? formatNumber(totalFollowers) : undefined;
-
   return (
     <Link
       to="/criador/$slug"
@@ -131,47 +109,9 @@ export function ProfileCard({
       {/* Organic glow blobs */}
       <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-[#FFEB00]/10 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-[#FFEB00]/10 blur-3xl" />
-      {/* Photo area: flex-1 so it never sits under the content overlay */}
-      <div className="relative aspect-[3/4] w-full overflow-hidden">
-        {profile.avatar_url ? (
-          <img
-            src={profile.avatar_url}
-            alt={profile.display_name}
-            loading="lazy"
-            className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
-          />
-        ) : (
-          <div
-            className={`flex h-full w-full items-center justify-center bg-gradient-to-br text-5xl font-extrabold text-white ${
-              GRADIENTS[index % GRADIENTS.length]
-            }`}
-          >
-            {initials(profile.display_name)}
-          </div>
-        )}
 
-        {/* Top badges: followers and tier */}
-        <div className="absolute left-2 right-2 top-2 flex items-start justify-between sm:left-3 sm:right-3 sm:top-3">
-          {totalValue ? (
-            <div className="rounded-lg border border-white/25 bg-[var(--brand-dark)]/70 px-2 py-1 shadow-lg shadow-black/20 backdrop-blur-xl sm:rounded-xl sm:px-2.5 sm:py-1.5">
-              <p className="text-xs font-semibold leading-none text-white sm:text-sm">{totalValue}</p>
-            </div>
-          ) : (
-            <span />
-          )}
-
-          <TierBadge tier={profile.tier} light compact />
-        </div>
-
-        {/* Floating name at bottom, like carousel */}
-        <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4">
-          <div className="inline-block rounded-xl border border-white/25 bg-[var(--brand-dark)]/70 px-3 py-2 backdrop-blur-xl">
-            <h3 className="truncate text-sm font-medium leading-tight text-white sm:text-base">
-              {profile.display_name}
-            </h3>
-          </div>
-        </div>
-      </div>
+      {/* Shared photo + badges + name */}
+      <CreatorCardMedia profile={profile} metrics={metrics} index={index} aspectClass="aspect-[3/4]" />
 
       {/* Glassmorphism content at bottom, organic fade into card background */}
       <div className="relative flex-1 bg-[radial-gradient(circle_at_70%_-20%,#14622f_0%,#0D4424_60%)] px-3 pb-3 pt-2.5 sm:px-5 sm:pb-5 sm:pt-4">
@@ -203,7 +143,7 @@ export function ProfileCard({
 
         {/* Full card description (tagline) */}
         {profile.tagline ? (
-          <p className="text-sm font-medium leading-relaxed text-white/80">{profile.tagline}</p>
+          <p className="text-xs font-medium leading-relaxed text-white/80 sm:text-[13px]">{profile.tagline}</p>
         ) : null}
       </div>
     </Link>
