@@ -301,7 +301,7 @@ function WorkCard({ work }: { work: Tables["profile_works"]["Row"] }) {
             src={work.image_url}
             alt={work.title}
             loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
           
         </div>
@@ -335,7 +335,7 @@ function WorkCard({ work }: { work: Tables["profile_works"]["Row"] }) {
       href={work.link_url}
       target="_blank"
       rel="noreferrer noopener"
-      className={`${base} hover:z-10 hover:scale-[1.03] hover:shadow-[0_32px_64px_-24px_rgba(0,0,0,0.35)]`}
+      className={`${base} hover:z-10 hover:scale-105 hover:shadow-[0_32px_64px_-24px_rgba(0,0,0,0.35)]`}
     >
       {inner}
     </a>
@@ -426,7 +426,7 @@ function SocialCard({
 
   const cardClass = "group relative z-0 flex flex-col rounded-[20px] border border-border bg-card p-5 transition-all duration-500";
   const hoverClass =
-    "hover:z-10 hover:scale-[1.03] hover:border-[#cfe4d3] hover:shadow-[0_22px_40px_-22px_rgba(13,68,36,0.35)]";
+    "hover:z-10 hover:scale-105 hover:border-[#cfe4d3] hover:shadow-[0_22px_40px_-22px_rgba(13,68,36,0.35)]";
 
   if (!account.profile_url) {
     return <div className={cardClass}>{content}</div>;

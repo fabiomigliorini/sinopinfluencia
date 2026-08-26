@@ -42,7 +42,7 @@ function NotFoundComponent() {
         <div className="mt-6">
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90"
+            className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-all duration-300 hover:scale-105 hover:bg-primary/90"
           >
             Voltar para a home
           </Link>
@@ -72,7 +72,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
               router.invalidate();
               reset();
             }}
-            className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90"
+            className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-all duration-300 hover:scale-105 hover:bg-primary/90"
           >
             Tentar novamente
           </button>
@@ -216,7 +216,7 @@ function Header() {
           {signedIn ? (
             <Link
               to="/dashboard"
-              className="group relative flex items-center justify-center overflow-hidden rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/25 transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90"
+              className="group relative flex items-center justify-center overflow-hidden rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/25 transition-all duration-300 hover:scale-105 hover:bg-primary/90"
               aria-label={headerProfile ? `Minha conta, ${headerProfile.display_name ?? ""}` : "Minha conta"}
               title="Minha conta"
             >
@@ -235,7 +235,7 @@ function Header() {
           ) : (
             <Link
               to="/auth"
-              className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90"
+              className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-all duration-300 hover:scale-105 hover:bg-primary/90"
             >
               Entrar
             </Link>
@@ -339,7 +339,7 @@ function Footer() {
           <div>
             <Link
               to="/"
-              className="inline-flex w-full max-w-[280px] items-center rounded-2xl bg-white/70 px-3 py-2 shadow-sm shadow-black/10 transition-all duration-300 hover:scale-[1.03] hover:bg-white/85"
+              className="inline-flex w-full max-w-[280px] items-center rounded-2xl bg-white/70 px-3 py-2 shadow-sm shadow-black/10 transition-all duration-300 hover:scale-105 hover:bg-white/85"
             >
               <img
                 src={logoHorizontal.url}

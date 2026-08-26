@@ -81,7 +81,7 @@ export function BrandsCard({ brands }: { brands: Brand[] }) {
                 <button
                   type="submit"
                   disabled={addMutation.isPending}
-                  className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90 disabled:opacity-60 disabled:hover:scale-100"
+                  className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition-all duration-300 hover:scale-105 hover:bg-primary/90 disabled:opacity-60 disabled:hover:scale-100"
                 >
                   {addMutation.isPending ? "Adicionando..." : "Adicionar"}
                 </button>
