@@ -273,7 +273,7 @@ export function PortfolioCard({ works }: { works: Work[] }) {
                   type="button"
                   onClick={importPreview}
                   disabled={importing}
-                  className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
+                  className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90 disabled:opacity-60"
                 >
                   {importing ? "Importando prévia..." : "Importar prévia do link"}
                 </button>
@@ -309,7 +309,7 @@ export function PortfolioCard({ works }: { works: Work[] }) {
                 <button
                   type="button"
                   onClick={() => setStep(3)}
-                  className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90"
+                  className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90"
                 >
                   Continuar
                 </button>
@@ -356,7 +356,7 @@ export function PortfolioCard({ works }: { works: Work[] }) {
                 <button
                   type="submit"
                   disabled={saveMutation.isPending}
-                  className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
+                  className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90 disabled:opacity-60"
                 >
                   {saveMutation.isPending ? "Salvando..." : "Salvar"}
                 </button>

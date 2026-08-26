@@ -214,7 +214,7 @@ function DashboardPage() {
             <button
               onClick={() => setConsentOpen(true)}
               disabled={submitMutation.isPending}
-              className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
+              className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90 disabled:opacity-60"
             >
               {submitMutation.isPending ? "Publicando..." : "Publicar alterações"}
             </button>
@@ -267,7 +267,7 @@ function DashboardPage() {
                 <button
                   onClick={() => setConsentOpen(true)}
                   disabled={submitMutation.isPending}
-                  className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
+                  className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90 disabled:opacity-60"
                 >
                   {submitMutation.isPending
                     ? "Publicando..."
