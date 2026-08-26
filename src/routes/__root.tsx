@@ -339,12 +339,12 @@ function Footer() {
           <div>
             <Link
               to="/"
-              className="inline-flex items-center rounded-2xl bg-white px-5 py-4 shadow-lg shadow-black/20 transition hover:shadow-xl"
+              className="inline-flex items-center rounded-2xl bg-white px-5 py-3.5 shadow-lg shadow-black/20 transition-all duration-300 hover:scale-[1.03] hover:shadow-xl"
             >
               <img
                 src={logoHorizontal.url}
                 alt="Sinop Influencia, um programa ACES"
-                className="h-16 w-auto md:h-20"
+                className="h-14 w-auto md:h-16"
               />
             </Link>
 
