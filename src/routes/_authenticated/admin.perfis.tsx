@@ -108,7 +108,7 @@ function AdminProfilesPage() {
         </p>
         <Link
           to="/dashboard"
-          className="mt-6 inline-flex rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground"
+          className="mt-6 inline-flex rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90"
         >
           Voltar para minha conta
         </Link>
@@ -541,7 +541,7 @@ function AdminSocialTools({ profileId }: { profileId: string }) {
               type="button"
               disabled={saveMutation.isPending || !handle.trim()}
               onClick={() => saveMutation.mutate()}
-              className="rounded-full bg-primary px-4 py-2 text-xs font-bold text-primary-foreground disabled:opacity-60"
+              className="rounded-full bg-primary px-4 py-2 text-xs font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90 disabled:opacity-60 disabled:hover:scale-100"
             >
               {saveMutation.isPending ? "Buscando…" : "Salvar e buscar"}
             </button>
