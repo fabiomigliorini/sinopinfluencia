@@ -337,9 +337,15 @@ function Footer() {
       <div className="mx-auto max-w-[1180px] px-6 pb-6 pt-14 lg:px-7">
         <div className="grid gap-10 border-b border-white/10 pb-10 md:grid-cols-[1.4fr_1fr_1fr]">
           <div>
-            <img src={logoHorizontal.url} alt="Sinop Influencia, um programa ACES" className="h-20 w-auto" />
-            <Link to="/" className="inline-block rounded-lg bg-white/60 p-1 shadow-lg shadow-black/10">
-              <img src={logoHorizontal.url} alt="Sinop Influencia, um programa ACES" className="h-20 w-auto" />
+            <Link
+              to="/"
+              className="inline-flex items-center rounded-2xl bg-white px-5 py-4 shadow-lg shadow-black/20 transition hover:shadow-xl"
+            >
+              <img
+                src={logoHorizontal.url}
+                alt="Sinop Influencia, um programa ACES"
+                className="h-16 w-auto md:h-20"
+              />
             </Link>
 
             <p className="mt-4 max-w-[280px] text-[13.5px] leading-relaxed text-[#A9C9B2]">
