@@ -11,12 +11,19 @@ import {
 } from "@/lib/account.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { ImageUpload } from "@/components/ImageUpload";
-import { SocialAccountCards } from "@/components/SocialAccountCards";
-import { BasicInfoCard } from "@/components/account/BasicInfoCard";
-import { FormatsCard } from "@/components/account/FormatsCard";
-import { BrandsCard } from "@/components/account/BrandsCard";
-import { NichesCard } from "@/components/account/NichesCard";
-import { PortfolioCard } from "@/components/account/PortfolioCard";
+import { ProfileView } from "@/components/ProfileView";
+import {
+  AddBrandButton,
+  AddNicheButton,
+  AddSocialButton,
+  AddWorkButton,
+  EditBasicsButton,
+  EditFormatsButton,
+  SocialActions,
+  WorkActions,
+  useRemoveBrand,
+  useRemoveNiche,
+} from "@/components/account/edit-controls";
 import { ConsentDialog } from "@/components/ConsentDialog";
 import { EmailVerificationBanner } from "@/components/EmailVerificationBanner";
 
@@ -160,6 +167,8 @@ function DashboardPage() {
       ].filter(Boolean).length
     : 0;
 
+  const removeNiche = useRemoveNiche(profile?.niche ?? null);
+  const removeBrand = useRemoveBrand();
 
   return (
     <div className="mx-auto max-w-[1180px] px-6 py-12 lg:px-7">
@@ -214,7 +223,7 @@ function DashboardPage() {
             <button
               onClick={() => setConsentOpen(true)}
               disabled={submitMutation.isPending}
-              className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition-all duration-300 hover:scale-105 hover:bg-primary/90 disabled:opacity-60 disabled:hover:scale-100"
+              className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
             >
               {submitMutation.isPending ? "Publicando..." : "Publicar alterações"}
             </button>
@@ -223,108 +232,102 @@ function DashboardPage() {
       )}
 
       {profile && (
-        <div className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
-
-          <section className="rounded-3xl border border-border bg-card p-7">
-            <div className="mb-6 max-w-[260px]">
-              <ImageUpload
-                label="Foto de perfil"
-                round
-                value={profile.avatar_url ?? ""}
-                onChange={(url) => avatarMutation.mutate(url)}
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          <div className="glass-panel p-6">
+            <h3 className="text-xs font-bold uppercase tracking-widest text-white/50">
+              Preenchimento
+            </h3>
+            <p className="mt-3 text-3xl font-extrabold text-white">
+              {Math.round((completeness / 6) * 100)}%
+            </p>
+            <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
+              <div
+                className="h-full rounded-full bg-[#FFEB00]"
+                style={{ width: `${(completeness / 6) * 100}%` }}
               />
-              {avatarMutation.isPending ? (
-                <p className="mt-2 text-xs text-muted-foreground">Salvando foto…</p>
-              ) : null}
             </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <span
-                className={`rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide ${status?.tone}`}
-              >
-                {status?.label}
-              </span>
-              <span className="text-xs text-muted-foreground">
-                /{profile.slug}
-              </span>
-            </div>
-            <h2 className="mt-4 text-2xl font-bold">{profile.display_name}</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {profile.niche ?? "Nicho não informado"} · {profile.city ?? "Sinop, MT"}
-            </p>
-            {profile.tagline ? (
-              <p className="mt-3 text-sm font-semibold text-foreground/90 whitespace-pre-line">
-                {profile.tagline}
-              </p>
-            ) : null}
-            <p className="mt-4 text-sm leading-relaxed text-foreground/80 whitespace-pre-line">
-              {profile.bio ?? "Você ainda não escreveu sua bio."}
-            </p>
-
-            <p className="mt-5 text-sm text-muted-foreground">{status?.hint}</p>
-
-            <div className="mt-6 flex flex-wrap gap-2">
-              {hasPendingChanges && (
-                <button
-                  onClick={() => setConsentOpen(true)}
-                  disabled={submitMutation.isPending}
-                  className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition-all duration-300 hover:scale-105 hover:bg-primary/90 disabled:opacity-60 disabled:hover:scale-100"
-                >
-                  {submitMutation.isPending
-                    ? "Publicando..."
-                    : profile.status === "draft"
-                      ? "Publicar e enviar para curadoria"
-                      : "Publicar alterações"}
-                </button>
-              )}
-
-              {profile.status === "approved" && (
-                <Link
-                  to="/criador/$slug"
-                  params={{ slug: profile.slug }}
-                  className="rounded-full border border-border bg-card px-5 py-2.5 text-sm font-bold transition hover:bg-accent"
-                >
-                  Ver perfil público
-                </Link>
-              )}
-            </div>
-          </section>
-
-          <aside className="space-y-4">
-            <div className="rounded-3xl border border-border bg-card p-6">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                Preenchimento
-              </h3>
-              <p className="mt-3 text-3xl font-extrabold">
-                {Math.round((completeness / 6) * 100)}%
-              </p>
-              <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
-                <div
-                  className="h-full rounded-full bg-primary"
-                  style={{ width: `${(completeness / 6) * 100}%` }}
-                />
-              </div>
-            </div>
-            <div className="rounded-3xl border border-border bg-card p-6 text-sm">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                Resumo
-              </h3>
-              <ul className="mt-3 space-y-2 text-foreground/80">
-                <li>{data?.socialAccounts.length ?? 0} redes vinculadas</li>
-                <li>{data?.formats.length ?? 0} formatos de trabalho</li>
-                <li>{data?.works.length ?? 0} itens no portfólio</li>
-                <li>{data?.brands.length ?? 0} marcas parceiras</li>
-              </ul>
-            </div>
-          </aside>
-
-          <div className="space-y-6 lg:col-span-2">
-            <BasicInfoCard profile={profile} />
-          <NichesCard niche={profile.niche} />
-            <SocialAccountCards />
-            <FormatsCard formats={(data?.formats ?? []).map((f) => f.format)} />
-            <BrandsCard brands={data?.brands ?? []} />
-            <PortfolioCard works={data?.works ?? []} />
           </div>
+          <div className="glass-panel p-6 text-sm">
+            <h3 className="text-xs font-bold uppercase tracking-widest text-white/50">
+              Resumo
+            </h3>
+            <ul className="mt-3 grid grid-cols-2 gap-2 text-white/80">
+              <li>{data?.socialAccounts.length ?? 0} redes vinculadas</li>
+              <li>{data?.formats.length ?? 0} formatos</li>
+              <li>{data?.works.length ?? 0} itens no portfólio</li>
+              <li>{data?.brands.length ?? 0} marcas parceiras</li>
+            </ul>
+          </div>
+        </div>
+      )}
+
+      {profile && (
+        <div className="mt-6">
+          <ProfileView
+            data={{
+              profile,
+              formats: data?.formats ?? [],
+              works: data?.works ?? [],
+              brands: data?.brands ?? [],
+              socialAccounts: data?.socialAccounts ?? [],
+            }}
+            edit={{
+              extraBadges: (
+                <>
+                  <span
+                    className={`rounded-full px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-widest ${status?.tone}`}
+                  >
+                    {status?.label}
+                  </span>
+                  <span className="rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-widest text-white backdrop-blur-xl">
+                    /criador/{profile.slug}
+                  </span>
+                </>
+              ),
+              heroActions: (
+                <>
+                  <ImageUpload
+                    hidePreview
+                    hideRemove
+                    aspect={3 / 4}
+                    value={profile.avatar_url ?? ""}
+                    onChange={(url) => avatarMutation.mutate(url)}
+                    buttonClassName="glass-btn px-5 py-2.5 font-bold"
+                  />
+                  <EditBasicsButton profile={profile} />
+                  {profile.status === "approved" && (
+                    <Link
+                      to="/criador/$slug"
+                      params={{ slug: profile.slug }}
+                      className="glass-btn px-5 py-2.5 font-bold"
+                    >
+                      Ver perfil público
+                    </Link>
+                  )}
+                  {avatarMutation.isPending ? (
+                    <span className="text-xs text-white/70">Salvando foto…</span>
+                  ) : null}
+                </>
+              ),
+              heroNote: <p className="text-sm text-white/60">{status?.hint}</p>,
+              sectionActions: {
+                sobre: <EditBasicsButton profile={profile} light />,
+                redes: <AddSocialButton />,
+                portfolio: <AddWorkButton />,
+                formatos: (
+                  <EditFormatsButton
+                    formats={(data?.formats ?? []).map((f) => f.format)}
+                  />
+                ),
+                marcas: <AddBrandButton />,
+              },
+              addNicheButton: <AddNicheButton niche={profile.niche} />,
+              onRemoveNiche: removeNiche,
+              onRemoveBrand: removeBrand,
+              workActions: (work) => <WorkActions work={work} />,
+              socialActions: (account) => <SocialActions account={account} />,
+            }}
+          />
         </div>
       )}
 

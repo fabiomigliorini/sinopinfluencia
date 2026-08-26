@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { X } from "lucide-react";
 import { NetworkBadge, networkLabel } from "@/components/network-icons";
 import { TierBadge } from "@/components/ProfileCard";
 import { whatsappDigits, formatPhoneDisplay } from "@/components/PhoneInput";
@@ -6,13 +7,36 @@ import type { Database } from "@/integrations/supabase/types";
 import type { PublicSocialAccount } from "@/lib/social-public";
 
 type Tables = Database["public"]["Tables"];
+type Work = Tables["profile_works"]["Row"];
 
 export type ProfileViewData = {
   profile: Tables["profiles"]["Row"];
   formats: Tables["profile_formats"]["Row"][];
-  works: Tables["profile_works"]["Row"][];
+  works: Work[];
   brands: Tables["profile_brands"]["Row"][];
   socialAccounts?: PublicSocialAccount[];
+};
+
+/** Slots de edição: quando presentes, o ProfileView renderiza os controles do painel do criador. */
+export type ProfileViewEdit = {
+  /** Badges extras no hero (status, slug). */
+  extraBadges?: React.ReactNode;
+  /** Ações no lugar do botão de WhatsApp (trocar foto, editar infos, ver perfil público). */
+  heroActions?: React.ReactNode;
+  /** Nota abaixo das ações do hero (dica de status). */
+  heroNote?: React.ReactNode;
+  /** Botões ao lado do título de cada seção. */
+  sectionActions?: Partial<
+    Record<"sobre" | "redes" | "portfolio" | "formatos" | "marcas", React.ReactNode>
+  >;
+  /** Botão de adicionar nicho, renderizado após os chips do hero. */
+  addNicheButton?: React.ReactNode;
+  onRemoveNiche?: (name: string) => void;
+  onRemoveBrand?: (id: string) => void;
+  /** Ações por card de trabalho (editar/remover). */
+  workActions?: (work: Work) => React.ReactNode;
+  /** Ações por card de rede social (atualizar/informar/remover). */
+  socialActions?: (account: PublicSocialAccount) => React.ReactNode;
 };
 
 function WhatsAppIcon({ className }: { className?: string }) {
@@ -33,12 +57,33 @@ function compact(value: number) {
 const glassCard =
   "relative overflow-hidden rounded-[26px] border border-white/15 bg-gradient-to-b from-[var(--brand-green-deep)] to-[var(--brand-dark)] shadow-2xl shadow-black/20";
 
+const sectionTitle =
+  "text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground";
+
+function SectionHeading({
+  title,
+  action,
+}: {
+  title: string;
+  action?: React.ReactNode;
+}) {
+  if (!action) return <h2 className={sectionTitle}>{title}</h2>;
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <h2 className={sectionTitle}>{title}</h2>
+      {action}
+    </div>
+  );
+}
+
 export function ProfileView({
   data,
   backLink,
+  edit,
 }: {
   data: ProfileViewData;
   backLink?: React.ReactNode;
+  edit?: ProfileViewEdit;
 }) {
   const { profile, formats, works, brands } = data;
   const socialAccounts = data.socialAccounts ?? [];
@@ -64,23 +109,27 @@ export function ProfileView({
   const firstName = profile.display_name.split(" ")[0];
 
   return (
-    <div className="bg-background pb-20 pt-8">
-      <div className="mx-auto max-w-[1180px] px-6 lg:px-7">
-        {backLink ?? (
-          <Link
-            to="/vitrine"
-            search={{}}
-            className="inline-flex text-sm font-bold text-primary hover:underline"
-          >
-            ← Voltar à vitrine
-          </Link>
+    <div className={edit ? "" : "bg-background pb-20 pt-8"}>
+      <div className={edit ? "" : "mx-auto max-w-[1180px] px-6 lg:px-7"}>
+        {edit ? (
+          backLink
+        ) : (
+          backLink ?? (
+            <Link
+              to="/vitrine"
+              search={{}}
+              className="inline-flex text-sm font-bold text-primary hover:underline"
+            >
+              ← Voltar à vitrine
+            </Link>
+          )
         )}
 
         {/* HERO */}
-        <div className={`mt-6 ${glassCard} p-0`}>
+        <div className={`${edit ? "" : "mt-6 "}${glassCard} p-0`}>
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_85%_10%,rgba(255,235,0,0.14),transparent_45%)]" />
           <div className="relative flex flex-col md:flex-row">
-            <div className="relative aspect-[4/3] w-full overflow-hidden md:aspect-auto md:w-[340px] md:shrink-0 lg:w-[380px]">
+            <div className="relative aspect-[3/4] w-full overflow-hidden md:aspect-[2/3] md:w-[280px] md:shrink-0 lg:w-[300px]">
               {profile.avatar_url ? (
                 <img
                   src={profile.avatar_url}
@@ -96,7 +145,8 @@ export function ProfileView({
 
             <div className="min-w-0 flex-1 p-6 md:p-10">
               <div className="flex flex-wrap items-center gap-3">
-                <TierBadge tier={profile.tier} light />
+                {edit?.extraBadges}
+                <TierBadge tier={profile.tier} light showLabel variant="pill" />
                 {totalFollowers > 0 ? (
                   <span className="rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-widest text-white backdrop-blur-xl">
                     {compact(totalFollowers)} seguidores
@@ -124,16 +174,27 @@ export function ProfileView({
                 </p>
               ) : null}
 
-              {niches.length > 0 ? (
-                <div className="mt-4 flex flex-wrap gap-1.5">
+              {niches.length > 0 || edit?.addNicheButton ? (
+                <div className="mt-4 flex flex-wrap items-center gap-1.5">
                   {niches.map((n) => (
                     <span
                       key={n}
-                      className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white"
+                      className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white"
                     >
                       {n}
+                      {edit?.onRemoveNiche ? (
+                        <button
+                          type="button"
+                          aria-label={`Remover ${n}`}
+                          onClick={() => edit.onRemoveNiche!(n)}
+                          className="rounded-full p-0.5 text-white/60 transition hover:bg-white/10 hover:text-white"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      ) : null}
                     </span>
                   ))}
+                  {edit?.addNicheButton}
                 </div>
               ) : null}
 
@@ -142,15 +203,17 @@ export function ProfileView({
               ) : null}
 
               <div className="mt-6 flex flex-wrap items-center gap-4">
-                <a
-                  href={`https://wa.me/${whatsapp}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2.5 rounded-full bg-[#25D366] px-6 py-3.5 text-sm font-bold text-[#0b2b16] shadow-lg shadow-black/25 transition hover:brightness-110"
-                >
-                  <WhatsAppIcon className="h-5 w-5" />
-                  Falar com {firstName}
-                </a>
+                {edit?.heroActions ?? (
+                  <a
+                    href={`https://wa.me/${whatsapp}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2.5 rounded-full bg-[#25D366] px-6 py-3.5 text-sm font-bold text-[#0b2b16] shadow-lg shadow-black/25 transition hover:brightness-110"
+                  >
+                    <WhatsAppIcon className="h-5 w-5" />
+                    Falar com {firstName}
+                  </a>
+                )}
                 {whatsappLabel ? (
                   <div className="text-left">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-white/50">
@@ -168,27 +231,25 @@ export function ProfileView({
                   </div>
                 ) : null}
               </div>
+
+              {edit?.heroNote ? <div className="mt-5">{edit.heroNote}</div> : null}
             </div>
           </div>
         </div>
 
         {/* BIO */}
-        {profile.bio ? (
+        {profile.bio || edit ? (
           <section className="mt-10">
-            <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">
-              Sobre
-            </h2>
+            <SectionHeading title="Sobre" action={edit?.sectionActions?.sobre} />
             <p className="mt-3 max-w-3xl whitespace-pre-line text-[15px] leading-relaxed text-foreground/80">
-              {profile.bio}
+              {profile.bio ?? "Você ainda não escreveu sua bio."}
             </p>
           </section>
         ) : null}
 
         {/* REDES */}
         <section className="mt-12">
-          <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">
-            Redes sociais
-          </h2>
+          <SectionHeading title="Redes sociais" action={edit?.sectionActions?.redes} />
           <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {socialAccounts.length > 0 ? (
               socialAccounts.map((account) => (
@@ -196,11 +257,14 @@ export function ProfileView({
                   key={account.id}
                   account={account}
                   isPrimary={account.network === profile.main_network}
+                  actions={edit?.socialActions?.(account)}
                 />
               ))
             ) : (
               <p className="col-span-full text-sm text-muted-foreground">
-                Nenhuma métrica pública disponível.
+                {edit
+                  ? "Nenhuma rede vinculada ainda. Clique em “Vincular nova rede”."
+                  : "Nenhuma métrica pública disponível."}
               </p>
             )}
           </div>
@@ -208,13 +272,15 @@ export function ProfileView({
 
         {/* PORTFÓLIO */}
         <section className="mt-12">
-          <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">
-            Portfólio
-          </h2>
+          <SectionHeading title="Portfólio" action={edit?.sectionActions?.portfolio} />
           {works.length > 0 ? (
-            <div className="mt-4 grid items-start gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-4 grid items-start gap-4 sm:grid-cols-3 lg:grid-cols-4">
               {works.map((work) => (
-                <WorkCard key={work.id} work={work} />
+                <WorkCard
+                  key={work.id}
+                  work={work}
+                  actions={edit?.workActions?.(work)}
+                />
               ))}
             </div>
           ) : (
@@ -225,9 +291,10 @@ export function ProfileView({
         {/* FORMATOS + MARCAS */}
         <div className="mt-12 grid gap-10 md:grid-cols-2">
           <section>
-            <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">
-              Formatos de trabalho
-            </h2>
+            <SectionHeading
+              title="Formatos de trabalho"
+              action={edit?.sectionActions?.formatos}
+            />
             <div className="mt-4 flex flex-wrap gap-2">
               {formats.length > 0 ? (
                 formats.map((f) => (
@@ -245,21 +312,31 @@ export function ProfileView({
           </section>
 
           <section>
-            <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">
-              Marcas e parceiros
-            </h2>
+            <SectionHeading
+              title="Marcas e parceiros"
+              action={edit?.sectionActions?.marcas}
+            />
             {brands.length > 0 ? (
               <div className="mt-4 flex flex-wrap gap-2">
                 {brands.map((b) => (
                   <span
                     key={b.id}
-                    className="rounded-full border border-border bg-secondary px-4 py-2 text-sm font-semibold text-foreground"
+                    className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-4 py-2 text-sm font-semibold text-foreground"
                   >
                     {b.brand_name}
+                    {edit?.onRemoveBrand ? (
+                      <button
+                        type="button"
+                        aria-label={`Remover ${b.brand_name}`}
+                        onClick={() => edit.onRemoveBrand!(b.id)}
+                        className="rounded-full p-0.5 text-muted-foreground transition hover:text-foreground"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    ) : null}
                   </span>
                 ))}
               </div>
-
             ) : (
               <p className="mt-3 text-sm text-muted-foreground">Nenhuma marca cadastrada.</p>
             )}
@@ -267,52 +344,54 @@ export function ProfileView({
         </div>
 
         {/* CTA FINAL */}
-        <div className={`mt-14 ${glassCard} p-8 text-center md:p-10`}>
-          <h2 className="text-2xl font-black tracking-tight text-white md:text-3xl">
-            Quer trabalhar com {firstName}?
-          </h2>
-          <p className="mx-auto mt-2 max-w-lg text-sm text-white/70">
-            Fale diretamente pelo WhatsApp para propostas de parceria e campanhas.
-          </p>
-          {whatsappLabel ? (
-            <p className="mt-4 text-lg font-bold text-white">{whatsappLabel}</p>
-          ) : null}
-          <a
-            href={`https://wa.me/${whatsapp}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-5 inline-flex items-center gap-2.5 rounded-full bg-[#25D366] px-7 py-3.5 text-sm font-bold text-[#0b2b16] shadow-lg shadow-black/25 transition hover:brightness-110"
-          >
-            <WhatsAppIcon className="h-5 w-5" />
-            Enviar mensagem
-          </a>
-        </div>
+        {!edit && (
+          <div className={`mt-14 ${glassCard} p-8 text-center md:p-10`}>
+            <h2 className="text-2xl font-black tracking-tight text-white md:text-3xl">
+              Quer trabalhar com {firstName}?
+            </h2>
+            <p className="mx-auto mt-2 max-w-lg text-sm text-white/70">
+              Fale diretamente pelo WhatsApp para propostas de parceria e campanhas.
+            </p>
+            {whatsappLabel ? (
+              <p className="mt-4 text-lg font-bold text-white">{whatsappLabel}</p>
+            ) : null}
+            <a
+              href={`https://wa.me/${whatsapp}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-5 inline-flex items-center gap-2.5 rounded-full bg-[#25D366] px-7 py-3.5 text-sm font-bold text-[#0b2b16] shadow-lg shadow-black/25 transition hover:brightness-110"
+            >
+              <WhatsAppIcon className="h-5 w-5" />
+              Enviar mensagem
+            </a>
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
-function WorkCard({ work }: { work: Tables["profile_works"]["Row"] }) {
+function WorkCard({
+  work,
+  actions,
+}: {
+  work: Work;
+  actions?: React.ReactNode;
+}) {
   const inner = (
     <>
       {work.image_url ? (
-        <div className="relative aspect-[4/5] overflow-hidden">
+        <div className="relative aspect-video overflow-hidden">
           <img
             src={work.image_url}
             alt={work.title}
             loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
           />
-          
+
         </div>
       ) : null}
-      <div
-        className={
-          work.image_url
-            ? "absolute inset-x-0 bottom-0 border-t border-white/10 bg-[var(--brand-dark)]/60 px-5 pb-5 pt-4 backdrop-blur-2xl"
-            : "px-5 py-6"
-        }
-      >
+      <div className="border-t border-white/10 px-5 pb-5 pt-4">
         <h3 className="text-base font-extrabold leading-tight text-white">{work.title}</h3>
         {work.description ? (
           <p className="!bio-clamp mt-1.5 text-sm text-white/75">{work.description}</p>
@@ -322,20 +401,23 @@ function WorkCard({ work }: { work: Tables["profile_works"]["Row"] }) {
             Ver post original →
           </span>
         ) : null}
+        {actions ? <div className="mt-3 flex flex-wrap gap-2">{actions}</div> : null}
       </div>
     </>
   );
 
   const base = `group relative z-0 ${glassCard} transition-all duration-500`;
 
-  if (!work.link_url) return <div className={base}>{inner}</div>;
+  if (!work.link_url || actions) {
+    return <div className={actions ? `${base} hover:z-10 hover:scale-[1.03] hover:shadow-[0_32px_64px_-24px_rgba(0,0,0,0.35)]` : base}>{inner}</div>;
+  }
 
   return (
     <a
       href={work.link_url}
       target="_blank"
       rel="noreferrer noopener"
-      className={`${base} hover:z-10 hover:scale-105 hover:shadow-[0_32px_64px_-24px_rgba(0,0,0,0.35)]`}
+      className={`${base} hover:z-10 hover:scale-[1.03] hover:shadow-[0_32px_64px_-24px_rgba(0,0,0,0.35)]`}
     >
       {inner}
     </a>
@@ -345,9 +427,11 @@ function WorkCard({ work }: { work: Tables["profile_works"]["Row"] }) {
 function SocialCard({
   account,
   isPrimary = false,
+  actions,
 }: {
   account: PublicSocialAccount;
   isPrimary?: boolean;
+  actions?: React.ReactNode;
 }) {
   const snap = account.latest;
   const isDeclared = account.is_declared;
@@ -366,42 +450,47 @@ function SocialCard({
 
   const content = (
     <>
-      <div className="flex items-center gap-3">
-        <div className="relative">
+      <div className="flex items-center gap-4">
+        <div className="relative shrink-0">
           {account.avatar_url ? (
             <img
               src={account.avatar_url}
               alt={account.handle ?? networkLabel(account.network)}
               loading="lazy"
-              className="h-11 w-11 rounded-full object-cover"
+              className="h-16 w-16 rounded-full object-cover ring-2 ring-white/20"
             />
           ) : (
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-secondary text-sm font-bold text-primary">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/10 text-xl font-bold text-white ring-2 ring-white/20">
               {(account.handle ?? networkLabel(account.network))[0]?.toUpperCase()}
             </div>
           )}
           <NetworkBadge
             network={account.network}
-            className="absolute -bottom-1 -right-1 h-5 w-5 ring-2 ring-card"
-            iconClassName="h-2.5 w-2.5"
+            className="absolute -bottom-1 -right-1 h-6 w-6 ring-2 ring-[var(--brand-dark)]"
+            iconClassName="h-3 w-3"
           />
         </div>
         <div className="min-w-0">
-          <p className="truncate text-sm font-bold text-foreground">
+          <p className="truncate text-base font-bold text-white">
             {account.handle ? `@${account.handle}` : networkLabel(account.network)}
           </p>
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-white/50">
             {networkLabel(account.network)}
           </p>
+          {account.profile_url && !actions ? (
+            <span className="mt-1.5 inline-block text-[10px] font-bold uppercase tracking-widest text-[#FFEB00]">
+              Ver perfil →
+            </span>
+          ) : null}
         </div>
       </div>
 
       {stats.length > 0 ? (
-        <div className="mt-4 grid grid-cols-2 gap-3">
+        <div className="mt-5 grid grid-cols-2 gap-2">
           {stats.map((stat) => (
-            <div key={stat.label}>
-              <p className="text-lg font-extrabold leading-tight text-foreground">{stat.value}</p>
-              <p className="text-[11px] font-semibold text-muted-foreground">{stat.label}</p>
+            <div key={stat.label} className="rounded-2xl bg-white/10 px-3 py-2.5">
+              <p className="text-lg font-extrabold leading-tight text-white">{stat.value}</p>
+              <p className="text-[11px] font-semibold text-white/55">{stat.label}</p>
             </div>
           ))}
         </div>
@@ -409,27 +498,29 @@ function SocialCard({
 
       <div className="mt-4 flex flex-wrap items-center gap-2">
         <span
-          className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
-            isDeclared ? "bg-secondary text-muted-foreground" : "bg-primary/10 text-primary"
+          className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider ${
+            isDeclared ? "bg-white/10 text-white/60" : "bg-[#FFEB00]/15 text-[#FFEB00]"
           }`}
         >
           {isDeclared ? "Declarado pelo criador" : "Dados públicos"}
         </span>
         {!isDeclared && account.last_synced_at ? (
-          <span className="text-[11px] text-muted-foreground">
+          <span className="text-[11px] text-white/50">
             Atualizado em {new Date(account.last_synced_at).toLocaleDateString("pt-BR")}
           </span>
         ) : null}
       </div>
+
+      {actions ? <div className="mt-4 flex flex-wrap gap-2">{actions}</div> : null}
     </>
   );
 
-  const cardClass = "group relative z-0 flex flex-col rounded-[20px] border border-border bg-card p-5 transition-all duration-500";
+  const cardClass = `group relative z-0 flex flex-col ${glassCard} p-6 transition-all duration-500`;
   const hoverClass =
-    "hover:z-10 hover:scale-105 hover:border-[#cfe4d3] hover:shadow-[0_22px_40px_-22px_rgba(13,68,36,0.35)]";
+    "hover:z-10 hover:scale-[1.03] hover:shadow-[0_32px_64px_-24px_rgba(0,0,0,0.45)]";
 
-  if (!account.profile_url) {
-    return <div className={cardClass}>{content}</div>;
+  if (!account.profile_url || actions) {
+    return <div className={`${cardClass} ${actions ? hoverClass : ""}`}>{content}</div>;
   }
 
   return (
