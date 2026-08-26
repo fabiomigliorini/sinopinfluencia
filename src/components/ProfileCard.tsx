@@ -22,12 +22,35 @@ export function TierBadge({
   tier,
   light = false,
   compact = false,
+  showLabel = false,
+  variant = "box",
 }: {
   tier: string;
   light?: boolean;
   compact?: boolean;
+  showLabel?: boolean;
+  variant?: "box" | "pill";
 }) {
   const order = tierRank(tier);
+  const label = tierLabel(tier);
+
+  if (variant === "pill") {
+    return (
+      <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-widest text-white backdrop-blur-xl">
+        <span className="flex gap-0.5">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Pin
+              key={i}
+              filled={i < order}
+              className={`h-2.5 w-2 ${i < order ? "text-white" : "text-white/25"}`}
+            />
+          ))}
+        </span>
+        {showLabel ? label : null}
+      </span>
+    );
+  }
+
   return (
     <div
       className={`flex flex-col items-start gap-0.5 rounded-xl px-2 py-1 sm:rounded-2xl sm:px-2.5 sm:py-1.5 ${
@@ -45,6 +68,11 @@ export function TierBadge({
           />
         ))}
       </div>
+      {showLabel ? (
+        <span className="text-[10px] font-bold uppercase tracking-wider text-white/90">
+          {label}
+        </span>
+      ) : null}
     </div>
   );
 }

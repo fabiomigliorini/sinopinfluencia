@@ -164,3 +164,15 @@
   from { transform: translate3d(0, 0, 0); }
   to { transform: translate3d(-50%, 0, 0); }
 }
+
+@utility glass-panel {
+  @apply relative overflow-hidden rounded-[26px] border border-white/15 bg-gradient-to-b from-[var(--brand-green-deep)] to-[var(--brand-dark)] text-white shadow-2xl shadow-black/20;
+}
+
+@utility glass-btn {
+  @apply rounded-full border border-white/25 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20;
+}
+
+@utility glass-chip {
+  @apply rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white;
+}
