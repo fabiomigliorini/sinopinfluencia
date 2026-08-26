@@ -134,7 +134,7 @@ function BrandLogo() {
   return (
     <Link to="/" className="flex items-center gap-3">
       <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-[#0D4424]">
-        <img src={brandMark.url} alt="Sinop Influencia" className="h-[30px] w-[30px] object-contain" />
+        <img src={brandMark.url} alt="Sinop Influencia" className="h-[22px] w-[22px] object-contain" />
       </div>
 
       <div className="leading-tight">
