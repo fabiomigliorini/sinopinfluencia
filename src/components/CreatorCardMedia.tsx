@@ -85,7 +85,7 @@ export function CreatorCardMedia({
       {showName ? (
         <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4">
           <div className="inline-block rounded-xl border border-white/25 bg-[var(--brand-dark)]/70 px-3 py-2 backdrop-blur-xl">
-            <h3 className="truncate text-sm font-medium leading-tight text-white sm:text-base">
+            <h3 className="truncate text-xs font-medium leading-tight text-white sm:text-sm">
               {profile.display_name}
             </h3>
           </div>
