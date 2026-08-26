@@ -339,7 +339,7 @@ function FeaturedDirectory({ profiles }: { profiles: ProfileRow[] }) {
           <Link
             to="/vitrine"
             search={{}}
-            className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-6 py-3 text-sm font-bold text-foreground transition hover:border-primary hover:text-primary"
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-bold text-primary-foreground transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90"
           >
             Ver todos os criadores
           </Link>
