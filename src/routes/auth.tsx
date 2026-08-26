@@ -385,7 +385,7 @@ function AuthPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-full bg-primary py-3.5 text-sm font-bold text-white shadow-lg shadow-primary/25 transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90 disabled:opacity-60 disabled:hover:scale-100"
+              className="w-full rounded-full bg-primary py-3.5 text-sm font-bold text-white shadow-lg shadow-primary/25 transition-all duration-300 hover:scale-105 hover:bg-primary/90 disabled:opacity-60 disabled:hover:scale-100"
             >
               {submitLabel}
             </button>

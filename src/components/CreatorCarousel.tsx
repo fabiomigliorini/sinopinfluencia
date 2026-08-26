@@ -20,7 +20,7 @@ function CarouselCard({ profile, metrics, index }: { profile: ProfileRow; metric
     <Link
       to="/criador/$slug"
       params={{ slug: profile.slug }}
-      className="group relative block w-[240px] shrink-0 overflow-hidden rounded-[26px] border border-white/15 shadow-2xl shadow-black/20 transition-all duration-500 hover:z-10 hover:scale-[1.03] hover:shadow-[0_24px_48px_-12px_rgba(0,0,0,0.35)] sm:w-[270px]"
+      className="group relative block w-[240px] shrink-0 overflow-hidden rounded-[26px] border border-white/15 shadow-2xl shadow-black/20 transition-all duration-500 hover:z-10 hover:scale-105 hover:shadow-[0_24px_48px_-12px_rgba(0,0,0,0.35)] sm:w-[270px]"
     >
       <CreatorCardMedia profile={profile} metrics={metrics} index={index} aspectClass="aspect-[3/4]" />
     </Link>

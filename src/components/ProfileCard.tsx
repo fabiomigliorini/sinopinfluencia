@@ -104,7 +104,7 @@ export function ProfileCard({
     <Link
       to="/criador/$slug"
       params={{ slug: profile.slug }}
-      className="group relative z-0 flex flex-col overflow-hidden rounded-[20px] border border-white/20 bg-[radial-gradient(circle_at_70%_-20%,#14622f_0%,#0D4424_60%)] shadow-2xl shadow-black/20 transition-all duration-500 hover:z-10 hover:scale-[1.03] hover:shadow-[0_32px_64px_-24px_rgba(0,0,0,0.35)] sm:rounded-[28px]"
+      className="group relative z-0 flex flex-col overflow-hidden rounded-[20px] border border-white/20 bg-[radial-gradient(circle_at_70%_-20%,#14622f_0%,#0D4424_60%)] shadow-2xl shadow-black/20 transition-all duration-500 hover:z-10 hover:scale-105 hover:shadow-[0_32px_64px_-24px_rgba(0,0,0,0.35)] sm:rounded-[28px]"
     >
       {/* Organic glow blobs */}
       <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-[#FFEB00]/10 blur-3xl" />

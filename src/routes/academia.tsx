@@ -112,7 +112,7 @@ function AcademiaPage() {
             <div className="mt-8">
               <Link
                 to="/auth"
-                className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-bold text-primary-foreground transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90"
+                className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-bold text-primary-foreground transition-all duration-300 hover:scale-105 hover:bg-primary/90"
               >
                 Cadastrar meu perfil
               </Link>
