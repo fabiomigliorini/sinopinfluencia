@@ -205,7 +205,7 @@ export function PortfolioCard({ works }: { works: Work[] }) {
                     type="button"
                     onClick={() => removeMutation.mutate(work.id)}
                     disabled={removeMutation.isPending}
-                    className="rounded-full border border-border bg-card px-3 py-1.5 text-xs font-semibold text-destructive transition hover:bg-accent disabled:opacity-60"
+                    className="rounded-full border border-border bg-card px-3 py-1.5 text-xs font-semibold text-destructive transition hover:bg-accent disabled:opacity-60 disabled:hover:scale-100"
                   >
                     Remover
                   </button>
@@ -273,7 +273,7 @@ export function PortfolioCard({ works }: { works: Work[] }) {
                   type="button"
                   onClick={importPreview}
                   disabled={importing}
-                  className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90 disabled:opacity-60"
+                  className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90 disabled:opacity-60 disabled:hover:scale-100"
                 >
                   {importing ? "Importando prévia..." : "Importar prévia do link"}
                 </button>
@@ -356,7 +356,7 @@ export function PortfolioCard({ works }: { works: Work[] }) {
                 <button
                   type="submit"
                   disabled={saveMutation.isPending}
-                  className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90 disabled:opacity-60"
+                  className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90 disabled:opacity-60 disabled:hover:scale-100"
                 >
                   {saveMutation.isPending ? "Salvando..." : "Salvar"}
                 </button>

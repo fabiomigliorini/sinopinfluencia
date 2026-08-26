@@ -220,7 +220,7 @@ function AdminProfilesPage() {
                   onClick={() =>
                     mutation.mutate({ profileId: p.id, status: "approved" })
                   }
-                  className="rounded-full bg-primary px-4 py-2 text-xs font-bold text-primary-foreground transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90 disabled:opacity-60"
+                  className="rounded-full bg-primary px-4 py-2 text-xs font-bold text-primary-foreground transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90 disabled:opacity-60 disabled:hover:scale-100"
                 >
                   Aprovar
                 </button>
@@ -231,7 +231,7 @@ function AdminProfilesPage() {
                   onClick={() =>
                     mutation.mutate({ profileId: p.id, status: "rejected" })
                   }
-                  className="rounded-full border border-destructive/40 px-4 py-2 text-xs font-bold text-destructive transition hover:bg-destructive/10 disabled:opacity-60"
+                  className="rounded-full border border-destructive/40 px-4 py-2 text-xs font-bold text-destructive transition hover:bg-destructive/10 disabled:opacity-60 disabled:hover:scale-100"
                 >
                   Rejeitar
                 </button>
@@ -422,7 +422,7 @@ function AdminSocialTools({ profileId }: { profileId: string }) {
         type="button"
         disabled={syncMutation.isPending}
         onClick={() => syncMutation.mutate()}
-        className="rounded-full border border-border px-4 py-2 text-xs font-bold transition hover:bg-accent disabled:opacity-60"
+        className="rounded-full border border-border px-4 py-2 text-xs font-bold transition hover:bg-accent disabled:opacity-60 disabled:hover:scale-100"
       >
         {syncMutation.isPending ? "Atualizando…" : "Atualizar métricas"}
       </button>
@@ -499,7 +499,7 @@ function AdminSocialTools({ profileId }: { profileId: string }) {
                       type="button"
                       disabled={syncMutation.isPending}
                       onClick={() => syncMutation.mutate()}
-                      className="rounded-full border border-border px-3 py-1.5 text-[11px] font-bold transition hover:bg-accent disabled:opacity-60"
+                      className="rounded-full border border-border px-3 py-1.5 text-[11px] font-bold transition hover:bg-accent disabled:opacity-60 disabled:hover:scale-100"
                     >
                       Atualizar
                     </button>
@@ -507,7 +507,7 @@ function AdminSocialTools({ profileId }: { profileId: string }) {
                       type="button"
                       disabled={removeMutation.isPending}
                       onClick={() => removeMutation.mutate(account.id)}
-                      className="rounded-full border border-destructive/40 px-3 py-1.5 text-[11px] font-bold text-destructive transition hover:bg-destructive/10 disabled:opacity-60"
+                      className="rounded-full border border-destructive/40 px-3 py-1.5 text-[11px] font-bold text-destructive transition hover:bg-destructive/10 disabled:opacity-60 disabled:hover:scale-100"
                     >
                       Remover
                     </button>
