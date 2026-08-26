@@ -68,6 +68,11 @@ export function TierBadge({
           />
         ))}
       </div>
+      {showLabel ? (
+        <span className="text-[10px] font-bold uppercase tracking-wider text-white/90">
+          {label}
+        </span>
+      ) : null}
     </div>
   );
 }
