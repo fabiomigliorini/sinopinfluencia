@@ -409,7 +409,7 @@ function WorkCard({
   const base = `group relative z-0 ${glassCard} transition-all duration-500`;
 
   if (!work.link_url || actions) {
-    return <div className={actions ? `${base} hover:z-10 hover:scale-[1.03] hover:shadow-[0_32px_64px_-24px_rgba(0,0,0,0.35)]` : base}>{inner}</div>;
+    return <div className={actions ? `${base} hover:z-10 hover:scale-105 hover:shadow-[0_32px_64px_-24px_rgba(0,0,0,0.35)]` : base}>{inner}</div>;
   }
 
   return (
@@ -417,7 +417,7 @@ function WorkCard({
       href={work.link_url}
       target="_blank"
       rel="noreferrer noopener"
-      className={`${base} hover:z-10 hover:scale-[1.03] hover:shadow-[0_32px_64px_-24px_rgba(0,0,0,0.35)]`}
+      className={`${base} hover:z-10 hover:scale-105 hover:shadow-[0_32px_64px_-24px_rgba(0,0,0,0.35)]`}
     >
       {inner}
     </a>
@@ -517,7 +517,7 @@ function SocialCard({
 
   const cardClass = `group relative z-0 flex flex-col ${glassCard} p-6 transition-all duration-500`;
   const hoverClass =
-    "hover:z-10 hover:scale-[1.03] hover:shadow-[0_32px_64px_-24px_rgba(0,0,0,0.45)]";
+    "hover:z-10 hover:scale-105 hover:shadow-[0_32px_64px_-24px_rgba(0,0,0,0.45)]";
 
   if (!account.profile_url || actions) {
     return <div className={`${cardClass} ${actions ? hoverClass : ""}`}>{content}</div>;
