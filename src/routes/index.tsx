@@ -90,7 +90,7 @@ function HeroSearch() {
               <Link
                 to="/vitrine"
                 search={{}}
-                className="inline-flex items-center gap-2 rounded-full bg-[#FFEB00] px-7 py-3.5 text-sm font-bold text-[#0D4424] transition hover:brightness-95"
+                className="inline-flex items-center gap-2 rounded-full bg-[#FFEB00] px-7 py-3.5 text-sm font-bold text-[#0D4424] transition-all duration-300 hover:scale-[1.03] hover:bg-[#FFF04D]"
               >
                 Buscar criador para minha empresa
               </Link>
@@ -309,7 +309,7 @@ function CreatorOnboarding() {
         <div className="mt-10 text-center">
           <Link
             to="/auth"
-            className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-bold text-primary-foreground transition hover:brightness-110"
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-bold text-primary-foreground transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90"
           >
             Quero fazer parte
           </Link>
@@ -339,7 +339,7 @@ function FeaturedDirectory({ profiles }: { profiles: ProfileRow[] }) {
           <Link
             to="/vitrine"
             search={{}}
-            className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-6 py-3 text-sm font-bold text-foreground transition hover:border-primary hover:text-primary"
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-bold text-primary-foreground transition-all duration-300 hover:scale-[1.03] hover:bg-primary/90"
           >
             Ver todos os criadores
           </Link>
