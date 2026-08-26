@@ -11,6 +11,9 @@ type Props = {
   label?: string;
   round?: boolean;
   aspect?: number;
+  hidePreview?: boolean;
+  hideRemove?: boolean;
+  buttonClassName?: string;
 };
 
 export function ImageUpload({
@@ -19,6 +22,9 @@ export function ImageUpload({
   label = "Imagem",
   round = false,
   aspect,
+  hidePreview = false,
+  hideRemove = false,
+  buttonClassName,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -77,33 +83,44 @@ export function ImageUpload({
   }
 
 
+  const ratio = aspect ?? (round ? 1 : 4 / 3);
+
   return (
     <div className="space-y-2">
-      <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-        {label}
-      </span>
+      {hidePreview ? null : (
+        <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+          {label}
+        </span>
+      )}
       <div className="flex items-center gap-4">
-        <div
-          className={`grid h-20 w-20 shrink-0 place-items-center overflow-hidden border border-border bg-accent ${
-            round ? "rounded-full" : "rounded-2xl"
-          }`}
-        >
-          {value ? (
-            <img src={value} alt="" className="h-full w-full object-cover" loading="lazy" />
-          ) : (
-            <span className="text-xs text-muted-foreground">sem foto</span>
-          )}
-        </div>
+        {hidePreview ? null : (
+          <div
+            style={round ? undefined : { aspectRatio: String(ratio) }}
+            className={`grid shrink-0 place-items-center overflow-hidden border border-border bg-accent ${
+              round ? "h-20 w-20 rounded-full" : "h-24 rounded-2xl"
+            }`}
+          >
+            {value ? (
+              <img src={value} alt="" className="h-full w-full object-cover" loading="lazy" />
+            ) : (
+              <span className="px-2 text-center text-xs text-muted-foreground">sem foto</span>
+            )}
+          </div>
+        )}
+
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
             disabled={uploading}
             onClick={() => inputRef.current?.click()}
-            className="rounded-full border border-border bg-card px-4 py-2 text-xs font-bold transition hover:bg-accent disabled:opacity-60"
+            className={
+              buttonClassName ??
+              "rounded-full border border-border bg-card px-4 py-2 text-xs font-bold transition hover:bg-accent disabled:opacity-60"
+            }
           >
             {uploading ? "Enviando..." : value ? "Trocar imagem" : "Enviar imagem"}
           </button>
-          {value && (
+          {value && !hideRemove && (
             <button
               type="button"
               onClick={() => onChange("")}
@@ -126,7 +143,7 @@ export function ImageUpload({
         <ImageCropDialog
           file={pending?.file ?? null}
           imageSrc={pending?.src ?? null}
-          aspect={aspect ?? (round ? 1 : 4 / 3)}
+          aspect={ratio}
           round={round}
           onCancel={closeCrop}
           onConfirm={(cropped) => {
