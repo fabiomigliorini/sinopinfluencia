@@ -90,7 +90,7 @@ function HeroSearch() {
               <Link
                 to="/vitrine"
                 search={{}}
-                className="inline-flex items-center gap-2 rounded-full bg-[#FFEB00] px-7 py-3.5 text-sm font-bold text-[#0D4424] transition hover:brightness-95"
+                className="inline-flex items-center gap-2 rounded-full bg-[#FFEB00] px-7 py-3.5 text-sm font-bold text-[#0D4424] transition-all duration-300 hover:scale-[1.03] hover:bg-[#FFF04D]"
               >
                 Buscar criador para minha empresa
               </Link>
